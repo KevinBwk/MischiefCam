@@ -1,0 +1,37 @@
+# Default runtime configuration. Override with --config <file>.
+# Times are in seconds of *media time* (video pts), not wall-clock.
+
+[source]
+target_fps = 5.0           # frames sampled per second of video
+
+[detector]
+backend = "ultralytics"    # Stage II: "hailo"
+model = "models/yolov8m.pt"  # same family as the Hailo model zoo yolov8m HEF; git-ignored
+device = "mps"             # "mps" | "cpu"
+target_classes = ["dog"]   # COCO class names
+min_score = 0.35
+tracker = "bytetrack.yaml"
+
+[roi]
+file = "config/rois.example.json"
+bbox_expand = 0.15         # expand the animal bbox by this fraction before overlap test
+min_overlap = 0.10         # fraction of the expanded bbox that must fall inside the ROI
+
+[state]
+dwell_s = 2.0              # Candidate -> Observing after staying this long
+leave_grace_s = 1.5        # tolerate short detection gaps before closing an episode
+reobserve_s = 6.0          # after a normal/insufficient verdict, ask again after this long
+cooldown_s = 60.0          # after an alert, stay quiet for this long on the same (track, roi)
+
+[vlm]
+backend = "mlx"            # "mlx" (Mac) | "fake" (tests / dry runs) | Stage II: "hailo"
+model = "mlx-community/Qwen2-VL-2B-Instruct-4bit"
+input_size = 336           # Hailo Qwen2-VL-2B vision encoder input is 336x336
+max_new_tokens = 48
+queue_size = 2             # bounded queue; oldest pending request is dropped when full
+max_age_s = 10.0           # drop requests that waited longer than this (wall-clock)
+
+[output]
+dir = "outputs"
+save_crops = true
+notify_insufficient = false  # insufficient verdicts are always logged; pushing them is opt-in

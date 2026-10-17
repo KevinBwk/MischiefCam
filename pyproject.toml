@@ -1,0 +1,33 @@
+[project]
+name = "mischiefcam"
+version = "0.1.0"
+description = "On-device detection of pets chewing owner-protected objects, with local event review."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "numpy",
+    "opencv-python",
+    "pillow",
+    "ultralytics",
+    "lap",  # ByteTrack dependency; declared so Ultralytics never pip-installs at runtime
+    "mlx-vlm; sys_platform == 'darwin' and platform_machine == 'arm64'",
+]
+
+[project.optional-dependencies]
+ui = ["fastapi", "uvicorn"]
+
+[dependency-groups]
+dev = ["pytest"]
+
+[project.scripts]
+mcam = "core.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/core"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

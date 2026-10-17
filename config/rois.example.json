@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "coordinate_space": "normalized",
+  "note": "Polygons use normalized [0,1] image coordinates so they survive resolution changes. policy: forbidden | allowed.",
+  "rois": [
+    {
+      "id": "sofa",
+      "name": "sofa",
+      "policy": "forbidden",
+      "polygon": [[0.05, 0.45], [0.60, 0.45], [0.60, 0.95], [0.05, 0.95]]
+    },
+    {
+      "id": "toy_corner",
+      "name": "toy corner",
+      "policy": "allowed",
+      "polygon": [[0.70, 0.60], [0.98, 0.60], [0.98, 0.98], [0.70, 0.98]]
+    }
+  ]
+}

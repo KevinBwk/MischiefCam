@@ -1,0 +1,15 @@
+# Single source of truth for user-facing names.
+# The product name is provisional — change it here (and run scripts/rename_product.py for docs).
+# Code never hard-codes these strings; the Python package is intentionally named `core`.
+
+product_name = "MischiefCam"
+tagline = "On-device AI that spots pet mischief before it spreads."
+
+# Mascot / reminder persona used in notifications and UI copy.
+mascot_name = "Michelle"
+
+[messages]
+# {mascot}, {product}, {roi}, {decision}, {reason}, {time} are available placeholders.
+suspect = "{mascot}: looks like someone is chewing the {roi} ({time}). Tap to review the clip."
+insufficient = "{mascot}: something happened near the {roi} but I couldn't see clearly ({time})."
+camera_moved = "{mascot}: the camera view changed — please re-check your protected zones."

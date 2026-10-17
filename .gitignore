@@ -1,0 +1,23 @@
+# Python / uv
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Local model caches and tool config (kept inside the project, never committed)
+.hf_cache/
+.yolo_config/
+*.pt
+*.onnx
+*.hef
+
+# Data and outputs
+data/
+outputs/
+runs/
+
+# Private notes (competitive analysis etc.) — decide per file before publishing
+notes/
+
+# OS
+.DS_Store

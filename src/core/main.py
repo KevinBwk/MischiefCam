@@ -1,0 +1,102 @@
+"""CLI entry point: run the Stage I pipeline on a local video file."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import statistics
+from datetime import datetime
+from pathlib import Path
+
+from .branding import load_branding
+from .config import load_config, resolve
+from .detector import UltralyticsDetector
+from .events import EventBus, JsonlSink, MascotNotifier
+from .pipeline import Pipeline, PipelineConfig
+from .roi import load_rois
+from .sources import VideoFileSource
+from .state import StateConfig
+from .vlm import make_backend
+from .worker import VLMWorker
+
+
+def _pct(values: list[float], q: float) -> float | None:
+    if not values:
+        return None
+    if len(values) == 1:
+        return round(values[0], 1)
+    return round(statistics.quantiles(values, n=100, method="inclusive")[int(q) - 1], 1)
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description="Run the pet-mischief pipeline on a video file.")
+    ap.add_argument("--video", required=True, help="Path to a local video file")
+    ap.add_argument("--config", help="Optional TOML file overriding config/default.toml")
+    ap.add_argument("--rois", help="ROI JSON (default: [roi].file in config)")
+    ap.add_argument("--vlm", choices=["mlx", "fake"], help="Override VLM backend")
+    ap.add_argument("--target-class", action="append", help="Override detector classes (repeatable), e.g. person for dry runs")
+    ap.add_argument("--annotate", action="store_true", help="Write an annotated video next to the run outputs")
+    args = ap.parse_args(argv)
+
+    cfg = load_config(args.config)
+    branding = load_branding()
+    if args.vlm:
+        cfg["vlm"]["backend"] = args.vlm
+    if args.target_class:
+        cfg["detector"]["target_classes"] = args.target_class
+
+    run_dir = resolve(cfg["output"]["dir"]) / datetime.now().strftime("run_%Y%m%d_%H%M%S")
+    run_dir.mkdir(parents=True, exist_ok=True)
+
+    source = VideoFileSource(args.video, cfg["source"]["target_fps"])
+    det_cfg = cfg["detector"]
+    detector = UltralyticsDetector(str(resolve(det_cfg["model"])), det_cfg["device"], det_cfg["target_classes"],
+                                   det_cfg["min_score"], det_cfg["tracker"])
+    rois = load_rois(resolve(args.rois or cfg["roi"]["file"]))
+    vcfg = cfg["vlm"]
+    worker = VLMWorker(make_backend(vcfg), vcfg["queue_size"], vcfg["max_age_s"])
+
+    bus = EventBus()
+    sink = JsonlSink(run_dir / "events.jsonl")
+    bus.subscribe(sink)
+    bus.subscribe(MascotNotifier(branding, notify_insufficient=cfg["output"].get("notify_insufficient", False)))
+
+    pipe = Pipeline(
+        source, detector, rois, worker, bus,
+        StateConfig(**cfg["state"]),
+        PipelineConfig(cfg["roi"]["bbox_expand"], cfg["roi"]["min_overlap"], vcfg["input_size"],
+                       vcfg["max_new_tokens"], cfg["output"]["save_crops"], run_dir),
+        annotate_path=run_dir / "annotated.mp4" if args.annotate else None,
+    )
+    print(f"[{branding.product_name}] running on {args.video} (VLM: {vcfg['backend']}, mascot: {branding.mascot_name})")
+    try:
+        stats = pipe.run()
+    finally:
+        worker.close()
+        sink.close()
+
+    summary = {
+        "product": branding.product_name,
+        "video": str(args.video),
+        "frames": stats.frames,
+        "detections": stats.detections,
+        "reviews_requested": stats.reviews_requested,
+        "alerts": stats.alerts,
+        "insufficient": stats.insufficient,
+        "errors": stats.errors,
+        "dropped": stats.dropped,
+        "detector_ms_p50": _pct(stats.detector_ms, 50),
+        "detector_ms_p95": _pct(stats.detector_ms, 95),
+        "vlm_ms_p50": _pct(stats.vlm_ms, 50),
+        "vlm_ms_p95": _pct(stats.vlm_ms, 95),
+        "max_detector_gap_s": round(stats.max_detector_gap_s, 3),
+        "config": cfg,
+    }
+    (run_dir / "summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(json.dumps({k: v for k, v in summary.items() if k != "config"}, indent=2, ensure_ascii=False))
+    print(f"outputs: {run_dir}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
