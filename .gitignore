@@ -11,6 +11,9 @@ __pycache__/
 *.onnx
 *.hef
 
+# Camera-specific zones (your home layout) — share an example instead
+config/rois.json
+
 # Data and outputs
 data/
 outputs/

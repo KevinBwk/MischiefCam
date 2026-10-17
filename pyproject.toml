@@ -21,6 +21,7 @@ dev = ["pytest"]
 
 [project.scripts]
 mcam = "core.main:main"
+mcam-roi = "core.roi_editor:main"
 
 [build-system]
 requires = ["hatchling"]

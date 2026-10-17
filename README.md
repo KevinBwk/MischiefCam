@@ -39,13 +39,25 @@ uv run python scripts/smoke_models.py
 `scripts/env.sh` keeps model caches inside the project (`.hf_cache/`, `.yolo_config/`) and disables telemetry.
 After models are downloaded, `source scripts/env.sh --offline` makes any Hugging Face network access an error.
 
+## Draw protected zones
+
+```bash
+uv run mcam-roi --video data/raw/your_clip.mp4 --at 2
+```
+
+Opens a local page (http://127.0.0.1:8765, localhost only) showing a snapshot of the clip.
+Click **New zone**, click around the sofa / shoe rack / cable area, click the first point to close,
+name it, choose **Forbidden** (alert) or **Allowed** (ignore), and **Save**. Corners can be dragged;
+the slider picks a different snapshot time. Zones are saved to `config/rois.json` (git-ignored, it is your home layout)
+in normalized coordinates, which the pipeline reads by default.
+
 ## Run
 
 ```bash
 uv run mcam --video data/your_clip.mp4 --annotate
 ```
 
-Dry run without a dog (exercises every stage with people instead):
+Dry run without a dog (exercises every stage with people instead; uses the example zones):
 
 ```bash
 uv run python scripts/make_dryrun_video.py --out data/dryrun.mp4
@@ -74,6 +86,7 @@ max detector gap), `crops/`, and `annotated.mp4` with `--annotate`.
 | Event log + mascot notifications | implemented |
 | Latency / detector-gap numbers on real dog footage | **to be measured** |
 | ROI-only vs ROI+VLM evaluation on held-out clips | planned |
+| Zone editor web page (draw / drag / name / policy / save, localhost only) | implemented, tested |
 | RTSP source, web event page, tap-to-select zones (FastSAM) | planned |
 | Hailo backends (`hailo_platform.genai.VLM`, Hailo YOLO HEF) on UGen300 | planned (Stage II) |
 

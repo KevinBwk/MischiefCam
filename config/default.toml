@@ -13,7 +13,7 @@ min_score = 0.35
 tracker = "bytetrack.yaml"
 
 [roi]
-file = "config/rois.example.json"
+file = "config/rois.json"          # drawn with `mcam-roi`; falls back to rois.example.json if missing
 bbox_expand = 0.15         # expand the animal bbox by this fraction before overlap test
 min_overlap = 0.10         # fraction of the expanded bbox that must fall inside the ROI
 

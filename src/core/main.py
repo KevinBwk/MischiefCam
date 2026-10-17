@@ -52,7 +52,11 @@ def main(argv: list[str] | None = None) -> int:
     det_cfg = cfg["detector"]
     detector = UltralyticsDetector(str(resolve(det_cfg["model"])), det_cfg["device"], det_cfg["target_classes"],
                                    det_cfg["min_score"], det_cfg["tracker"])
-    rois = load_rois(resolve(args.rois or cfg["roi"]["file"]))
+    roi_path = resolve(args.rois or cfg["roi"]["file"])
+    if not roi_path.exists() and not args.rois:
+        roi_path = resolve("config/rois.example.json")
+        print(f"[warn] no zones drawn yet — using example zones ({roi_path}). Draw yours with: uv run mcam-roi --video <clip>")
+    rois = load_rois(roi_path)
     vcfg = cfg["vlm"]
     worker = VLMWorker(make_backend(vcfg), vcfg["queue_size"], vcfg["max_age_s"])
 

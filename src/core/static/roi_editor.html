@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{PRODUCT}} Zones</title>
+<style>
+  :root {
+    --bg: #f6f6f4; --panel: #ffffff; --text: #1d1d1f; --muted: #6b6b70; --line: #dcdcd8;
+    --forbidden: #d93a3a; --allowed: #2f9e5b; --accent: #2b6cb0;
+  }
+  * { box-sizing: border-box; }
+  html, body { overflow-x: hidden; }
+  body { margin: 0; font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
+  header { display: flex; align-items: baseline; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  header h1 { font-size: 17px; margin: 0; }
+  header .src { color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  main { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; padding: 16px 20px; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+  .stage { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+  .canvas-wrap { position: relative; width: fit-content; max-width: 100%; margin: 0 auto; }
+  /* fit portrait and landscape snapshots inside the viewport */
+  #snap { display: block; max-width: 100%; max-height: calc(100vh - 150px); width: auto; height: auto; border-radius: 6px; user-select: none; }
+  #overlay { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; }
+  .seek { display: flex; align-items: center; gap: 10px; margin-top: 10px; color: var(--muted); font-size: 12px; }
+  .seek input { flex: 1; }
+  aside { display: flex; flex-direction: column; gap: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+  .card h2 { font-size: 13px; margin: 0 0 8px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .mascot { font-size: 13px; }
+  .mascot b { color: var(--accent); }
+  button { font: inherit; border: 1px solid var(--line); background: #fafafa; border-radius: 7px; padding: 6px 10px; cursor: pointer; }
+  button:hover { background: #f0f0ee; }
+  button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  button.primary:hover { filter: brightness(1.05); }
+  button.danger { color: var(--forbidden); }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .zone { border: 1px solid var(--line); border-radius: 8px; padding: 8px; margin-bottom: 8px; display: grid; grid-template-columns: 10px 1fr auto; gap: 8px; align-items: center; }
+  .zone.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(43,108,176,.15); }
+  .swatch { width: 10px; height: 100%; min-height: 34px; border-radius: 3px; }
+  .zone input[type=text] { width: 100%; font: inherit; padding: 4px 6px; border: 1px solid var(--line); border-radius: 5px; }
+  .zone select { font: inherit; margin-top: 4px; }
+  .zone .meta { color: var(--muted); font-size: 11px; margin-top: 2px; }
+  #status { min-height: 20px; font-size: 13px; }
+  #status.ok { color: var(--allowed); } #status.err { color: var(--forbidden); }
+  .help { color: var(--muted); font-size: 12px; margin: 0; padding-left: 16px; }
+  .empty { color: var(--muted); font-size: 13px; }
+  kbd { font: 11px ui-monospace, monospace; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; background: #fafafa; }
+</style>
+</head>
+<body>
+<header>
+  <h1>{{PRODUCT}} · Protected zones</h1>
+  <span class="src" id="src"></span>
+</header>
+<main>
+  <section class="stage">
+    <div class="canvas-wrap">
+      <img id="snap" alt="Camera snapshot" draggable="false">
+      <canvas id="overlay"></canvas>
+    </div>
+    <div class="seek" id="seekRow" hidden>
+      <span>Snapshot at</span>
+      <input type="range" id="seek" min="0" max="1" step="0.1" value="0">
+      <span id="seekLabel">0.0s</span>
+    </div>
+  </section>
+  <aside>
+    <div class="card mascot"><b>{{MASCOT}}</b> will watch the <span style="color:var(--forbidden)">red</span> zones and stay quiet in the <span style="color:var(--allowed)">green</span> ones.</div>
+    <div class="card">
+      <h2>Zones</h2>
+      <div class="row" style="margin-bottom:10px">
+        <button class="primary" id="newZone">+ New zone</button>
+        <button id="finish" hidden>Finish shape</button>
+        <button id="cancel" hidden>Cancel</button>
+      </div>
+      <div id="zones"></div>
+    </div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <button class="primary" id="save">Save zones</button>
+        <span id="status"></span>
+      </div>
+      <div class="meta" id="outPath" style="color:var(--muted);font-size:11px;margin-top:6px"></div>
+    </div>
+    <div class="card">
+      <h2>How to</h2>
+      <ul class="help">
+        <li>Click <b>New zone</b>, then click around the sofa / shoe rack / cable area.</li>
+        <li>Click the first point (or <kbd>Enter</kbd>) to close the shape. <kbd>Backspace</kbd> removes the last point, <kbd>Esc</kbd> cancels.</li>
+        <li>Drag any corner to adjust. Click inside a zone to select it.</li>
+        <li><b>Forbidden</b> = alert if the dog chews here. <b>Allowed</b> = e.g. the toy corner.</li>
+      </ul>
+    </div>
+  </aside>
+</main>
+<script>
+(() => {
+  const img = document.getElementById('snap');
+  const cv = document.getElementById('overlay');
+  const ctx = cv.getContext('2d');
+  const zonesEl = document.getElementById('zones');
+  const statusEl = document.getElementById('status');
+  const btnNew = document.getElementById('newZone');
+  const btnFinish = document.getElementById('finish');
+  const btnCancel = document.getElementById('cancel');
+  const COLORS = { forbidden: '#d93a3a', allowed: '#2f9e5b' };
+  const HIT = 10; // px
+
+  let zones = [];        // {name, policy, polygon: [[x,y] normalized]}
+  let selected = -1;
+  let drawing = null;    // array of normalized points while drawing
+  let hover = null;      // normalized mouse position
+  let drag = null;       // {zi, pi}
+  let dirty = false;
+
+  const setStatus = (msg, cls = '') => { statusEl.textContent = msg; statusEl.className = cls; };
+  const markDirty = () => { dirty = true; setStatus('Unsaved changes'); };
+
+  function fitCanvas() {
+    const r = img.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+  const W = () => img.getBoundingClientRect().width;
+  const H = () => img.getBoundingClientRect().height;
+  const toPx = ([x, y]) => [x * W(), y * H()];
+  function toNorm(ev) {
+    const r = cv.getBoundingClientRect();
+    return [Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width)),
+            Math.min(1, Math.max(0, (ev.clientY - r.top) / r.height))];
+  }
+  const distPx = (a, b) => { const [ax, ay] = toPx(a), [bx, by] = toPx(b); return Math.hypot(ax - bx, ay - by); };
+
+  function pointInPoly(p, poly) {
+    let inside = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const [xi, yi] = poly[i], [xj, yj] = poly[j];
+      if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  }
+
+  function drawPoly(poly, color, { closed = true, fillAlpha = 0.22, label = '', active = false } = {}) {
+    if (!poly.length) return;
+    ctx.beginPath();
+    poly.forEach((p, i) => { const [x, y] = toPx(p); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+    if (closed) ctx.closePath();
+    if (closed) { ctx.globalAlpha = fillAlpha; ctx.fillStyle = color; ctx.fill(); ctx.globalAlpha = 1; }
+    ctx.lineWidth = active ? 3 : 2; ctx.strokeStyle = color; ctx.stroke();
+    poly.forEach(p => {
+      const [x, y] = toPx(p);
+      ctx.beginPath(); ctx.arc(x, y, active ? 5 : 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
+    });
+    if (label) {
+      const [x, y] = toPx(poly[0]);
+      ctx.font = '600 13px -apple-system, sans-serif';
+      const w = ctx.measureText(label).width + 10;
+      ctx.fillStyle = color; ctx.fillRect(x, y - 22, w, 20);
+      ctx.fillStyle = '#fff'; ctx.fillText(label, x + 5, y - 7);
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W(), H());
+    zones.forEach((z, i) => drawPoly(z.polygon, COLORS[z.policy], { label: z.name, active: i === selected }));
+    if (drawing) {
+      const pts = hover ? [...drawing, hover] : drawing;
+      drawPoly(pts, '#2b6cb0', { closed: false });
+      if (drawing.length >= 3 && hover && distPx(hover, drawing[0]) < HIT) {
+        const [x, y] = toPx(drawing[0]);
+        ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI * 2); ctx.strokeStyle = '#2b6cb0'; ctx.lineWidth = 2; ctx.stroke();
+      }
+    }
+  }
+
+  function renderList() {
+    zonesEl.innerHTML = '';
+    if (!zones.length) { zonesEl.innerHTML = '<div class="empty">No zones yet. Click “New zone” to draw one.</div>'; return; }
+    zones.forEach((z, i) => {
+      const el = document.createElement('div');
+      el.className = 'zone' + (i === selected ? ' selected' : '');
+      el.innerHTML = `
+        <div class="swatch" style="background:${COLORS[z.policy]}"></div>
+        <div>
+          <input type="text" value="" aria-label="Zone name">
+          <select aria-label="Policy">
+            <option value="forbidden">Forbidden — alert</option>
+            <option value="allowed">Allowed — ignore</option>
+          </select>
+          <div class="meta">${z.polygon.length} points</div>
+        </div>
+        <button class="danger" title="Delete zone">✕</button>`;
+      const name = el.querySelector('input'); name.value = z.name;
+      const pol = el.querySelector('select'); pol.value = z.policy;
+      name.addEventListener('input', () => { z.name = name.value; markDirty(); draw(); });
+      pol.addEventListener('change', () => { z.policy = pol.value; markDirty(); renderList(); draw(); });
+      el.querySelector('button').addEventListener('click', ev => {
+        ev.stopPropagation();
+        zones.splice(i, 1); selected = -1; markDirty(); renderList(); draw();
+      });
+      // select without rebuilding the list, so a click into the name field keeps focus
+      el.addEventListener('click', () => {
+        if (selected === i) return;
+        selected = i;
+        zonesEl.querySelectorAll('.zone').forEach((n, k) => n.classList.toggle('selected', k === i));
+        draw();
+      });
+      zonesEl.appendChild(el);
+    });
+  }
+
+  function setDrawing(on) {
+    drawing = on ? [] : null;
+    btnNew.hidden = on; btnFinish.hidden = !on; btnCancel.hidden = !on;
+    cv.style.cursor = on ? 'crosshair' : 'default';
+    draw();
+  }
+
+  function finishShape() {
+    if (!drawing || drawing.length < 3) { setStatus('A zone needs at least 3 points', 'err'); return; }
+    const n = zones.length + 1;
+    zones.push({ name: n === 1 ? 'sofa' : `zone ${n}`, policy: 'forbidden', polygon: drawing });
+    selected = zones.length - 1;
+    setDrawing(false); markDirty(); renderList();
+  }
+
+  function hitVertex(p) {
+    const order = selected >= 0 ? [selected, ...zones.keys()] : [...zones.keys()];
+    for (const zi of order) {
+      const pi = zones[zi].polygon.findIndex(q => distPx(p, q) < HIT);
+      if (pi >= 0) return { zi, pi };
+    }
+    return null;
+  }
+
+  cv.addEventListener('mousedown', ev => {
+    const p = toNorm(ev);
+    if (drawing) {
+      if (drawing.length >= 3 && distPx(p, drawing[0]) < HIT) return finishShape();
+      drawing.push(p); draw(); return;
+    }
+    const v = hitVertex(p);
+    if (v) { drag = v; selected = v.zi; renderList(); return; }
+    selected = zones.findIndex(z => pointInPoly(p, z.polygon));
+    renderList(); draw();
+  });
+  cv.addEventListener('mousemove', ev => {
+    const p = toNorm(ev);
+    hover = p;
+    if (drag) { zones[drag.zi].polygon[drag.pi] = p; markDirty(); }
+    if (!drawing) cv.style.cursor = drag || hitVertex(p) ? 'grab' : 'default';
+    draw();
+  });
+  window.addEventListener('mouseup', () => { if (drag) { drag = null; renderList(); } });
+  cv.addEventListener('mouseleave', () => { hover = null; draw(); });
+
+  window.addEventListener('keydown', ev => {
+    if (ev.target.tagName === 'INPUT') return;
+    if (drawing) {
+      if (ev.key === 'Enter') finishShape();
+      else if (ev.key === 'Escape') setDrawing(false);
+      else if (ev.key === 'Backspace') { ev.preventDefault(); drawing.pop(); draw(); }
+    } else if ((ev.key === 'Delete' || ev.key === 'Backspace') && selected >= 0) {
+      ev.preventDefault(); zones.splice(selected, 1); selected = -1; markDirty(); renderList(); draw();
+    }
+  });
+
+  btnNew.addEventListener('click', () => { selected = -1; setDrawing(true); renderList(); });
+  btnFinish.addEventListener('click', finishShape);
+  btnCancel.addEventListener('click', () => setDrawing(false));
+
+  document.getElementById('save').addEventListener('click', async () => {
+    if (drawing) { setStatus('Finish or cancel the current shape first', 'err'); return; }
+    const res = await fetch('/api/rois', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rois: zones }) });
+    const data = await res.json();
+    if (!res.ok) { setStatus(data.error || 'Save failed', 'err'); return; }
+    dirty = false;
+    setStatus(`Saved ${data.count} zone(s)`, 'ok');
+  });
+
+  window.addEventListener('beforeunload', ev => { if (dirty) { ev.preventDefault(); ev.returnValue = ''; } });
+
+  // video snapshot seeking
+  const seek = document.getElementById('seek');
+  const seekLabel = document.getElementById('seekLabel');
+  seek.addEventListener('input', () => { seekLabel.textContent = `${(+seek.value).toFixed(1)}s`; });
+  seek.addEventListener('change', async () => {
+    const res = await fetch('/api/seek', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ at_s: +seek.value }) });
+    if (!res.ok) { setStatus((await res.json()).error || 'Seek failed', 'err'); return; }
+    img.src = `/snapshot.jpg?t=${Date.now()}`;
+  });
+
+  async function init() {
+    const info = await (await fetch('/api/info')).json();
+    document.getElementById('src').textContent = `${info.source} · ${info.width}×${info.height}`;
+    document.getElementById('outPath').textContent = `Saves to ${info.out_path}`;
+    if (info.is_video && info.duration_s > 0) {
+      document.getElementById('seekRow').hidden = false;
+      seek.max = info.duration_s; seek.value = info.at_s; seekLabel.textContent = `${info.at_s.toFixed(1)}s`;
+    }
+    const res = await fetch('/api/rois');
+    const data = await res.json();
+    if (!res.ok) setStatus(`Existing file not loaded: ${data.error}`, 'err');
+    zones = (data.rois || []).map(z => ({ name: z.name, policy: z.policy, polygon: z.polygon }));
+    renderList();
+    img.addEventListener('load', fitCanvas);
+    img.src = `/snapshot.jpg?t=${Date.now()}`;
+  }
+  window.addEventListener('resize', fitCanvas);
+  init();
+})();
+</script>
+</body>
+</html>
