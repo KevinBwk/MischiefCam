@@ -36,6 +36,15 @@ class UltralyticsDetector:
         self.class_ids = [i for i, n in names.items() if n in wanted]
         self.names = names
 
+    def detect_once(self, image_bgr: np.ndarray) -> list[Detection]:
+        """Detection without tracking (for offline sampling of single frames)."""
+        res = self.model.predict(image_bgr, classes=self.class_ids, conf=self.min_score, device=self.device, verbose=False)[0]
+        boxes = res.boxes
+        if boxes is None or len(boxes) == 0:
+            return []
+        return [Detection(bbox=tuple(float(v) for v in b), score=float(s), class_name=self.names[int(c)])
+                for b, s, c in zip(boxes.xyxy.cpu().numpy(), boxes.conf.cpu().numpy(), boxes.cls.cpu().numpy())]
+
     def detect(self, image_bgr: np.ndarray) -> list[Detection]:
         results = self.model.track(
             image_bgr,

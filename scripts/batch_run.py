@@ -1,6 +1,6 @@
 """Run the pipeline over a folder of clips and print a verdict table.
 
-Labels come from a JSON file {"<file name>": "positive" | "negative" | "uncertain"};
+Labels come from the labeling tool's JSON (or a legacy {"<file name>": label} map);
 clips without a label are listed as "?". Example:
 
     uv run python scripts/batch_run.py data/raw --labels data/labels.json --rois config/rois.full_frame.json
@@ -18,6 +18,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
+from core import labels as L
 from core.config import resolve
 from core.main import main as run_clip
 
@@ -32,7 +33,7 @@ def main() -> int:
     ap.add_argument("--name", default=datetime.now().strftime("batch_%Y%m%d_%H%M%S"))
     args = ap.parse_args()
 
-    labels = json.loads(Path(args.labels).read_text(encoding="utf-8")) if args.labels else {}
+    lab_data = L.load(args.labels) if args.labels else L.empty()
     clips = sorted(p for p in Path(args.folder).rglob("*") if p.suffix.lower() in VIDEO_EXT)
     rows = []
     for clip in clips:
@@ -47,7 +48,9 @@ def main() -> int:
         verdicts = [v for v in verdicts if not v.endswith("episode_closed")]
         alerted = any(e["kind"] == "alert" for e in events)
         first_alert = next((e["pts_s"] for e in events if e["kind"] == "alert"), None)
-        label = labels.get(clip.name, "?")
+        rel = clip.relative_to(args.folder).as_posix()
+        entry = lab_data["clips"].get(rel) or lab_data["clips"].get(clip.name)
+        label = (L.clip_label(entry) if entry else None) or "?"
         outcome = {("positive", True): "TP", ("positive", False): "FN",
                    ("negative", True): "FP", ("negative", False): "TN"}.get((label, alerted), "-")
         rows.append({"clip": str(clip.relative_to(args.folder)), "label": label, "alert": alerted,

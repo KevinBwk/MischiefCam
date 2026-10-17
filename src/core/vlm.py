@@ -120,4 +120,9 @@ def make_backend(cfg: dict) -> VLMBackend:
         return FakeVLMBackend()
     if kind == "mlx":
         return MLXVLMBackend(cfg["model"])
+    if kind == "probe":
+        from .config import resolve
+        from .probe import ProbeBackend
+
+        return ProbeBackend(resolve(cfg.get("classifier", "models/classifier.json")))
     raise ValueError(f"Unknown VLM backend {kind!r} (hailo backend is planned for Stage II)")

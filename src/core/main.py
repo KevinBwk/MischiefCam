@@ -33,7 +33,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--video", required=True, help="Path to a local video file")
     ap.add_argument("--config", help="Optional TOML file overriding config/default.toml")
     ap.add_argument("--rois", help="ROI JSON (default: [roi].file in config)")
-    ap.add_argument("--vlm", choices=["mlx", "fake"], help="Override VLM backend")
+    ap.add_argument("--vlm", choices=["mlx", "fake", "probe"], help="Override judge backend (probe = trained classifier)")
     ap.add_argument("--target-class", action="append", help="Override detector classes (repeatable), e.g. person for dry runs")
     ap.add_argument("--annotate", action="store_true", help="Write an annotated video next to the run outputs")
     ap.add_argument("--run-name", help="Output folder name under [output].dir (default: run_<timestamp>)")

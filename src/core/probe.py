@@ -1,0 +1,315 @@
+"""Linear probe on frozen image embeddings ("is the dog chewing a forbidden object?").
+
+Training (mcam-train): labeled clips -> animal crops (same crop as the VLM gets) -> frozen CLIP
+embeddings -> logistic regression. Evaluation is grouped by clip (frames of one clip never sit in
+both train and test). The result is a small JSON file the pipeline can load as a judge backend.
+
+Why this design: little data is needed, it trains in seconds on a Mac, and on UGen300 the image
+encoder can be a Hailo model-zoo CLIP HEF while this classifier (a few KB) runs on the host CPU.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import time
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
+from typing import Callable, Protocol
+
+import numpy as np
+
+from .types import VLMRequest, VLMResult
+
+DEFAULT_EMBED_MODEL = "openai/clip-vit-base-patch16"  # same family as Hailo zoo clip_vit_b_16 (HEF equivalence to verify)
+
+
+# --------------------------------------------------------------------------- embeddings
+class Embedder(Protocol):
+    model_id: str
+
+    def embed(self, images: list) -> np.ndarray: ...  # (N, D) float32, L2-normalised
+
+
+class CLIPEmbedder:
+    def __init__(self, model_id: str = DEFAULT_EMBED_MODEL, device: str = "mps"):
+        import torch
+        from transformers import CLIPModel, CLIPProcessor
+
+        self.model_id = model_id
+        self.torch = torch
+        self.device = device if (device != "mps" or torch.backends.mps.is_available()) else "cpu"
+        self.model = CLIPModel.from_pretrained(model_id).to(self.device).eval()
+        self.processor = CLIPProcessor.from_pretrained(model_id)
+
+    def embed(self, images: list) -> np.ndarray:
+        if not images:
+            return np.zeros((0, 0), dtype=np.float32)
+        with self.torch.no_grad():
+            inputs = self.processor(images=images, return_tensors="pt").to(self.device)
+            out = self.model.get_image_features(**inputs)
+            if isinstance(out, self.torch.Tensor):
+                feats = out
+            elif getattr(out, "image_embeds", None) is not None:
+                feats = out.image_embeds
+            else:  # some transformers versions return a model output object
+                feats = out.pooler_output
+            feats = feats.float().cpu().numpy()
+        return feats / np.linalg.norm(feats, axis=1, keepdims=True).clip(min=1e-8)
+
+
+# --------------------------------------------------------------------------- classifier
+@dataclass
+class LogisticProbe:
+    weights: np.ndarray
+    bias: float
+
+    @staticmethod
+    def fit(X: np.ndarray, y: np.ndarray, l2: float = 1e-2, epochs: int = 2000, lr: float = 0.5) -> "LogisticProbe":
+        """Class-balanced L2-regularised logistic regression (full-batch gradient descent, deterministic)."""
+        n, d = X.shape
+        pos = max(1, int(y.sum()))
+        neg = max(1, n - pos)
+        sw = np.where(y == 1, n / (2 * pos), n / (2 * neg))
+        w = np.zeros(d)
+        b = 0.0
+        for _ in range(epochs):
+            z = X @ w + b
+            p = 1.0 / (1.0 + np.exp(-np.clip(z, -30, 30)))
+            g = sw * (p - y)
+            w -= lr * (X.T @ g / n + l2 * w)
+            b -= lr * g.mean()
+        return LogisticProbe(w.astype(np.float32), float(b))
+
+    def proba(self, X: np.ndarray) -> np.ndarray:
+        z = X @ self.weights + self.bias
+        return 1.0 / (1.0 + np.exp(-np.clip(z, -30, 30)))
+
+
+def clip_alert(probs: np.ndarray, threshold: float, k: int = 2, m: int = 4) -> bool:
+    """Episode rule: alert if at least k of any m consecutive frames are at or above threshold."""
+    hits = (np.asarray(probs) >= threshold).astype(int)
+    if len(hits) < k:
+        return False
+    window = min(m, len(hits))
+    return any(hits[i:i + window].sum() >= k for i in range(len(hits) - window + 1))
+
+
+def group_folds(clip_ids: list[str], clip_labels: dict[str, int], k: int) -> list[set[str]]:
+    """Split clip ids into k folds, alternating positives and negatives so each fold gets both."""
+    pos = sorted(c for c in clip_ids if clip_labels[c] == 1)
+    neg = sorted(c for c in clip_ids if clip_labels[c] == 0)
+    folds = [set() for _ in range(k)]
+    for i, c in enumerate(pos):
+        folds[i % k].add(c)
+    for i, c in enumerate(neg):
+        folds[(i + len(pos)) % k].add(c)
+    return [f for f in folds if f]
+
+
+def pick_threshold(probs: np.ndarray, y: np.ndarray, max_fp_rate: float = 0.02) -> float:
+    """Lowest threshold whose frame-level false-positive rate on negatives stays <= max_fp_rate."""
+    negs = np.sort(probs[y == 0])
+    if len(negs) == 0:
+        return 0.5
+    allowed = int(np.floor(max_fp_rate * len(negs)))
+    idx = len(negs) - allowed - 1
+    return float(min(0.99, negs[idx] + 1e-6)) if idx >= 0 else 0.0
+
+
+# --------------------------------------------------------------------------- dataset
+@dataclass
+class ClipFrames:
+    clip: str
+    label: int                 # clip-level: 1 positive, 0 negative
+    times: np.ndarray          # sample times (s)
+    frame_labels: np.ndarray   # per-frame 1/0 (frames inside labeled segments only)
+    X: np.ndarray              # (n, D) embeddings
+
+
+def cache_key(path: Path, model_id: str, fps: float, crop: str, expand: float) -> str:
+    st = path.stat()
+    raw = f"{path.resolve()}|{st.st_size}|{int(st.st_mtime)}|{model_id}|{fps}|{crop}|{expand}"
+    return hashlib.sha1(raw.encode()).hexdigest()[:16]
+
+
+FrameSampler = Callable[[Path, float], list[tuple[float, object]]]  # -> [(t, PIL crop or None)]
+
+
+def make_sampler(detector, size: int = 336, expand: float = 0.15) -> FrameSampler:
+    """Sample frames at `fps`, find the largest dog box and return the animal crop (or None)."""
+    import cv2
+
+    from .crop import interaction_crop
+    from .types import ROI
+
+    whole = ROI("frame", "frame", "forbidden", ((0, 0), (1, 0), (1, 1), (0, 1)))
+
+    def sample(path: Path, fps: float):
+        cap = cv2.VideoCapture(str(path))
+        duration = (cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0) / (cap.get(cv2.CAP_PROP_FPS) or 30.0)
+        out = []
+        t = 0.25
+        while t < duration:
+            cap.set(cv2.CAP_PROP_POS_MSEC, t * 1000)
+            ok, frame = cap.read()
+            if not ok:
+                break
+            dets = detector.detect_once(frame)
+            if dets:
+                box = max(dets, key=lambda d: (d.bbox[2] - d.bbox[0]) * (d.bbox[3] - d.bbox[1])).bbox
+                out.append((t, interaction_crop(frame, box, whole, size, expand, "animal")))
+            else:
+                out.append((t, None))
+            t += 1.0 / fps
+        cap.release()
+        return out
+
+    return sample
+
+
+def build_dataset(
+    folder: Path, labels: dict, embedder: Embedder, sampler: FrameSampler, fps: float,
+    cache_dir: Path | None, crop: str = "animal", expand: float = 0.15, log=print,
+) -> list[ClipFrames]:
+    from . import labels as L
+
+    clips = []
+    for rel, entry in sorted(labels["clips"].items()):
+        lab = L.clip_label(entry)
+        if lab not in ("positive", "negative"):
+            continue  # uncertain clips are not used for training
+        path = folder / rel
+        if not path.exists():
+            matches = list(folder.rglob(Path(rel).name))
+            if not matches:
+                log(f"  skip (missing file): {rel}")
+                continue
+            path = matches[0]
+        cached = None
+        if cache_dir is not None:
+            cache_dir.mkdir(parents=True, exist_ok=True)
+            cached = cache_dir / f"{cache_key(path, embedder.model_id, fps, crop, expand)}.npz"
+        if cached is not None and cached.exists():
+            z = np.load(cached)
+            times, X = z["times"], z["X"]
+        else:
+            samples = [(t, img) for t, img in sampler(path, fps) if img is not None]
+            times = np.array([t for t, _ in samples], dtype=np.float32)
+            X = embedder.embed([img for _, img in samples]) if samples else np.zeros((0, 1), np.float32)
+            if cached is not None:
+                np.savez(cached, times=times, X=X)
+        duration = float(times.max()) + 1.0 if len(times) else 0.0
+        keep, ys = [], []
+        for i, t in enumerate(times):
+            fl = L.label_at(entry, float(t), duration)
+            if fl in ("positive", "negative"):
+                keep.append(i)
+                ys.append(1 if fl == "positive" else 0)
+        if not keep:
+            log(f"  skip (no labeled frames with a dog): {rel}")
+            continue
+        clips.append(ClipFrames(rel, 1 if lab == "positive" else 0, times[keep], np.array(ys), X[keep]))
+        log(f"  {rel}: {len(keep)} frames ({lab})")
+    return clips
+
+
+# --------------------------------------------------------------------------- training + evaluation
+def train_and_evaluate(clips: list[ClipFrames], folds: int = 5, max_fp_rate: float = 0.02,
+                       k: int = 2, m: int = 4) -> dict:
+    n_pos = sum(c.label == 1 for c in clips)
+    n_neg = sum(c.label == 0 for c in clips)
+    if n_pos == 0 or n_neg == 0:
+        raise ValueError(f"need both positive and negative clips (have {n_pos} positive, {n_neg} negative)")
+    X = np.vstack([c.X for c in clips])
+    y = np.concatenate([c.frame_labels for c in clips])
+
+    report: dict = {"clips": {"positive": n_pos, "negative": n_neg}, "frames": {"positive": int(y.sum()), "negative": int((1 - y).sum())}}
+    evaluable = min(n_pos, n_neg) >= 2
+    if evaluable:
+        ids = [c.clip for c in clips]
+        fold_sets = group_folds(ids, {c.clip: c.label for c in clips}, min(folds, min(n_pos, n_neg)))
+        oof: dict[str, np.ndarray] = {}
+        for fs in fold_sets:
+            tr = [c for c in clips if c.clip not in fs]
+            te = [c for c in clips if c.clip in fs]
+            ytr = np.concatenate([c.frame_labels for c in tr])
+            if ytr.min() == ytr.max():
+                continue
+            probe = LogisticProbe.fit(np.vstack([c.X for c in tr]), ytr)
+            for c in te:
+                oof[c.clip] = probe.proba(c.X)
+        all_p = np.concatenate([oof[c.clip] for c in clips if c.clip in oof])
+        all_y = np.concatenate([c.frame_labels for c in clips if c.clip in oof])
+        thr = pick_threshold(all_p, all_y, max_fp_rate)
+        per_clip = []
+        tp = fn = fp = tn = 0
+        for c in clips:
+            if c.clip not in oof:
+                continue
+            alert = clip_alert(oof[c.clip], thr, k, m)
+            outcome = {(1, True): "TP", (1, False): "FN", (0, True): "FP", (0, False): "TN"}[(c.label, alert)]
+            tp += outcome == "TP"; fn += outcome == "FN"; fp += outcome == "FP"; tn += outcome == "TN"
+            per_clip.append({"clip": c.clip, "label": "positive" if c.label else "negative", "alert": alert,
+                             "outcome": outcome, "max_p": round(float(oof[c.clip].max()), 3)})
+        fpos = all_p[all_y == 1] >= thr
+        fneg = all_p[all_y == 0] >= thr
+        report["cross_validation"] = {
+            "method": f"{len(fold_sets)}-fold, grouped by clip",
+            "threshold": round(thr, 4), "threshold_rule": f"frame FP rate <= {max_fp_rate}",
+            "episode_rule": f"alert if >= {k} of {m} consecutive frames >= threshold",
+            "frame_level": {"recall": round(float(fpos.mean()), 3) if len(fpos) else None,
+                            "fp_rate": round(float(fneg.mean()), 3) if len(fneg) else None},
+            "clip_level": {"TP": tp, "FN": fn, "FP": fp, "TN": tn},
+            "per_clip": per_clip,
+        }
+    else:
+        thr = 0.5
+        report["cross_validation"] = None
+        report["warning"] = "Fewer than 2 clips in a class: trained without evaluation. Do not report any accuracy."
+
+    final = LogisticProbe.fit(X, y)
+    report["threshold"] = thr
+    report["probe"] = final
+    return report
+
+
+def save_classifier(path: Path, report: dict, embed_model: str, fps: float, crop: str, expand: float,
+                    size: int, k: int, m: int) -> dict:
+    probe: LogisticProbe = report["probe"]
+    data = {
+        "type": "logistic_probe",
+        "version": 1,
+        "created": datetime.now().isoformat(timespec="seconds"),
+        "embedding_model": embed_model,
+        "input": {"crop": crop, "bbox_expand": expand, "size": size, "sample_fps": fps},
+        "threshold": report["threshold"],
+        "episode_rule": {"k": k, "m": m},
+        "bias": probe.bias,
+        "weights": [round(float(v), 6) for v in probe.weights],
+        "training": {k2: v for k2, v in report.items() if k2 not in ("probe", "threshold")},
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    return data
+
+
+# --------------------------------------------------------------------------- runtime judge
+class ProbeBackend:
+    """Drop-in judge for the pipeline (same interface as the VLM backends): vlm.backend = "probe"."""
+
+    def __init__(self, classifier_path: Path | str, embedder: Embedder | None = None):
+        data = json.loads(Path(classifier_path).read_text(encoding="utf-8"))
+        self.threshold = float(data["threshold"])
+        self.probe = LogisticProbe(np.array(data["weights"], dtype=np.float32), float(data["bias"]))
+        self.embedder = embedder or CLIPEmbedder(data["embedding_model"])
+
+    def infer(self, request: VLMRequest) -> VLMResult:
+        t0 = time.perf_counter()
+        p = float(self.probe.proba(self.embedder.embed(list(request.images)))[0])
+        decision = "suspect" if p >= self.threshold else "normal"
+        return VLMResult(decision, f"p={p:.3f}", (time.perf_counter() - t0) * 1000, f"probe p={p:.2f}")
+
+    def close(self) -> None:
+        pass
