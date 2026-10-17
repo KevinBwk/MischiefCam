@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "coordinate_space": "normalized",
+  "note": "Whole frame as one forbidden zone: the zone test always passes, so results reflect only the VLM. For quick VLM checks, not for real use.",
+  "rois": [
+    {"id": "sofa", "name": "sofa", "policy": "forbidden", "polygon": [[0, 0], [1, 0], [1, 1], [0, 1]]}
+  ]
+}

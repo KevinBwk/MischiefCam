@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "purpose": "Negative / hard-negative synthetic clips for MischiefCam development, matching the scene of the positive clip Dog_chewing_living_room_sofa.",
+  "generation_defaults": {
+    "duration_s": 8,
+    "resolution": "1280x720",
+    "fps": 24,
+    "clips_per_prompt": 3,
+    "vary_between_clips": "dog position, timing of the action, small lighting changes",
+    "note": "Exclusions are written into each prompt; use negative_prompt only if the generator has that field."
+  },
+  "negative_prompt": "For tools with a separate negative-prompt field: chewing furniture, biting sofa, torn fabric, stuffing, foam, destroyed cushion, camera shake, cuts, text, watermark, cartoon",
+  "labeling_rules": [
+    "Label each generated clip from what is actually visible, not from the prompt: generators sometimes add chewing or stuffing.",
+    "Discard or relabel clips where the dog bites the sofa, or where torn fabric/stuffing appears.",
+    "Mark these clips simulated: yes, consent_or_license: <generator name + terms checked>.",
+    "Disclose synthetic clips in the deck and video; keep them separate from real recordings in reports."
+  ],
+  "prompts": [
+    {
+      "id": "A1",
+      "category": "on_or_near_sofa_not_chewing",
+      "name": "sleeping_on_sofa",
+      "expected_event_label": "negative",
+      "expected_observed_behavior": "resting",
+      "zone_policy_for_sofa": "forbidden",
+      "suggested_filename": "neg_A1_sleeping_on_sofa_{nn}.mp4",
+      "action": "The dog walks to the gray fabric sofa, climbs onto the chaise, circles once and lies down with its head resting on its front paws. It closes its eyes and sleeps, breathing slowly, barely moving for the rest of the clip. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing.",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a modern living room during daytime. The dog walks to the gray fabric sofa, climbs onto the chaise, circles once and lies down with its head resting on its front paws. It closes its eyes and sleeps, breathing slowly, barely moving for the rest of the clip. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from the corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects."
+    },
+    {
+      "id": "A2",
+      "category": "on_or_near_sofa_not_chewing",
+      "name": "chin_on_armrest",
+      "expected_event_label": "negative",
+      "expected_observed_behavior": "resting",
+      "zone_policy_for_sofa": "forbidden",
+      "suggested_filename": "neg_A2_chin_on_armrest_{nn}.mp4",
+      "action": "The dog stands beside the gray fabric sofa and rests its chin on the armrest with its mouth closed. Its tail wags slowly as it looks around the room, then it lifts its head and looks toward the camera. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing.",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a modern living room during daytime. The dog stands beside the gray fabric sofa and rests its chin on the armrest with its mouth closed. Its tail wags slowly as it looks around the room, then it lifts its head and looks toward the camera. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from the corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects."
+    },
+    {
+      "id": "A3",
+      "category": "on_or_near_sofa_not_chewing",
+      "name": "jump_and_sit_on_sofa",
+      "expected_event_label": "negative",
+      "expected_observed_behavior": "sitting",
+      "zone_policy_for_sofa": "forbidden",
+      "suggested_filename": "neg_A3_jump_and_sit_on_sofa_{nn}.mp4",
+      "action": "The dog jumps onto the gray fabric sofa, turns around once and sits upright on the seat cushion, calmly looking out of the window. After a few seconds it lies down on the cushion and relaxes. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing.",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a modern living room during daytime. The dog jumps onto the gray fabric sofa, turns around once and sits upright on the seat cushion, calmly looking out of the window. After a few seconds it lies down on the cushion and relaxes. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from the corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects."
+    },
+    {
+      "id": "A4",
+      "category": "on_or_near_sofa_not_chewing",
+      "name": "licking_own_paw_on_sofa",
+      "expected_event_label": "negative",
+      "expected_observed_behavior": "licking_self",
+      "zone_policy_for_sofa": "forbidden",
+      "suggested_filename": "neg_A4_licking_own_paw_on_sofa_{nn}.mp4",
+      "action": "The dog is lying on the gray fabric sofa and repeatedly licks its own front paw. Its mouth only ever touches its own paw, never the sofa fabric. It then rests its head and looks toward the camera. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing.",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a modern living room during daytime. The dog is lying on the gray fabric sofa and repeatedly licks its own front paw. Its mouth only ever touches its own paw, never the sofa fabric. It then rests its head and looks toward the camera. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from the corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects."
+    },
+    {
+      "id": "B5",
+      "category": "mouth_near_sofa_hard_negative",
+      "name": "sniffing_sofa",
+      "expected_event_label": "negative",
+      "expected_observed_behavior": "sniffing",
+      "zone_policy_for_sofa": "forbidden",
+      "suggested_filename": "neg_B5_sniffing_sofa_{nn}.mp4",
+      "action": "The dog walks up to the gray fabric sofa and sniffs slowly along the edge of the seat cushion and the armrest, nose close to the fabric, without opening its mouth. It loses interest and walks away onto the rug. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing.",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a modern living room during daytime. The dog walks up to the gray fabric sofa and sniffs slowly along the edge of the seat cushion and the armrest, nose close to the fabric, without opening its mouth. It loses interest and walks away onto the rug. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from the corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects."
+    },
+    {
+      "id": "B6",
+      "category": "mouth_near_sofa_hard_negative",
+      "name": "brief_lick_armrest",
+      "expected_event_label": "negative",
+      "expected_observed_behavior": "licking_object",
+      "zone_policy_for_sofa": "forbidden",
+      "suggested_filename": "neg_B6_brief_lick_armrest_{nn}.mp4",
+      "action": "The dog approaches the gray fabric sofa and briefly licks the armrest once or twice with its tongue, without biting or pulling. It then turns away, sits down on the rug and scratches its ear. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing.",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a modern living room during daytime. The dog approaches the gray fabric sofa and briefly licks the armrest once or twice with its tongue, without biting or pulling. It then turns away, sits down on the rug and scratches its ear. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from the corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects."
+    },
+    {
+      "id": "B7",
+      "category": "mouth_near_sofa_hard_negative",
+      "name": "chewing_toy_next_to_sofa",
+      "expected_event_label": "negative",
+      "expected_observed_behavior": "chewing_toy",
+      "zone_policy_for_sofa": "forbidden",
+      "suggested_filename": "neg_B7_chewing_toy_next_to_sofa_{nn}.mp4",
+      "action": "The dog lies on the rug right next to the gray fabric sofa, holding a bright red rubber chew toy between its front paws and chewing it enthusiastically. The toy is clearly a dog toy and only the toy is ever in its mouth. It pauses, hears a sound, and looks toward the camera. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing.",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a modern living room during daytime. The dog lies on the rug right next to the gray fabric sofa, holding a bright red rubber chew toy between its front paws and chewing it enthusiastically. The toy is clearly a dog toy and only the toy is ever in its mouth. It pauses, hears a sound, and looks toward the camera. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from the corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects."
+    },
+    {
+      "id": "B8",
+      "category": "mouth_near_sofa_hard_negative",
+      "name": "chewing_toy_on_sofa",
+      "expected_event_label": "negative",
+      "expected_observed_behavior": "chewing_toy",
+      "zone_policy_for_sofa": "forbidden",
+      "suggested_filename": "neg_B8_chewing_toy_on_sofa_{nn}.mp4",
+      "action": "The dog lies on the chaise of the gray fabric sofa chewing and tugging a blue rope toy held between its paws. Only the rope toy is in its mouth; its teeth never touch the sofa fabric. It then drops the toy on the cushion and looks toward the camera. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing.",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a modern living room during daytime. The dog lies on the chaise of the gray fabric sofa chewing and tugging a blue rope toy held between its paws. Only the rope toy is in its mouth; its teeth never touch the sofa fabric. It then drops the toy on the cushion and looks toward the camera. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from the corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "note": "Hardest case: the object in the mouth is allowed (toy) but it sits inside the forbidden sofa zone. Expected: no alert if the VLM judges the action, not the location."
+    },
+    {
+      "id": "C9",
+      "category": "passing_or_carrying",
+      "name": "walking_past_sofa",
+      "expected_event_label": "negative",
+      "expected_observed_behavior": "walking",
+      "zone_policy_for_sofa": "forbidden",
+      "suggested_filename": "neg_C9_walking_past_sofa_{nn}.mp4",
+      "action": "The dog trots from the left side of the room to the right, passing in front of the gray fabric sofa without stopping or touching it, and walks out of the frame. The room is then empty and still. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing.",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a modern living room during daytime. The dog trots from the left side of the room to the right, passing in front of the gray fabric sofa without stopping or touching it, and walks out of the frame. The room is then empty and still. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from the corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects."
+    },
+    {
+      "id": "C10",
+      "category": "passing_or_carrying",
+      "name": "carrying_ball_past_sofa",
+      "expected_event_label": "negative",
+      "expected_observed_behavior": "carrying",
+      "zone_policy_for_sofa": "forbidden",
+      "suggested_filename": "neg_C10_carrying_ball_past_sofa_{nn}.mp4",
+      "action": "The dog walks past the gray fabric sofa carrying a yellow tennis ball in its mouth, without stopping, then lies down on the rug far from the sofa and drops the ball between its paws. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing.",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a modern living room during daytime. The dog walks past the gray fabric sofa carrying a yellow tennis ball in its mouth, without stopping, then lies down on the rug far from the sofa and drops the ball between its paws. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from the corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects."
+    },
+    {
+      "id": "D11",
+      "category": "distractor",
+      "name": "person_rearranging_cushions",
+      "expected_event_label": "negative",
+      "expected_observed_behavior": "sitting",
+      "zone_policy_for_sofa": "forbidden",
+      "suggested_filename": "neg_D11_person_rearranging_cushions_{nn}.mp4",
+      "action": "A person walks into the room and rearranges the cushions on the gray fabric sofa, plumping and repositioning them, while the dog sits calmly on the rug and watches. The dog never touches the sofa. The person then leaves the room. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing.",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a modern living room during daytime. A person walks into the room and rearranges the cushions on the gray fabric sofa, plumping and repositioning them, while the dog sits calmly on the rug and watches. The dog never touches the sofa. The person then leaves the room. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from the corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects."
+    },
+    {
+      "id": "D12",
+      "category": "distractor",
+      "name": "evening_shadows_sleeping",
+      "expected_event_label": "negative",
+      "expected_observed_behavior": "resting",
+      "zone_policy_for_sofa": "forbidden",
+      "suggested_filename": "neg_D12_evening_shadows_sleeping_{nn}.mp4",
+      "action": "The dog is lying asleep on the gray fabric sofa. Slow-moving shadows from the window blinds drift across the sofa and the dog as the light changes; the dog barely moves, only its ear twitches once. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing.",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a modern living room in the evening, lit by a dim warm floor lamp. The dog is lying asleep on the gray fabric sofa. Slow-moving shadows from the window blinds drift across the sofa and the dog as the light changes; the dog barely moves, only its ear twitches once. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from the corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects."
+    },
+    {
+      "id": "D13",
+      "category": "distractor",
+      "name": "mouth_not_visible",
+      "expected_event_label": "uncertain",
+      "expected_observed_behavior": "unobservable",
+      "zone_policy_for_sofa": "forbidden",
+      "suggested_filename": "neg_D13_mouth_not_visible_{nn}.mp4",
+      "action": "The dog stands on the far side of the gray fabric sofa, facing away from the camera, with its head hidden behind the backrest so its mouth is never visible. Its back and tail move slightly as it shifts its weight, then it lies down out of view behind the sofa.",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a modern living room during daytime. The dog stands on the far side of the gray fabric sofa, facing away from the camera, with its head hidden behind the backrest so its mouth is never visible. Its back and tail move slightly as it shifts its weight, then it lies down out of view behind the sofa. Fixed wide-angle surveillance camera view from the corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "note": "Expected VLM verdict is insufficient, not normal. Labelled uncertain for evaluation."
+    }
+  ],
+  "prompt_style": "Narrative CCTV style: opening sentence (subject, room, time) + action sequence + explicit 'sofa stays intact' + fixed-camera/realism tail with exclusions."
+}

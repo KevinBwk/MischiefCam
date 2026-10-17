@@ -36,6 +36,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--vlm", choices=["mlx", "fake"], help="Override VLM backend")
     ap.add_argument("--target-class", action="append", help="Override detector classes (repeatable), e.g. person for dry runs")
     ap.add_argument("--annotate", action="store_true", help="Write an annotated video next to the run outputs")
+    ap.add_argument("--run-name", help="Output folder name under [output].dir (default: run_<timestamp>)")
     args = ap.parse_args(argv)
 
     cfg = load_config(args.config)
@@ -45,7 +46,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.target_class:
         cfg["detector"]["target_classes"] = args.target_class
 
-    run_dir = resolve(cfg["output"]["dir"]) / datetime.now().strftime("run_%Y%m%d_%H%M%S")
+    run_dir = resolve(cfg["output"]["dir"]) / (args.run_name or datetime.now().strftime("run_%Y%m%d_%H%M%S"))
     run_dir.mkdir(parents=True, exist_ok=True)
 
     source = VideoFileSource(args.video, cfg["source"]["target_fps"])
