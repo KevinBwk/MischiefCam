@@ -22,6 +22,7 @@ class StateConfig:
     dwell_s: float = 2.0
     leave_grace_s: float = 1.5
     reobserve_s: float = 6.0
+    reobserve_insufficient_s: float = 2.0  # "couldn't see" -> look again soon
     cooldown_s: float = 60.0
 
 
@@ -34,6 +35,7 @@ class Episode:
     first_seen: float
     last_seen: float
     last_review_pts: float = -math.inf
+    next_gap_s: float = 0.0  # wait this long after last_review_pts before asking again
     reviews: int = 0
     verdicts: list[Decision] = field(default_factory=list)
 
@@ -98,7 +100,7 @@ class EpisodeTracker:
         if ep.state is EpisodeState.OBSERVING:
             if pts < self.roi_cooldown_until.get(ep.roi_id, -math.inf):
                 ep.state = EpisodeState.COOLDOWN
-            elif pts - ep.last_review_pts >= self.cfg.reobserve_s:
+            elif pts - ep.last_review_pts >= ep.next_gap_s:
                 ep.state = EpisodeState.REVIEWING
                 ep.reviews += 1
                 out.reviews.append(ReviewRequest(ep.episode_id, ep.track_id, ep.roi_id, pts))
@@ -116,7 +118,8 @@ class EpisodeTracker:
         if decision == "suspect":
             ep.state = EpisodeState.COOLDOWN
             return True
-        # normal / insufficient / error: keep watching, ask again after reobserve_s
+        # keep watching: re-ask soon after insufficient/error, later after a confident "normal"
         ep.state = EpisodeState.OBSERVING
         ep.last_review_pts = pts
+        ep.next_gap_s = self.cfg.reobserve_s if decision == "normal" else self.cfg.reobserve_insufficient_s
         return False

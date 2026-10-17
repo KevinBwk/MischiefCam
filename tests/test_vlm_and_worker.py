@@ -19,6 +19,15 @@ def test_parse_garbage_is_insufficient_not_normal():
     assert parse_decision("the dog is cute") == ("insufficient", "unparseable output")
 
 
+def test_parse_bare_label():
+    assert parse_decision("suspect") == ("suspect", "")
+    assert parse_decision("  Normal.\n") == ("normal", "")
+
+
+def test_parse_label_inside_sentence_is_not_accepted():
+    assert parse_decision("I think it is suspect maybe") == ("insufficient", "unparseable output")
+
+
 def test_parse_unknown_label_is_insufficient():
     assert parse_decision('{"decision": "maybe"}')[0] == "insufficient"
 

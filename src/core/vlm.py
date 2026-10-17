@@ -34,7 +34,14 @@ def build_prompt(target: str) -> str:
 
 
 def parse_decision(text: str) -> tuple[Decision, str]:
-    """Extract (decision, reason) from model output. Unparseable output -> insufficient."""
+    """Extract (decision, reason) from model output. Unparseable output -> insufficient.
+
+    Accepts the requested JSON, or an answer that is exactly one label (small VLMs
+    often reply with just "suspect"). Anything else is treated as insufficient.
+    """
+    bare = text.strip().strip(".!\"'`").strip().lower()
+    if bare in DECISIONS:
+        return bare, ""  # type: ignore[return-value]
     match = re.search(r"\{.*?\}", text, flags=re.DOTALL)
     if match:
         try:

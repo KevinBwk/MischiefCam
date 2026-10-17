@@ -25,6 +25,7 @@ class PipelineConfig:
     bbox_expand: float = 0.15
     min_overlap: float = 0.10
     vlm_input_size: int = 336
+    crop_mode: str = "animal"
     max_new_tokens: int = 48
     save_crops: bool = True
     output_dir: Path = Path("outputs")
@@ -125,7 +126,7 @@ class Pipeline:
         roi = self.rois[roi_id]
         if det is None:
             return
-        crop = interaction_crop(image, det.bbox, roi, self.cfg.vlm_input_size, self.cfg.bbox_expand)
+        crop = interaction_crop(image, det.bbox, roi, self.cfg.vlm_input_size, self.cfg.bbox_expand, self.cfg.crop_mode)
         if self.cfg.save_crops:
             crop_dir = self.cfg.output_dir / "crops"
             crop_dir.mkdir(parents=True, exist_ok=True)

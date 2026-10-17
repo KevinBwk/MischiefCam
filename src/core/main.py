@@ -68,8 +68,10 @@ def main(argv: list[str] | None = None) -> int:
     pipe = Pipeline(
         source, detector, rois, worker, bus,
         StateConfig(**cfg["state"]),
-        PipelineConfig(cfg["roi"]["bbox_expand"], cfg["roi"]["min_overlap"], vcfg["input_size"],
-                       vcfg["max_new_tokens"], cfg["output"]["save_crops"], run_dir),
+        PipelineConfig(bbox_expand=cfg["roi"]["bbox_expand"], min_overlap=cfg["roi"]["min_overlap"],
+                       vlm_input_size=vcfg["input_size"], crop_mode=vcfg.get("crop", "animal"),
+                       max_new_tokens=vcfg["max_new_tokens"], save_crops=cfg["output"]["save_crops"],
+                       output_dir=run_dir),
         annotate_path=run_dir / "annotated.mp4" if args.annotate else None,
     )
     print(f"[{branding.product_name}] running on {args.video} (VLM: {vcfg['backend']}, mascot: {branding.mascot_name})")

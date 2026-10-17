@@ -20,13 +20,15 @@ min_overlap = 0.10         # fraction of the expanded bbox that must fall inside
 [state]
 dwell_s = 2.0              # Candidate -> Observing after staying this long
 leave_grace_s = 1.5        # tolerate short detection gaps before closing an episode
-reobserve_s = 6.0          # after a normal/insufficient verdict, ask again after this long
+reobserve_s = 6.0          # after a "normal" verdict, ask again after this long
+reobserve_insufficient_s = 2.0  # after "insufficient" (or a backend error), look again sooner
 cooldown_s = 60.0          # after an alert, stay quiet for this long on the same (track, roi)
 
 [vlm]
 backend = "mlx"            # "mlx" (Mac) | "fake" (tests / dry runs) | Stage II: "hailo"
 model = "mlx-community/Qwen2-VL-2B-Instruct-4bit"
 input_size = 336           # Hailo Qwen2-VL-2B vision encoder input is 336x336
+crop = "animal"            # "animal" (expanded dog box) | "union" (dog box ∪ zone box)
 max_new_tokens = 48
 queue_size = 2             # bounded queue; oldest pending request is dropped when full
 max_age_s = 10.0           # drop requests that waited longer than this (wall-clock)

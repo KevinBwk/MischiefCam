@@ -1,7 +1,7 @@
 from core.state import EpisodeTracker, StateConfig
 from core.types import EpisodeState
 
-CFG = StateConfig(dwell_s=2.0, leave_grace_s=1.0, reobserve_s=5.0, cooldown_s=30.0)
+CFG = StateConfig(dwell_s=2.0, leave_grace_s=1.0, reobserve_s=5.0, reobserve_insufficient_s=1.5, cooldown_s=30.0)
 KEY = (1, "sofa")
 
 
@@ -83,3 +83,13 @@ def test_error_verdict_keeps_watching():
     (req,), _ = feed(tr, 0.0, 2.0)
     assert tr.on_verdict(req.episode_id, "sofa", None, 2.0) is False
     assert tr.episodes[KEY].state is EpisodeState.OBSERVING
+
+
+def test_insufficient_reobserves_sooner_than_normal():
+    tr = EpisodeTracker(CFG)
+    (req,), _ = feed(tr, 0.0, 2.0)
+    tr.on_verdict(req.episode_id, "sofa", "insufficient", 2.0)
+    reviews, _ = feed(tr, 2.5, 3.0)
+    assert reviews == []
+    reviews, _ = feed(tr, 3.5, 3.5)  # 1.5 s later
+    assert len(reviews) == 1

@@ -16,14 +16,25 @@ def interaction_crop(
     roi: ROI,
     size: int = 336,
     expand: float = 0.15,
+    mode: str = "animal",
 ) -> Image.Image:
-    """Crop the union of the expanded animal box and the zone's bounding box,
-    then letterbox (no distortion) to size x size. Returns an RGB PIL image."""
+    """Build the VLM input and letterbox it (no distortion) to size x size (RGB PIL).
+
+    mode="animal": the expanded animal box only. Keeps the mouth large enough to read
+                   after downscaling to 336 px; the default.
+    mode="union":  expanded animal box ∪ zone bounding box. More context, but a large
+                   zone (a whole sofa) shrinks the dog to a few dozen pixels.
+    """
     h, w = frame_bgr.shape[:2]
     ax1, ay1, ax2, ay2 = expand_box(animal_box, expand, w, h)
-    rx1, ry1, rx2, ry2 = roi_bbox_px(roi, w, h)
-    x1, y1 = int(max(0, min(ax1, rx1))), int(max(0, min(ay1, ry1)))
-    x2, y2 = int(min(w, max(ax2, rx2))), int(min(h, max(ay2, ry2)))
+    if mode == "animal":
+        x1, y1, x2, y2 = int(ax1), int(ay1), int(ax2), int(ay2)
+    elif mode == "union":
+        rx1, ry1, rx2, ry2 = roi_bbox_px(roi, w, h)
+        x1, y1 = int(max(0, min(ax1, rx1))), int(max(0, min(ay1, ry1)))
+        x2, y2 = int(min(w, max(ax2, rx2))), int(min(h, max(ay2, ry2)))
+    else:
+        raise ValueError(f"Unknown crop mode {mode!r}")
     region = frame_bgr[y1:y2, x1:x2]
     if region.size == 0:
         region = frame_bgr
