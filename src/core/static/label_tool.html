@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{PRODUCT}} Labels</title>
+<title>{{PRODUCT}} 影片標註</title>
 <style>
   :root { --bg:#f6f6f4; --panel:#fff; --text:#1d1d1f; --muted:#6b6b70; --line:#dcdcd8;
           --pos:#d93a3a; --neg:#2f9e5b; --unc:#c08a12; --accent:#2b6cb0; }
   * { box-sizing: border-box; }
   html, body { overflow-x: hidden; }
-  body { margin:0; font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--text); }
+  body { margin:0; font:14px/1.5 -apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Segoe UI",sans-serif; background:var(--bg); color:var(--text); }
   header { display:flex; gap:12px; align-items:baseline; padding:12px 20px; background:var(--panel); border-bottom:1px solid var(--line); }
   header h1 { font-size:17px; margin:0; }
   header .meta { color:var(--muted); font-size:12px; }
@@ -52,55 +52,56 @@
 </style>
 </head>
 <body>
-<header><h1>{{PRODUCT}} · Clip labels</h1><span class="meta" id="meta"></span></header>
+<header><h1>{{PRODUCT}} · 影片標註</h1><span class="meta" id="meta"></span></header>
 <main>
-  <section class="card" id="list"><h2>Clips</h2><div class="progress" id="progress"></div><div id="clips"></div></section>
+  <section class="card" id="list"><h2>影片清單</h2><div class="progress" id="progress"></div><div id="clips"></div></section>
   <section class="card">
     <video id="vid" controls preload="auto" playsinline></video>
     <div class="timeline" id="timeline"><div class="cursor" id="cursor"></div></div>
     <div class="controls">
       <span class="time" id="time">0.00 / 0.00 s</span>
-      <button id="back">◀ 0.1s</button><button id="fwd">0.1s ▶</button>
-      <button id="markStart">Start <kbd>[</kbd></button><button id="markEnd">End <kbd>]</kbd></button>
-      <button id="whole">Whole clip</button>
+      <button id="back">◀ 0.1 秒</button><button id="fwd">0.1 秒 ▶</button>
+      <button id="markStart">起點 <kbd>[</kbd></button><button id="markEnd">終點 <kbd>]</kbd></button>
+      <button id="whole">整支影片</button>
     </div>
     <div class="controls labelbtns" style="margin-top:10px">
-      <button class="positive" data-label="positive">Positive <kbd>1</kbd></button>
-      <button class="negative" data-label="negative">Negative <kbd>2</kbd></button>
-      <button class="uncertain" data-label="uncertain">Uncertain <kbd>3</kbd></button>
-      <button class="primary" id="addSeg">Add segment <kbd>A</kbd></button>
+      <button class="positive" data-label="positive">正例：咬沙發 <kbd>1</kbd></button>
+      <button class="negative" data-label="negative">負例：沒在咬 <kbd>2</kbd></button>
+      <button class="uncertain" data-label="uncertain">不確定：看不清楚 <kbd>3</kbd></button>
+      <button class="primary" id="addSeg">加入時間段 <kbd>A</kbd></button>
     </div>
   </section>
   <section class="right">
     <div class="card">
-      <h2>Segment details</h2>
-      <label class="f">Behavior
+      <h2>時間段細節</h2>
+      <label class="f">狗在做什麼
         <select id="behavior"></select></label>
-      <label class="f">Target object (what the mouth is on)
-        <input type="text" id="target" placeholder="e.g. sofa armrest, rope toy"></label>
-      <label class="f">Mouth visibility
-        <select id="visibility"><option>clear</option><option>partial</option><option>unobservable</option></select></label>
+      <label class="f">嘴碰到什麼（可填中文或英文）
+        <input type="text" id="target" placeholder="例如：沙發扶手、繩子玩具"></label>
+      <label class="f">嘴巴看得清楚嗎
+        <select id="visibility"><option value="clear">清楚</option><option value="partial">部分可見</option><option value="unobservable">看不到</option></select></label>
       <div class="hint" id="hint" hidden></div>
     </div>
     <div class="card" style="margin-top:12px">
-      <h2>Segments in this clip</h2>
+      <h2>這支影片的時間段</h2>
       <div id="segs"></div>
-      <label class="f"><input type="checkbox" id="simulated"> AI-generated / simulated clip</label>
-      <label class="f">Damage confirmed
-        <select id="damage"><option>unknown</option><option>yes</option><option>no</option></select></label>
-      <label class="f">Source note (generator, licence, who recorded)
+      <label class="f"><input type="checkbox" id="simulated"> AI 生成／模擬影片</label>
+      <label class="f">確認有造成損壞嗎
+        <select id="damage"><option value="unknown">不知道</option><option value="yes">有</option><option value="no">沒有</option></select></label>
+      <label class="f">來源備註（生成工具、授權、拍攝者）
         <input type="text" id="source"></label>
-      <div class="controls"><button class="primary" id="save">Save clip <kbd>S</kbd></button><button id="next">Next unlabeled <kbd>N</kbd></button></div>
+      <div class="controls"><button class="primary" id="save">儲存 <kbd>S</kbd></button><button id="next">下一支未標註 <kbd>N</kbd></button></div>
       <div id="status"></div>
     </div>
     <div class="card" style="margin-top:12px">
-      <h2>How to</h2>
+      <h2>操作說明</h2>
       <ul class="help">
-        <li>Play the clip; <kbd>Space</kbd> pauses. <kbd>←</kbd>/<kbd>→</kbd> step 0.1 s.</li>
-        <li>Press <kbd>[</kbd> where a behaviour starts and <kbd>]</kbd> where it ends, choose a label, then <b>Add segment</b>.</li>
-        <li>Label what you <b>see</b>, not what the prompt asked for. The yellow box is only a hint.</li>
-        <li><b>Positive</b>: mouth repeatedly on a forbidden object ≥ ~2 s. <b>Uncertain</b>: mouth not visible.</li>
-        <li>Unlabeled time is ignored for training, so label whole clips when nothing changes.</li>
+        <li>播放影片，<kbd>空白鍵</kbd>暫停，<kbd>←</kbd>／<kbd>→</kbd> 前後移動 0.1 秒。</li>
+        <li>行為開始時按 <kbd>[</kbd>、結束時按 <kbd>]</kbd>，選好類別後按<b>加入時間段</b>，最後按<b>儲存</b>。</li>
+        <li>整支影片都一樣時，選好類別直接按<b>整支影片</b>。</li>
+        <li>照<b>實際看到的</b>標，不是照 prompt。黃色框只是提示。</li>
+        <li><b>正例</b>：嘴反覆咬、啃、拉扯沙發約 2 秒以上。咬自己的玩具算<b>負例</b>。嘴巴看不到標<b>不確定</b>。</li>
+        <li>沒標的時段訓練時會略過。</li>
       </ul>
     </div>
   </section>
@@ -110,6 +111,12 @@
   const $ = id => document.getElementById(id);
   const vid = $('vid'), tl = $('timeline'), cursor = $('cursor');
   const COLORS = { positive: '#d93a3a', negative: '#2f9e5b', uncertain: '#c08a12' };
+  // UI text is Chinese; saved values stay English
+  const LABEL_ZH = { positive: '正例', negative: '負例', uncertain: '不確定' };
+  const VIS_ZH = { clear: '清楚', partial: '部分可見', unobservable: '看不到' };
+  const BEH_ZH = { chewing_furniture: '咬家具／沙發', chewing_toy: '咬玩具／骨頭', sniffing: '聞', licking_object: '舔東西',
+    licking_self: '舔自己', resting: '躺著／睡覺', sitting: '坐著', walking: '走動', carrying: '叼著東西走', playing: '玩耍',
+    scratching_self: '抓癢', rolling: '翻滾', person_present: '有人在場', unobservable: '看不到嘴', other: '其他' };
   let clips = [], cur = -1, segs = [], mark = { start: null, end: null }, chosen = 'negative', dirty = false;
 
   const status = (m, c = '') => { $('status').textContent = m; $('status').className = c; };
@@ -118,7 +125,7 @@
 
   function renderList() {
     const done = clips.filter(c => c.label).length;
-    $('progress').textContent = `${done} / ${clips.length} labeled`;
+    $('progress').textContent = `已標註 ${done} / ${clips.length} 支`;
     $('clips').innerHTML = '';
     clips.forEach((c, i) => {
       const el = document.createElement('div');
@@ -149,14 +156,14 @@
   }
 
   function renderSegs() {
-    $('segs').innerHTML = segs.length ? '' : '<div class="help" style="padding:0">No segments yet.</div>';
+    $('segs').innerHTML = segs.length ? '' : '<div class="help" style="padding:0">還沒有時間段。</div>';
     segs.forEach((s, i) => {
       const row = document.createElement('div'); row.className = 'segrow';
-      const end = s.end_s < 0 ? 'end' : fmt(s.end_s);
+      const end = s.end_s < 0 ? '結尾' : fmt(s.end_s);
       row.innerHTML = `<span class="sw" style="background:${COLORS[s.label]}"></span>
-        <span><b>${s.label}</b> ${fmt(s.start_s)}–${end}s<br><span style="color:#6b6b70">${s.behavior}${s.target ? ' · ' + s.target : ''} · ${s.visibility}</span></span>
-        <button title="Delete">✕</button>`;
-      row.querySelector('button').onclick = () => { segs.splice(i, 1); dirty = true; renderSegs(); renderTimeline(); status('Unsaved changes'); };
+        <span><b>${LABEL_ZH[s.label]}</b> ${fmt(s.start_s)}–${end} 秒<br><span style="color:#6b6b70">${BEH_ZH[s.behavior] || s.behavior}${s.target ? ' · ' + s.target : ''} · ${VIS_ZH[s.visibility] || s.visibility}</span></span>
+        <button title="刪除">✕</button>`;
+      row.querySelector('button').onclick = () => { segs.splice(i, 1); dirty = true; renderSegs(); renderTimeline(); status('尚未儲存'); };
       row.onclick = ev => { if (ev.target.tagName !== 'BUTTON') vid.currentTime = s.start_s; };
       $('segs').appendChild(row);
     });
@@ -172,10 +179,10 @@
     const el = $('hint');
     if (!h) { el.hidden = true; return; }
     el.hidden = false;
-    el.innerHTML = `Hint from ${h.source}: expected <b>${h.label}</b>${h.behavior ? ' · ' + h.behavior : ''}.<br>Check the video — generators do not always follow the prompt.`;
+    el.innerHTML = `提示（來自 ${h.source}）：預期為<b>${LABEL_ZH[h.label] || h.label}</b>${h.behavior ? '，' + (BEH_ZH[h.behavior] || h.behavior) : ''}。<br>請以影片實際內容為準，生成工具不一定照 prompt 做。`;
   }
 
-  function confirmLeave() { return !dirty || window.confirm('Discard unsaved changes for this clip?'); }
+  function confirmLeave() { return !dirty || window.confirm('這支影片有尚未儲存的變更，確定要放棄嗎？'); }
 
   function open(i) {
     if (i === cur || !confirmLeave()) return;
@@ -196,14 +203,14 @@
 
   function addSegment(whole = false) {
     let start = whole ? 0 : mark.start, end = whole ? -1 : (mark.end ?? vid.currentTime);
-    if (start == null) { status('Press Start ([) first, or use Whole clip', 'err'); return; }
+    if (start == null) { status('請先按「起點」（[），或使用「整支影片」', 'err'); return; }
     if (end >= 0 && end < start) [start, end] = [end, start];
-    if (end >= 0 && end - start < 0.2) { status('Segment is too short', 'err'); return; }
+    if (end >= 0 && end - start < 0.2) { status('時間段太短', 'err'); return; }
     segs.push({ start_s: +start.toFixed(3), end_s: end < 0 ? -1 : +end.toFixed(3), label: chosen,
                 behavior: $('behavior').value, target: $('target').value.trim(), visibility: $('visibility').value });
     segs.sort((a, b) => a.start_s - b.start_s);
     mark = { start: null, end: null }; dirty = true;
-    renderSegs(); renderTimeline(); status('Segment added — remember to Save');
+    renderSegs(); renderTimeline(); status('已加入時間段，記得按「儲存」');
   }
 
   async function save() {
@@ -211,16 +218,16 @@
     const body = { segments: segs, simulated: $('simulated').checked, damage_confirmed: $('damage').value, source_note: $('source').value };
     const res = await fetch(`/api/clips/${clips[cur].index}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     const data = await res.json();
-    if (!res.ok) { status(data.error || 'Save failed', 'err'); return; }
+    if (!res.ok) { status(data.error || '儲存失敗', 'err'); return; }
     Object.assign(clips[cur], { label: data.label, segments: data.segments, simulated: body.simulated, damage_confirmed: body.damage_confirmed, source_note: body.source_note });
     segs = JSON.parse(JSON.stringify(data.segments)); dirty = false;
-    renderList(); renderSegs(); status(data.label ? `Saved · clip label: ${data.label}` : 'Saved (no segments: clip cleared)', 'ok');
+    renderList(); renderSegs(); status(data.label ? `已儲存 · 整支影片判定：${LABEL_ZH[data.label]}` : '已儲存（沒有時間段，已清除這支影片的標註）', 'ok');
   }
 
   function nextUnlabeled() {
     const n = clips.findIndex((c, i) => i > cur && !c.label);
     const k = n >= 0 ? n : clips.findIndex(c => !c.label);
-    if (k >= 0) open(k); else status('All clips are labeled 🎉', 'ok');
+    if (k >= 0) open(k); else status('全部影片都標完了 🎉', 'ok');
   }
 
   // events
@@ -229,8 +236,8 @@
   tl.addEventListener('click', ev => { const r = tl.getBoundingClientRect(); vid.currentTime = ((ev.clientX - r.left) / r.width) * dur(); });
   $('back').onclick = () => { vid.currentTime = Math.max(0, vid.currentTime - 0.1); };
   $('fwd').onclick = () => { vid.currentTime = Math.min(dur(), vid.currentTime + 0.1); };
-  $('markStart').onclick = () => { mark = { start: vid.currentTime, end: null }; renderTimeline(); status(`Start at ${fmt(mark.start)} s`); };
-  $('markEnd').onclick = () => { if (mark.start == null) { status('Press Start first', 'err'); return; } mark.end = vid.currentTime; renderTimeline(); status(`${fmt(mark.start)}–${fmt(mark.end)} s selected`); };
+  $('markStart').onclick = () => { mark = { start: vid.currentTime, end: null }; renderTimeline(); status(`起點：${fmt(mark.start)} 秒`); };
+  $('markEnd').onclick = () => { if (mark.start == null) { status('請先按「起點」', 'err'); return; } mark.end = vid.currentTime; renderTimeline(); status(`已選取 ${fmt(mark.start)}–${fmt(mark.end)} 秒`); };
   $('whole').onclick = () => addSegment(true);
   $('addSeg').onclick = () => addSegment(false);
   $('save').onclick = save;
@@ -256,8 +263,8 @@
   (async () => {
     const data = await (await fetch('/api/clips')).json();
     clips = data.clips;
-    $('meta').textContent = `${clips.length} clips · saves to ${data.labels_path}`;
-    $('behavior').innerHTML = data.behaviors.map(b => `<option>${b}</option>`).join('');
+    $('meta').textContent = `共 ${clips.length} 支 · 儲存到 ${data.labels_path}`;
+    $('behavior').innerHTML = data.behaviors.map(b => `<option value="${b}">${BEH_ZH[b] || b}</option>`).join('');
     renderList();
     if (clips.length) open(clips.findIndex(c => !c.label) >= 0 ? clips.findIndex(c => !c.label) : 0);
   })();
