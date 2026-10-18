@@ -56,8 +56,9 @@ in normalized coordinates, which the pipeline reads by default.
 | Step | Command | What it does |
 |---|---|---|
 | Prompts | `uv run python scripts/gen_video_prompts.py` | 120 diverse CCTV-style prompts (50 positive, 67 negative, 3 uncertain) in `prompts/training_video_prompts.{json,txt}` |
-| Label | `uv run mcam-label --folder data/raw` | Local page: watch each clip, mark time segments as positive / negative / uncertain, saved to `data/labels.json` |
-| Train | `uv run mcam-train --folder data/raw --labels data/labels.json` | CLIP embeddings of animal crops → logistic-regression probe, cross-validated by clip → `models/classifier.json` |
+| Label | `uv run mcam-label` | Local page (blind: no prompt hints for id-only file names): mark time segments in `data/Videos` as positive / negative / uncertain → `data/labels_videos.json` |
+| Check | `uv run python scripts/label_report.py` | After labeling: lists clips whose label differs from what the prompt asked for |
+| Train | `uv run mcam-train` | CLIP embeddings of animal crops → logistic-regression probe, cross-validated by clip → `models/classifier.json` |
 | Use | `uv run mcam --video clip.mp4 --vlm probe` | The trained classifier replaces the VLM as the judge |
 
 ## Run

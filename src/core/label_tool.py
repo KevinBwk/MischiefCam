@@ -177,8 +177,8 @@ def make_server(state: LabelState, port: int) -> ThreadingHTTPServer:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Label clips: time segments + positive/negative/uncertain.")
-    ap.add_argument("--folder", default="data/raw")
-    ap.add_argument("--labels", default="data/labels.json")
+    ap.add_argument("--folder", default="data/Videos")
+    ap.add_argument("--labels", default="data/labels_videos.json")
     ap.add_argument("--prompts", default="prompts/training_video_prompts.json")
     ap.add_argument("--port", type=int, default=8766)
     ap.add_argument("--no-browser", action="store_true")

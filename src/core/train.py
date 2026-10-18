@@ -18,8 +18,8 @@ from .probe import DEFAULT_EMBED_MODEL, CLIPEmbedder, build_dataset, make_sample
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Train the chewing classifier (linear probe on CLIP embeddings).")
-    ap.add_argument("--folder", default="data/raw")
-    ap.add_argument("--labels", default="data/labels.json")
+    ap.add_argument("--folder", default="data/Videos")
+    ap.add_argument("--labels", default="data/labels_videos.json")
     ap.add_argument("--out", default="models/classifier.json")
     ap.add_argument("--embed-model", default=DEFAULT_EMBED_MODEL)
     ap.add_argument("--fps", type=float, default=2.0, help="frames sampled per second inside labeled segments")
