@@ -58,6 +58,8 @@ in normalized coordinates, which the pipeline reads by default.
 | Prompts | `prompts/training_video_prompts.*` (close, 60), `prompts/medium_prompts.*` (medium, 20), `prompts/wide_trial_prompts.*` (wide, 20) | Curated CCTV-style prompts, about 1 positive : 2 negatives per view. `scripts/gen_video_prompts.py` regenerates the original 120-prompt close-up pool (overwrites the curated file) |
 | Label | `uv run mcam-label` | Local page (blind: no prompt hints for id-only file names): mark time segments in `data/Videos` as positive / negative / uncertain → `data/labels_videos.json` |
 | Check | `uv run python scripts/label_report.py` | After labeling: lists clips whose label differs from what the prompt asked for |
+| AI-assisted | `uv run mcam-label --suggest data/labels_ai.json` | Shows AI pre-labels as suggestions (press G to apply, then review and save; saved with `ai_assisted: true`). Keep test sets blind by omitting `--suggest` |
+| Agreement | `uv run python scripts/compare_labels.py data/labels_videos.json data/labels_ai.json` | Clip- and time-level agreement between two label files, with every disagreement listed |
 | Train | `uv run mcam-train` | CLIP embeddings of animal crops → logistic-regression probe, cross-validated by clip → `models/classifier.json` |
 | Use | `uv run mcam --video clip.mp4 --vlm probe` | The trained classifier replaces the VLM as the judge |
 

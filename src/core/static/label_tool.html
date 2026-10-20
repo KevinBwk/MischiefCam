@@ -81,6 +81,11 @@
       <label class="f">嘴巴看得清楚嗎
         <select id="visibility"><option value="clear">清楚</option><option value="partial">部分可見</option><option value="unobservable">看不到</option></select></label>
       <div class="hint" id="hint" hidden></div>
+      <div class="hint" id="aiBox" hidden style="background:#eef4fb;border-color:#c9dbef">
+        <b style="text-transform:none">AI 建議</b>（只是建議，請看影片確認後再儲存）
+        <div id="aiSegs" style="margin:6px 0"></div>
+        <button id="applyAi">套用 AI 建議 <kbd>G</kbd></button>
+      </div>
     </div>
     <div class="card" style="margin-top:12px">
       <h2>這支影片的時間段</h2>
@@ -117,7 +122,7 @@
   const BEH_ZH = { chewing_furniture: '咬家具／沙發', chewing_toy: '咬玩具／骨頭', sniffing: '聞', licking_object: '舔東西',
     licking_self: '舔自己', resting: '躺著／睡覺', sitting: '坐著', walking: '走動', carrying: '叼著東西走', playing: '玩耍',
     scratching_self: '抓癢', rolling: '翻滾', person_present: '有人在場', unobservable: '看不到嘴', other: '其他' };
-  let clips = [], cur = -1, segs = [], mark = { start: null, end: null }, chosen = 'negative', dirty = false;
+  let clips = [], cur = -1, segs = [], mark = { start: null, end: null }, chosen = 'negative', dirty = false, aiApplied = false;
 
   const status = (m, c = '') => { $('status').textContent = m; $('status').className = c; };
   const fmt = t => (t ?? 0).toFixed(2);
@@ -182,14 +187,30 @@
     el.innerHTML = `提示（來自 ${h.source}）：預期為<b>${LABEL_ZH[h.label] || h.label}</b>${h.behavior ? '，' + (BEH_ZH[h.behavior] || h.behavior) : ''}。<br>請以影片實際內容為準，生成工具不一定照 prompt 做。`;
   }
 
+  function showAi(sug) {
+    const box = $('aiBox');
+    if (!sug || !sug.length) { box.hidden = true; return; }
+    box.hidden = false;
+    $('aiSegs').innerHTML = sug.map(s => `<div><span class="dot ${s.label}" style="display:inline-block;margin-right:6px"></span>${LABEL_ZH[s.label]} ${fmt(s.start_s)}–${s.end_s < 0 ? '結尾' : fmt(s.end_s)} 秒 · ${BEH_ZH[s.behavior] || s.behavior}${s.target ? ' · ' + s.target : ''}</div>`).join('');
+  }
+
+  function applyAi() {
+    const sug = cur >= 0 ? clips[cur].suggestion : null;
+    if (!sug || !sug.length) { status('這支影片沒有 AI 建議', 'err'); return; }
+    if (segs.length && !window.confirm('要用 AI 建議取代目前的時間段嗎？')) return;
+    segs = JSON.parse(JSON.stringify(sug)); aiApplied = true; dirty = true;
+    renderSegs(); renderTimeline(); status('已套用 AI 建議：請播放影片確認，必要時修改，再按「儲存」');
+  }
+
   function confirmLeave() { return !dirty || window.confirm('這支影片有尚未儲存的變更，確定要放棄嗎？'); }
 
   function open(i) {
     if (i === cur || !confirmLeave()) return;
     cur = i; const c = clips[i];
     segs = JSON.parse(JSON.stringify(c.segments || []));
-    mark = { start: null, end: null }; dirty = false;
+    mark = { start: null, end: null }; dirty = false; aiApplied = !!c.ai_assisted;
     vid.src = `/video/${c.index}`;
+    showAi(c.suggestion);
     $('simulated').checked = c.simulated ?? (/^V\d{3}[_-]/.test(c.path.split('/').pop()) || !!(c.hint && c.hint.source !== 'file name'));
     $('damage').value = c.damage_confirmed || 'unknown';
     $('source').value = c.source_note || '';
@@ -215,11 +236,11 @@
 
   async function save() {
     if (cur < 0) return;
-    const body = { segments: segs, simulated: $('simulated').checked, damage_confirmed: $('damage').value, source_note: $('source').value };
+    const body = { segments: segs, simulated: $('simulated').checked, damage_confirmed: $('damage').value, source_note: $('source').value, ai_assisted: aiApplied };
     const res = await fetch(`/api/clips/${clips[cur].index}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     const data = await res.json();
     if (!res.ok) { status(data.error || '儲存失敗', 'err'); return; }
-    Object.assign(clips[cur], { label: data.label, segments: data.segments, simulated: body.simulated, damage_confirmed: body.damage_confirmed, source_note: body.source_note });
+    Object.assign(clips[cur], { label: data.label, segments: data.segments, simulated: body.simulated, damage_confirmed: body.damage_confirmed, source_note: body.source_note, ai_assisted: body.ai_assisted });
     segs = JSON.parse(JSON.stringify(data.segments)); dirty = false;
     renderList(); renderSegs(); status(data.label ? `已儲存 · 整支影片判定：${LABEL_ZH[data.label]}` : '已儲存（沒有時間段，已清除這支影片的標註）', 'ok');
   }
@@ -241,6 +262,7 @@
   $('whole').onclick = () => addSegment(true);
   $('addSeg').onclick = () => addSegment(false);
   $('save').onclick = save;
+  $('applyAi').onclick = applyAi;
   $('next').onclick = nextUnlabeled;
   document.querySelectorAll('.labelbtns [data-label]').forEach(b => b.onclick = () => choose(b.dataset.label));
   ['simulated', 'damage', 'source'].forEach(id => $(id).addEventListener('input', () => { dirty = true; }));
@@ -257,6 +279,7 @@
     else if (k === 'a' || k === 'A') addSegment(false);
     else if (k === 's' || k === 'S') { ev.preventDefault(); save(); }
     else if (k === 'n' || k === 'N') nextUnlabeled();
+    else if (k === 'g' || k === 'G') applyAi();
   });
   window.addEventListener('beforeunload', ev => { if (dirty) { ev.preventDefault(); ev.returnValue = ''; } });
 

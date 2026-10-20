@@ -173,3 +173,24 @@ def test_build_dataset_uses_segments_and_cache(tmp_path):
     assert len(by["neg.mp4"].X) == 4
     build_dataset(folder, labels, Emb(), sampler, 2.0, tmp_path / "cache", log=lambda *_: None)
     assert calls["n"] == 2  # second run hits the embedding cache
+
+
+# ---------------------------------------------------------------- AI suggestions
+def test_suggestions_only_when_requested(tmp_path):
+    folder = tmp_path / "raw"; folder.mkdir()
+    (folder / "v1.mp4").write_bytes(b"x")
+    sug = tmp_path / "ai.json"
+    sug.write_text(json.dumps({"clips": {"v1.mp4": {"segments": [{"start_s": 0, "end_s": -1, "label": "negative"}]}}}))
+    blind = LabelState(folder, tmp_path / "labels.json", tmp_path / "none.json")
+    assert blind.listing()[0]["suggestion"] is None
+    helped = LabelState(folder, tmp_path / "labels.json", tmp_path / "none.json", sug)
+    assert helped.listing()[0]["suggestion"][0]["label"] == "negative"
+
+
+def test_ai_assisted_flag_is_saved(tmp_path):
+    folder = tmp_path / "raw"; folder.mkdir()
+    (folder / "v1.mp4").write_bytes(b"x")
+    state = LabelState(folder, tmp_path / "labels.json", tmp_path / "none.json")
+    state.save_clip(0, {"segments": [{"start_s": 0, "end_s": -1, "label": "positive"}], "ai_assisted": True})
+    saved = json.loads((tmp_path / "labels.json").read_text())["clips"]["v1.mp4"]
+    assert saved["ai_assisted"] is True and state.listing()[0]["ai_assisted"] is True

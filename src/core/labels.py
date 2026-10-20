@@ -64,6 +64,7 @@ def validate_clip(entry: dict) -> dict:
         "source_note": str(entry.get("source_note", "")),
         "damage_confirmed": entry.get("damage_confirmed", "unknown"),
         "split": str(entry.get("split", "")),
+        "ai_assisted": bool(entry.get("ai_assisted", False)),  # segments started from an AI pre-label
         "updated": datetime.now().isoformat(timespec="seconds"),
     }
 

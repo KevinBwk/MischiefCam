@@ -51,12 +51,14 @@ def guess_hint(name: str, hints: dict[str, dict]) -> dict | None:
 
 
 class LabelState:
-    def __init__(self, folder: Path, labels_path: Path, prompts_path: Path):
+    def __init__(self, folder: Path, labels_path: Path, prompts_path: Path, suggest_path: Path | None = None):
         self.folder = folder
         self.labels_path = labels_path
         self.clips = find_clips(folder)
         self.hints = load_hints(prompts_path)
         self.data = L.load(labels_path)
+        # AI pre-labels shown only when --suggest is given (keep test sets blind by not passing it)
+        self.suggestions = L.load(suggest_path)["clips"] if suggest_path else {}
 
     def rel(self, p: Path) -> str:
         return p.relative_to(self.folder).as_posix()
@@ -74,6 +76,8 @@ class LabelState:
                 "source_note": entry.get("source_note", "") if entry else "",
                 "damage_confirmed": entry.get("damage_confirmed", "unknown") if entry else "unknown",
                 "hint": guess_hint(p.name, self.hints),
+                "suggestion": (self.suggestions.get(rel) or self.suggestions.get(p.name) or {}).get("segments"),
+                "ai_assisted": entry.get("ai_assisted", False) if entry else False,
             })
         return out
 
@@ -180,13 +184,16 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--folder", default="data/Videos")
     ap.add_argument("--labels", default="data/labels_videos.json")
     ap.add_argument("--prompts", default="prompts/training_video_prompts.json")
+    ap.add_argument("--suggest", help="AI pre-label JSON to offer as suggestions (omit for blind labeling)")
     ap.add_argument("--port", type=int, default=8766)
     ap.add_argument("--no-browser", action="store_true")
     args = ap.parse_args(argv)
-    state = LabelState(resolve(args.folder), resolve(args.labels), resolve(args.prompts))
+    state = LabelState(resolve(args.folder), resolve(args.labels), resolve(args.prompts),
+                       resolve(args.suggest) if args.suggest else None)
     server = make_server(state, args.port)
     url = f"http://127.0.0.1:{args.port}/"
-    print(f"Labeling tool: {url}  ({len(state.clips)} clips, saving to {state.labels_path}; Ctrl+C to stop)")
+    mode = f"AI suggestions from {args.suggest}" if args.suggest else "blind (no AI suggestions)"
+    print(f"Labeling tool: {url}  ({len(state.clips)} clips, {mode}, saving to {state.labels_path}; Ctrl+C to stop)")
     if not args.no_browser:
         webbrowser.open(url)
     try:
