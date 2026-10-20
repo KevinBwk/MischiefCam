@@ -55,7 +55,7 @@ in normalized coordinates, which the pipeline reads by default.
 
 | Step | Command | What it does |
 |---|---|---|
-| Prompts | `uv run python scripts/gen_video_prompts.py` | 120 diverse CCTV-style prompts (50 positive, 67 negative, 3 uncertain) in `prompts/training_video_prompts.{json,txt}` |
+| Prompts | `prompts/training_video_prompts.*` (close, 60), `prompts/medium_prompts.*` (medium, 20), `prompts/wide_trial_prompts.*` (wide, 20) | Curated CCTV-style prompts, about 1 positive : 2 negatives per view. `scripts/gen_video_prompts.py` regenerates the original 120-prompt close-up pool (overwrites the curated file) |
 | Label | `uv run mcam-label` | Local page (blind: no prompt hints for id-only file names): mark time segments in `data/Videos` as positive / negative / uncertain → `data/labels_videos.json` |
 | Check | `uv run python scripts/label_report.py` | After labeling: lists clips whose label differs from what the prompt asked for |
 | Train | `uv run mcam-train` | CLIP embeddings of animal crops → logistic-regression probe, cross-validated by clip → `models/classifier.json` |

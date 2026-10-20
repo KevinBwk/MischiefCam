@@ -2,16 +2,16 @@
   "version": 1,
   "seed": 20261018,
   "how_to_use": [
-    "Generate clips in id order; priority 1 (first 45) is already balanced (about 1 positive : 2 negatives).",
-    "Save each clip with its suggested_filename so labels can be pre-filled automatically.",
-    "Label every clip from what is actually visible (the labeling tool shows the expected label as a hint only).",
-    "Generators sometimes add chewing or stuffing to negative prompts: relabel or discard those clips."
+    "Close-up set: V001–V025 are already generated (data/Videos/v1–v25). Generate V026–V060 next and save them as v26.mp4 … v60.mp4 in data/Videos.",
+    "V026–V060 were selected from the original 120 for hard negatives, clearly visible chewing targets and scene diversity; the original ids are kept in source_id.",
+    "Label every clip from what is actually visible; generators sometimes ignore parts of the prompt.",
+    "Note: re-running scripts/gen_video_prompts.py regenerates the full 120-prompt pool and overwrites this curated file."
   ],
   "counts": {
-    "total": 120,
-    "positive": 50,
-    "negative": 67,
-    "uncertain": 3
+    "positive": 20,
+    "negative": 39,
+    "uncertain": 1,
+    "total": 60
   },
   "prompts": [
     {
@@ -20,8 +20,8 @@
       "label": "positive",
       "behavior": "chewing_furniture",
       "template": "P01",
-      "target": "sofarmrest",
-      "suggested_filename": "V001_pos_chewing_furniture.mp4",
+      "target": "sofa armrest",
+      "suggested_filename": "v1.mp4",
       "prompt": "A photorealistic CCTV-style video of a tricolor beagle in a living room with dark green walls and plants in the late morning with strong sunlight and sharp shadows across the floor. There is a black fabric futon sofa in the room. The dog walks up to the sofa, grips the sofa armrest with its teeth and starts chewing and tugging at it, shaking its head from side to side. The fabric becomes visibly frayed and a small amount of stuffing appears. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "tricolor beagle",
@@ -38,7 +38,7 @@
       "behavior": "rolling",
       "template": "N14",
       "target": "sofa",
-      "suggested_filename": "V002_neg_rolling.mp4",
+      "suggested_filename": "v2.mp4",
       "prompt": "A photorealistic CCTV-style video of a brindle boxer in a mid-century modern living room with wood paneling during bright daytime. There is a charcoal tweed sofa with wooden legs in the room. The dog rolls onto its back on the sofa, wiggling happily with its paws in the air, then settles down and rests. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "brindle boxer",
@@ -55,7 +55,7 @@
       "behavior": "licking_self",
       "template": "N04",
       "target": "sofa",
-      "suggested_filename": "V003_neg_licking_self.mp4",
+      "suggested_filename": "v3.mp4",
       "prompt": "A photorealistic CCTV-style video of a apricot toy poodle in a compact studio apartment during bright daytime. There is a charcoal tweed sofa with wooden legs in the room. The dog lies on the sofa and repeatedly licks its own front paw. Its mouth only ever touches its own paw, never the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "apricot toy poodle",
@@ -72,7 +72,7 @@
       "behavior": "chewing_furniture",
       "template": "P02",
       "target": "front edge of seat cushion",
-      "suggested_filename": "V004_pos_chewing_furniture.mp4",
+      "suggested_filename": "v4.mp4",
       "prompt": "A photorealistic CCTV-style video of a long-haired dachshund in a minimalist white living room at night, recorded in black-and-white infrared night-vision mode. There is a navy blue velvet sofa in the room. The dog is lying on the floor next to the sofa, then turns and gnaws on the front edge of a seat cushion for several seconds, pulling at it with its teeth. The fabric becomes visibly frayed and a small amount of stuffing appears. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "long-haired dachshund",
@@ -89,7 +89,7 @@
       "behavior": "carrying",
       "template": "N11",
       "target": "sofa",
-      "suggested_filename": "V005_neg_carrying.mp4",
+      "suggested_filename": "v5.mp4",
       "prompt": "A photorealistic CCTV-style video of a Pembroke Welsh corgi in a compact studio apartment on an overcast afternoon with soft, flat daylight. There is a cream fabric sofa with a chaise in the room. The dog walks past the sofa carrying a tennis ball in its mouth without stopping, then lies down on the rug away from the sofa and drops the ball. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "Pembroke Welsh corgi",
@@ -106,7 +106,7 @@
       "behavior": "resting",
       "template": "N02",
       "target": "sofa",
-      "suggested_filename": "V006_neg_resting.mp4",
+      "suggested_filename": "v6.mp4",
       "prompt": "A photorealistic CCTV-style video of a long-haired dachshund in a mid-century modern living room with wood paneling during bright daytime. There is a brown leather three-seat sofa in the room. The dog stands beside the sofa and rests its chin on the armrest with its mouth closed, tail wagging slowly, then lifts its head and looks around the room. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "long-haired dachshund",
@@ -123,7 +123,7 @@
       "behavior": "chewing_furniture",
       "template": "P03",
       "target": "corner of back cushion",
-      "suggested_filename": "V007_pos_chewing_furniture.mp4",
+      "suggested_filename": "v7.mp4",
       "prompt": "A photorealistic CCTV-style video of a chocolate Labrador retriever in a small city apartment living room in the early evening under warm lamp light. There is a brown leather three-seat sofa in the room. The dog climbs onto the sofa and bites into the corner of a back cushion, pulling hard with its teeth for several seconds. Visible tooth marks and a small tear appear in the leather. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "chocolate Labrador retriever",
@@ -140,7 +140,7 @@
       "behavior": "resting",
       "template": "N02",
       "target": "sofa",
-      "suggested_filename": "V008_neg_resting.mp4",
+      "suggested_filename": "v8.mp4",
       "prompt": "A photorealistic CCTV-style video of a Bernese mountain dog puppy in a compact studio apartment on an overcast afternoon with soft, flat daylight. There is a white boucle sofa in the room. The dog stands beside the sofa and rests its chin on the armrest with its mouth closed, tail wagging slowly, then lifts its head and looks around the room. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "Bernese mountain dog puppy",
@@ -157,7 +157,7 @@
       "behavior": "person_present",
       "template": "N16",
       "target": "sofa",
-      "suggested_filename": "V009_neg_person_present.mp4",
+      "suggested_filename": "v9.mp4",
       "prompt": "A photorealistic CCTV-style video of a brindle French bulldog in a suburban living room with a fireplace in the late morning with strong sunlight and sharp shadows across the floor. There is a beige linen two-seat sofa in the room. A person sits on the sofa and gently pets the dog, which rests its head on the person's lap with its mouth closed. The person then gets up and leaves the room. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "brindle French bulldog",
@@ -174,7 +174,7 @@
       "behavior": "chewing_furniture",
       "template": "P04",
       "target": "throw pillow lying on sofa",
-      "suggested_filename": "V010_pos_chewing_furniture.mp4",
+      "suggested_filename": "v10.mp4",
       "prompt": "A photorealistic CCTV-style video of a German shepherd in a mid-century modern living room with wood paneling during bright daytime. There is a gray fabric sectional sofa in the room. The dog stands with its front paws on the sofa and repeatedly chews on a throw pillow lying on the sofa, pausing briefly and then biting again. The fabric becomes visibly frayed and a small amount of stuffing appears. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "German shepherd",
@@ -191,7 +191,7 @@
       "behavior": "chewing_toy",
       "template": "N08",
       "target": "sofa",
-      "suggested_filename": "V011_neg_chewing_toy.mp4",
+      "suggested_filename": "v11.mp4",
       "prompt": "A photorealistic CCTV-style video of a tricolor beagle in a compact studio apartment at night, recorded in black-and-white infrared night-vision mode. There is a cream fabric sofa with a chaise in the room. The dog lies on the sofa chewing and tugging a rope toy held between its paws. Only the rope toy is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "tricolor beagle",
@@ -208,7 +208,7 @@
       "behavior": "chewing_toy",
       "template": "N09",
       "target": "sofa",
-      "suggested_filename": "V012_neg_chewing_toy.mp4",
+      "suggested_filename": "v12.mp4",
       "prompt": "A photorealistic CCTV-style video of a scruffy medium-sized mixed-breed dog in a small city apartment living room at night, recorded in black-and-white infrared night-vision mode. There is a brown leather three-seat sofa in the room. The dog lies on the sofa gnawing a large chew bone. Only the bone is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "scruffy medium-sized mixed-breed dog",
@@ -224,8 +224,8 @@
       "label": "positive",
       "behavior": "chewing_furniture",
       "template": "P05",
-      "target": "sofarmrest",
-      "suggested_filename": "V013_pos_chewing_furniture.mp4",
+      "target": "sofa armrest",
+      "suggested_filename": "v13.mp4",
       "prompt": "A photorealistic CCTV-style video of a black pug in a modern Scandinavian living room on an overcast afternoon with soft, flat daylight. There is a cognac faux-leather sofa in the room. The dog lies on the sofa and chews on the sofa armrest slowly and steadily, holding it in place with one paw. Visible tooth marks and a small tear appear in the leather. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "black pug",
@@ -242,7 +242,7 @@
       "behavior": "chewing_toy",
       "template": "N08",
       "target": "sofa",
-      "suggested_filename": "V014_neg_chewing_toy.mp4",
+      "suggested_filename": "v14.mp4",
       "prompt": "A photorealistic CCTV-style video of a Australian shepherd with a merle coat in a modern Scandinavian living room during bright daytime. There is a olive green corduroy loveseat in the room. The dog lies on the sofa chewing and tugging a rope toy held between its paws. Only the rope toy is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "Australian shepherd with a merle coat",
@@ -259,7 +259,7 @@
       "behavior": "licking_self",
       "template": "N04",
       "target": "sofa",
-      "suggested_filename": "V015_neg_licking_self.mp4",
+      "suggested_filename": "v15.mp4",
       "prompt": "A photorealistic CCTV-style video of a Australian shepherd with a merle coat in a bright loft with large windows on an overcast afternoon with soft, flat daylight. There is a beige linen two-seat sofa in the room. The dog lies on the sofa and repeatedly licks its own front paw. Its mouth only ever touches its own paw, never the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "Australian shepherd with a merle coat",
@@ -276,7 +276,7 @@
       "behavior": "chewing_furniture",
       "template": "P01",
       "target": "corner of chaise",
-      "suggested_filename": "V016_pos_chewing_furniture.mp4",
+      "suggested_filename": "v16.mp4",
       "prompt": "A photorealistic CCTV-style video of a brindle boxer in a suburban living room with a fireplace during bright daytime. There is a mustard yellow two-seat sofa in the room. The dog walks up to the sofa, grips the corner of the chaise with its teeth and starts chewing and tugging at it, shaking its head from side to side. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "brindle boxer",
@@ -293,7 +293,7 @@
       "behavior": "licking_object",
       "template": "N06",
       "target": "sofa",
-      "suggested_filename": "V017_neg_licking_object.mp4",
+      "suggested_filename": "v17.mp4",
       "prompt": "A photorealistic CCTV-style video of a German shepherd in a minimalist white living room in the late morning with strong sunlight and sharp shadows across the floor. There is a cognac faux-leather sofa in the room. The dog briefly licks the sofa armrest once or twice with its tongue, without biting or pulling, then sits down on the floor and scratches its ear. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "German shepherd",
@@ -310,7 +310,7 @@
       "behavior": "chewing_toy",
       "template": "N07",
       "target": "sofa",
-      "suggested_filename": "V018_neg_chewing_toy.mp4",
+      "suggested_filename": "v18.mp4",
       "prompt": "A photorealistic CCTV-style video of a apricot toy poodle in a modern Scandinavian living room at night, recorded in black-and-white infrared night-vision mode. There is a black fabric futon sofa in the room. The dog lies on the floor right next to the sofa, holding a bright rubber chew toy between its front paws and chewing it enthusiastically. Only the toy is ever in its mouth. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "apricot toy poodle",
@@ -326,8 +326,8 @@
       "label": "positive",
       "behavior": "chewing_furniture",
       "template": "P02",
-      "target": "sofarmrest",
-      "suggested_filename": "V019_pos_chewing_furniture.mp4",
+      "target": "sofa armrest",
+      "suggested_filename": "v19.mp4",
       "prompt": "A photorealistic CCTV-style video of a yellow Labrador puppy in a bright loft with large windows in the late morning with strong sunlight and sharp shadows across the floor. There is a olive green corduroy loveseat in the room. The dog is lying on the floor next to the sofa, then turns and gnaws on the sofa armrest for several seconds, pulling at it with its teeth. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "yellow Labrador puppy",
@@ -344,7 +344,7 @@
       "behavior": "resting",
       "template": "N01",
       "target": "sofa",
-      "suggested_filename": "V020_neg_resting.mp4",
+      "suggested_filename": "v20.mp4",
       "prompt": "A photorealistic CCTV-style video of a red Shiba Inu in a bright loft with large windows in the late morning with strong sunlight and sharp shadows across the floor. There is a navy blue velvet sofa in the room. The dog walks to the sofa, climbs onto it, circles once and lies down with its head on its front paws. It falls asleep and barely moves for the rest of the clip. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "red Shiba Inu",
@@ -361,7 +361,7 @@
       "behavior": "person_present",
       "template": "N15",
       "target": "sofa",
-      "suggested_filename": "V021_neg_person_present.mp4",
+      "suggested_filename": "v21.mp4",
       "prompt": "A photorealistic CCTV-style video of a scruffy medium-sized mixed-breed dog in a bright loft with large windows in the early evening under warm lamp light. There is a brown leather three-seat sofa in the room. A person walks into the room and rearranges the sofa cushions while the dog sits calmly on the floor and watches. The dog never touches the sofa. The person then leaves. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "scruffy medium-sized mixed-breed dog",
@@ -378,7 +378,7 @@
       "behavior": "chewing_furniture",
       "template": "P03",
       "target": "front edge of seat cushion",
-      "suggested_filename": "V022_pos_chewing_furniture.mp4",
+      "suggested_filename": "v22.mp4",
       "prompt": "A photorealistic CCTV-style video of a Pembroke Welsh corgi in a family living room with a few kids' toys on the floor in the early evening under warm lamp light. There is a charcoal tweed sofa with wooden legs in the room. The dog climbs onto the sofa and bites into the front edge of a seat cushion, pulling hard with its teeth for several seconds. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "Pembroke Welsh corgi",
@@ -395,7 +395,7 @@
       "behavior": "sniffing",
       "template": "N05",
       "target": "sofa",
-      "suggested_filename": "V023_neg_sniffing.mp4",
+      "suggested_filename": "v23.mp4",
       "prompt": "A photorealistic CCTV-style video of a gray Weimaraner in a bright loft with large windows during bright daytime. There is a light blue slipcovered sofa in the room. The dog walks up to the sofa and sniffs slowly along the seat cushion and the armrest with its nose close to the fabric, mouth closed, then loses interest and walks away. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "gray Weimaraner",
@@ -412,7 +412,7 @@
       "behavior": "sitting",
       "template": "N03",
       "target": "sofa",
-      "suggested_filename": "V024_neg_sitting.mp4",
+      "suggested_filename": "v24.mp4",
       "prompt": "A photorealistic CCTV-style video of a brindle boxer in a living room with dark green walls and plants at night, recorded in black-and-white infrared night-vision mode. There is a charcoal tweed sofa with wooden legs in the room. The dog jumps onto the sofa, turns around and sits upright on the seat cushion, calmly looking out of the window, then lies down. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "brindle boxer",
@@ -429,8 +429,8 @@
       "behavior": "chewing_furniture",
       "template": "P04",
       "target": "corner of back cushion",
-      "suggested_filename": "V025_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black Labrador retriever in a cozy rustic living room with a brick wall at night, recorded in black-and-white infrared night-vision mode. There is a cream fabric sofa with a chaise in the room. The dog stands with its front paws on the sofa and repeatedly chews on the corner of a back cushion, pausing briefly and then biting again. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "suggested_filename": "v25.mp4",
+      "prompt": "A photorealistic CCTV-style video of a black Labrador retriever in a cozy rustic living room with a brick wall at night, recorded in black-and-white infrared night-vision mode. The room has a cream fabric sofa with a chaise. The dog stands with its front paws on the sofa and repeatedly chews on the corner of a back cushion, pausing briefly and then biting again. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "black Labrador retriever",
         "room": "cozy rustic living room with a brick wall",
@@ -442,1490 +442,11 @@
     {
       "id": "V026",
       "priority": 1,
-      "label": "negative",
-      "behavior": "playing",
-      "template": "N12",
-      "target": "sofa",
-      "suggested_filename": "V026_neg_playing.mp4",
-      "prompt": "A photorealistic CCTV-style video of a white standard poodle in a mid-century modern living room with wood paneling in the early evening under warm lamp light. There is a charcoal tweed sofa with wooden legs in the room. The dog plays with a squeaky toy on the floor in front of the sofa, tossing it into the air and pouncing on it. The dog never bites the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "white standard poodle",
-        "room": "mid-century modern living room with wood paneling",
-        "sofa": "charcoal tweed sofa with wooden legs",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V027",
-      "priority": 1,
-      "label": "negative",
-      "behavior": "rolling",
-      "template": "N14",
-      "target": "sofa",
-      "suggested_filename": "V027_neg_rolling.mp4",
-      "prompt": "A photorealistic CCTV-style video of a fawn French bulldog in a small city apartment living room in the early evening under warm lamp light. There is a gray fabric sectional sofa in the room. The dog rolls onto its back on the sofa, wiggling happily with its paws in the air, then settles down and rests. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "fawn French bulldog",
-        "room": "small city apartment living room",
-        "sofa": "gray fabric sectional sofa",
-        "camera": "Fixed fisheye home security camera with a dark circular vignette",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V028",
-      "priority": 1,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P05",
-      "target": "throw pillow lying on sofa",
-      "suggested_filename": "V028_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a brindle French bulldog in a compact studio apartment on an overcast afternoon with soft, flat daylight. There is a white boucle sofa in the room. The dog lies on the sofa and chews on a throw pillow lying on the sofa slowly and steadily, holding it in place with one paw. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "brindle French bulldog",
-        "room": "compact studio apartment",
-        "sofa": "white boucle sofa",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V029",
-      "priority": 1,
-      "label": "negative",
-      "behavior": "chewing_toy",
-      "template": "N09",
-      "target": "sofa",
-      "suggested_filename": "V029_neg_chewing_toy.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Bernese mountain dog puppy in a suburban living room with a fireplace on an overcast afternoon with soft, flat daylight. There is a white boucle sofa in the room. The dog lies on the sofa gnawing a large chew bone. Only the bone is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Bernese mountain dog puppy",
-        "room": "suburban living room with a fireplace",
-        "sofa": "white boucle sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V030",
-      "priority": 1,
-      "label": "negative",
-      "behavior": "sniffing",
-      "template": "N05",
-      "target": "sofa",
-      "suggested_filename": "V030_neg_sniffing.mp4",
-      "prompt": "A photorealistic CCTV-style video of a German shepherd in a small city apartment living room in the early evening under warm lamp light. There is a navy blue velvet sofa in the room. The dog walks up to the sofa and sniffs slowly along the seat cushion and the armrest with its nose close to the fabric, mouth closed, then loses interest and walks away. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "German shepherd",
-        "room": "small city apartment living room",
-        "sofa": "navy blue velvet sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V031",
-      "priority": 1,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P01",
-      "target": "fabric skirt at bottom of sofa",
-      "suggested_filename": "V031_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Siberian husky in a family living room with a few kids' toys on the floor on an overcast afternoon with soft, flat daylight. There is a beige linen two-seat sofa in the room. The dog walks up to the sofa, grips the fabric skirt at the bottom of the sofa with its teeth and starts chewing and tugging at it, shaking its head from side to side. The fabric becomes visibly frayed and a small amount of stuffing appears. It then stops, steps back and lies down next to the damage. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Siberian husky",
-        "room": "family living room with a few kids' toys on the floor",
-        "sofa": "beige linen two-seat sofa",
-        "camera": "Fixed indoor camera on a side table",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V032",
-      "priority": 1,
-      "label": "negative",
-      "behavior": "rolling",
-      "template": "N14",
-      "target": "sofa",
-      "suggested_filename": "V032_neg_rolling.mp4",
-      "prompt": "A photorealistic CCTV-style video of a tricolor beagle in a cozy rustic living room with a brick wall at night, recorded in black-and-white infrared night-vision mode. There is a black fabric futon sofa in the room. The dog rolls onto its back on the sofa, wiggling happily with its paws in the air, then settles down and rests. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "tricolor beagle",
-        "room": "cozy rustic living room with a brick wall",
-        "sofa": "black fabric futon sofa",
-        "camera": "Fixed indoor camera on a side table",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V033",
-      "priority": 1,
-      "label": "negative",
-      "behavior": "sitting",
-      "template": "N03",
-      "target": "sofa",
-      "suggested_filename": "V033_neg_sitting.mp4",
-      "prompt": "A photorealistic CCTV-style video of a white standard poodle in a modern Scandinavian living room in the early evening under warm lamp light. There is a cream fabric sofa with a chaise in the room. The dog jumps onto the sofa, turns around and sits upright on the seat cushion, calmly looking out of the window, then lies down. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "white standard poodle",
-        "room": "modern Scandinavian living room",
-        "sofa": "cream fabric sofa with a chaise",
-        "camera": "Fixed indoor camera on a side table",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V034",
-      "priority": 1,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P02",
-      "target": "corner of chaise",
-      "suggested_filename": "V034_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a apricot toy poodle in a bright loft with large windows during bright daytime. There is a light blue slipcovered sofa in the room. The dog is lying on the floor next to the sofa, then turns and gnaws on the corner of the chaise for several seconds, pulling at it with its teeth. The fabric becomes visibly frayed and a small amount of stuffing appears. It then stops, steps back and lies down next to the damage. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "apricot toy poodle",
-        "room": "bright loft with large windows",
-        "sofa": "light blue slipcovered sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V035",
-      "priority": 1,
-      "label": "negative",
-      "behavior": "walking",
-      "template": "N10",
-      "target": "sofa",
-      "suggested_filename": "V035_neg_walking.mp4",
-      "prompt": "A photorealistic CCTV-style video of a long-haired dachshund in a compact studio apartment in the late morning with strong sunlight and sharp shadows across the floor. There is a light blue slipcovered sofa in the room. The dog trots across the room, passing in front of the sofa without stopping or touching it, and walks out of the frame. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "long-haired dachshund",
-        "room": "compact studio apartment",
-        "sofa": "light blue slipcovered sofa",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V036",
-      "priority": 1,
-      "label": "negative",
-      "behavior": "playing",
-      "template": "N12",
-      "target": "sofa",
-      "suggested_filename": "V036_neg_playing.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Jack Russell terrier in a suburban living room with a fireplace in the late morning with strong sunlight and sharp shadows across the floor. There is a white boucle sofa in the room. The dog plays with a squeaky toy on the floor in front of the sofa, tossing it into the air and pouncing on it. The dog never bites the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Jack Russell terrier",
-        "room": "suburban living room with a fireplace",
-        "sofa": "white boucle sofa",
-        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V037",
-      "priority": 1,
       "label": "positive",
       "behavior": "chewing_furniture",
       "template": "P03",
-      "target": "sofarmrest",
-      "suggested_filename": "V037_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Bernese mountain dog puppy in a minimalist white living room in the early evening under warm lamp light. There is a light blue slipcovered sofa in the room. The dog climbs onto the sofa and bites into the sofa armrest, pulling hard with its teeth for several seconds. The fabric becomes visibly frayed and a small amount of stuffing appears. It then stops, steps back and lies down next to the damage. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Bernese mountain dog puppy",
-        "room": "minimalist white living room",
-        "sofa": "light blue slipcovered sofa",
-        "camera": "Fixed fisheye home security camera with a dark circular vignette",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V038",
-      "priority": 1,
-      "label": "negative",
-      "behavior": "playing",
-      "template": "N12",
-      "target": "sofa",
-      "suggested_filename": "V038_neg_playing.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Siberian husky in a modern Scandinavian living room during bright daytime. There is a mustard yellow two-seat sofa in the room. The dog plays with a squeaky toy on the floor in front of the sofa, tossing it into the air and pouncing on it. The dog never bites the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Siberian husky",
-        "room": "modern Scandinavian living room",
-        "sofa": "mustard yellow two-seat sofa",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V039",
-      "priority": 1,
-      "label": "negative",
-      "behavior": "resting",
-      "template": "N02",
-      "target": "sofa",
-      "suggested_filename": "V039_neg_resting.mp4",
-      "prompt": "A photorealistic CCTV-style video of a cream-colored Maltese in a cozy rustic living room with a brick wall in the early evening under warm lamp light. There is a beige linen two-seat sofa in the room. The dog stands beside the sofa and rests its chin on the armrest with its mouth closed, tail wagging slowly, then lifts its head and looks around the room. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "cream-colored Maltese",
-        "room": "cozy rustic living room with a brick wall",
-        "sofa": "beige linen two-seat sofa",
-        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V040",
-      "priority": 1,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P04",
-      "target": "front edge of seat cushion",
-      "suggested_filename": "V040_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a cream-colored Maltese in a modern Scandinavian living room in the late morning with strong sunlight and sharp shadows across the floor. There is a beige linen two-seat sofa in the room. The dog stands with its front paws on the sofa and repeatedly chews on the front edge of a seat cushion, pausing briefly and then biting again. The fabric becomes visibly frayed and a small amount of stuffing appears. It then stops, steps back and lies down next to the damage. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "cream-colored Maltese",
-        "room": "modern Scandinavian living room",
-        "sofa": "beige linen two-seat sofa",
-        "camera": "Fixed indoor camera on a side table",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V041",
-      "priority": 1,
-      "label": "negative",
-      "behavior": "person_present",
-      "template": "N16",
-      "target": "sofa",
-      "suggested_filename": "V041_neg_person_present.mp4",
-      "prompt": "A photorealistic CCTV-style video of a German shepherd in a small city apartment living room during bright daytime. There is a white boucle sofa in the room. A person sits on the sofa and gently pets the dog, which rests its head on the person's lap with its mouth closed. The person then gets up and leaves the room. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "German shepherd",
-        "room": "small city apartment living room",
-        "sofa": "white boucle sofa",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V042",
-      "priority": 1,
-      "label": "negative",
-      "behavior": "chewing_toy",
-      "template": "N07",
-      "target": "sofa",
-      "suggested_filename": "V042_neg_chewing_toy.mp4",
-      "prompt": "A photorealistic CCTV-style video of a yellow Labrador puppy in a mid-century modern living room with wood paneling on an overcast afternoon with soft, flat daylight. There is a cream fabric sofa with a chaise in the room. The dog lies on the floor right next to the sofa, holding a bright rubber chew toy between its front paws and chewing it enthusiastically. Only the toy is ever in its mouth. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "yellow Labrador puppy",
-        "room": "mid-century modern living room with wood paneling",
-        "sofa": "cream fabric sofa with a chaise",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V043",
-      "priority": 1,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P05",
-      "target": "corner of back cushion",
-      "suggested_filename": "V043_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a fawn French bulldog in a suburban living room with a fireplace at night, recorded in black-and-white infrared night-vision mode. There is a navy blue velvet sofa in the room. The dog lies on the sofa and chews on the corner of a back cushion slowly and steadily, holding it in place with one paw. The fabric becomes visibly frayed and a small amount of stuffing appears. It then stops, steps back and lies down next to the damage. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "fawn French bulldog",
-        "room": "suburban living room with a fireplace",
-        "sofa": "navy blue velvet sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V044",
-      "priority": 1,
-      "label": "negative",
-      "behavior": "chewing_toy",
-      "template": "N07",
-      "target": "sofa",
-      "suggested_filename": "V044_neg_chewing_toy.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black pug in a modern Scandinavian living room during bright daytime. There is a gray fabric sectional sofa in the room. The dog lies on the floor right next to the sofa, holding a bright rubber chew toy between its front paws and chewing it enthusiastically. Only the toy is ever in its mouth. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black pug",
-        "room": "modern Scandinavian living room",
-        "sofa": "gray fabric sectional sofa",
-        "camera": "Fixed indoor camera on a side table",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V045",
-      "priority": 1,
-      "label": "negative",
-      "behavior": "chewing_toy",
-      "template": "N08",
-      "target": "sofa",
-      "suggested_filename": "V045_neg_chewing_toy.mp4",
-      "prompt": "A photorealistic CCTV-style video of a cream-colored Maltese in a small city apartment living room during bright daytime. There is a beige linen two-seat sofa in the room. The dog lies on the sofa chewing and tugging a rope toy held between its paws. Only the rope toy is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "cream-colored Maltese",
-        "room": "small city apartment living room",
-        "sofa": "beige linen two-seat sofa",
-        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V046",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P01",
-      "target": "throw pillow lying on sofa",
-      "suggested_filename": "V046_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a red Shiba Inu in a cozy rustic living room with a brick wall at night, recorded in black-and-white infrared night-vision mode. There is a mustard yellow two-seat sofa in the room. The dog walks up to the sofa, grips a throw pillow lying on the sofa with its teeth and starts chewing and tugging at it, shaking its head from side to side. The fabric becomes visibly frayed and a small amount of stuffing appears. It then lets go, wags its tail and walks away from the sofa. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "red Shiba Inu",
-        "room": "cozy rustic living room with a brick wall",
-        "sofa": "mustard yellow two-seat sofa",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V047",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "scratching_self",
-      "template": "N13",
-      "target": "sofa",
-      "suggested_filename": "V047_neg_scratching_self.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black pug in a bright loft with large windows on an overcast afternoon with soft, flat daylight. There is a beige linen two-seat sofa in the room. The dog sits on the sofa and scratches behind its ear with its hind leg, then shakes its head and lies down. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black pug",
-        "room": "bright loft with large windows",
-        "sofa": "beige linen two-seat sofa",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V048",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "licking_object",
-      "template": "N06",
-      "target": "sofa",
-      "suggested_filename": "V048_neg_licking_object.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black-and-tan Rottweiler puppy in a small city apartment living room in the early evening under warm lamp light. There is a mustard yellow two-seat sofa in the room. The dog briefly licks the sofa armrest once or twice with its tongue, without biting or pulling, then sits down on the floor and scratches its ear. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black-and-tan Rottweiler puppy",
-        "room": "small city apartment living room",
-        "sofa": "mustard yellow two-seat sofa",
-        "camera": "Fixed indoor camera on a side table",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V049",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P02",
-      "target": "sofarmrest",
-      "suggested_filename": "V049_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a golden retriever in a living room with dark green walls and plants in the early evening under warm lamp light. There is a brown leather three-seat sofa in the room. The dog is lying on the floor next to the sofa, then turns and gnaws on the sofa armrest for several seconds, pulling at it with its teeth. Visible tooth marks and a small tear appear in the leather. It then lets go, wags its tail and walks away from the sofa. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "golden retriever",
-        "room": "living room with dark green walls and plants",
-        "sofa": "brown leather three-seat sofa",
-        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V050",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "sniffing",
-      "template": "N05",
-      "target": "sofa",
-      "suggested_filename": "V050_neg_sniffing.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Siberian husky in a mid-century modern living room with wood paneling at night, recorded in black-and-white infrared night-vision mode. There is a gray fabric sectional sofa in the room. The dog walks up to the sofa and sniffs slowly along the seat cushion and the armrest with its nose close to the fabric, mouth closed, then loses interest and walks away. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Siberian husky",
-        "room": "mid-century modern living room with wood paneling",
-        "sofa": "gray fabric sectional sofa",
-        "camera": "Fixed fisheye home security camera with a dark circular vignette",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V051",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "chewing_toy",
-      "template": "N08",
-      "target": "sofa",
-      "suggested_filename": "V051_neg_chewing_toy.mp4",
-      "prompt": "A photorealistic CCTV-style video of a brindle boxer in a living room with dark green walls and plants in the early evening under warm lamp light. There is a navy blue velvet sofa in the room. The dog lies on the sofa chewing and tugging a rope toy held between its paws. Only the rope toy is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "brindle boxer",
-        "room": "living room with dark green walls and plants",
-        "sofa": "navy blue velvet sofa",
-        "camera": "Fixed indoor camera on a side table",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V052",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P03",
-      "target": "corner of chaise",
-      "suggested_filename": "V052_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Jack Russell terrier in a compact studio apartment in the late morning with strong sunlight and sharp shadows across the floor. There is a olive green corduroy loveseat in the room. The dog climbs onto the sofa and bites into the corner of the chaise, pulling hard with its teeth for several seconds. The fabric becomes visibly frayed and a small amount of stuffing appears. It then lets go, wags its tail and walks away from the sofa. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Jack Russell terrier",
-        "room": "compact studio apartment",
-        "sofa": "olive green corduroy loveseat",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V053",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "licking_object",
-      "template": "N06",
-      "target": "sofa",
-      "suggested_filename": "V053_neg_licking_object.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black-and-white border collie in a compact studio apartment in the early evening under warm lamp light. There is a light blue slipcovered sofa in the room. The dog briefly licks the sofa armrest once or twice with its tongue, without biting or pulling, then sits down on the floor and scratches its ear. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black-and-white border collie",
-        "room": "compact studio apartment",
-        "sofa": "light blue slipcovered sofa",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V054",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "chewing_toy",
-      "template": "N08",
-      "target": "sofa",
-      "suggested_filename": "V054_neg_chewing_toy.mp4",
-      "prompt": "A photorealistic CCTV-style video of a chocolate Labrador retriever in a family living room with a few kids' toys on the floor in the late morning with strong sunlight and sharp shadows across the floor. There is a cognac faux-leather sofa in the room. The dog lies on the sofa chewing and tugging a rope toy held between its paws. Only the rope toy is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "chocolate Labrador retriever",
-        "room": "family living room with a few kids' toys on the floor",
-        "sofa": "cognac faux-leather sofa",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V055",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P04",
-      "target": "sofarmrest",
-      "suggested_filename": "V055_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black-and-tan Rottweiler puppy in a small city apartment living room on an overcast afternoon with soft, flat daylight. There is a white boucle sofa in the room. The dog stands with its front paws on the sofa and repeatedly chews on the sofa armrest, pausing briefly and then biting again. The fabric becomes visibly frayed and a small amount of stuffing appears. It then lets go, wags its tail and walks away from the sofa. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black-and-tan Rottweiler puppy",
-        "room": "small city apartment living room",
-        "sofa": "white boucle sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V056",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "chewing_toy",
-      "template": "N07",
-      "target": "sofa",
-      "suggested_filename": "V056_neg_chewing_toy.mp4",
-      "prompt": "A photorealistic CCTV-style video of a fawn French bulldog in a mid-century modern living room with wood paneling at night, recorded in black-and-white infrared night-vision mode. There is a brown leather three-seat sofa in the room. The dog lies on the floor right next to the sofa, holding a bright rubber chew toy between its front paws and chewing it enthusiastically. Only the toy is ever in its mouth. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "fawn French bulldog",
-        "room": "mid-century modern living room with wood paneling",
-        "sofa": "brown leather three-seat sofa",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V057",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "licking_self",
-      "template": "N04",
-      "target": "sofa",
-      "suggested_filename": "V057_neg_licking_self.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black-and-tan Rottweiler puppy in a minimalist white living room at night, recorded in black-and-white infrared night-vision mode. There is a black fabric futon sofa in the room. The dog lies on the sofa and repeatedly licks its own front paw. Its mouth only ever touches its own paw, never the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black-and-tan Rottweiler puppy",
-        "room": "minimalist white living room",
-        "sofa": "black fabric futon sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V058",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P05",
-      "target": "front edge of seat cushion",
-      "suggested_filename": "V058_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Australian shepherd with a merle coat in a mid-century modern living room with wood paneling during bright daytime. There is a black fabric futon sofa in the room. The dog lies on the sofa and chews on the front edge of a seat cushion slowly and steadily, holding it in place with one paw. The fabric becomes visibly frayed and a small amount of stuffing appears. It then lets go, wags its tail and walks away from the sofa. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Australian shepherd with a merle coat",
-        "room": "mid-century modern living room with wood paneling",
-        "sofa": "black fabric futon sofa",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V059",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "resting",
-      "template": "N01",
-      "target": "sofa",
-      "suggested_filename": "V059_neg_resting.mp4",
-      "prompt": "A photorealistic CCTV-style video of a brindle French bulldog in a modern Scandinavian living room on an overcast afternoon with soft, flat daylight. There is a black fabric futon sofa in the room. The dog walks to the sofa, climbs onto it, circles once and lies down with its head on its front paws. It falls asleep and barely moves for the rest of the clip. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "brindle French bulldog",
-        "room": "modern Scandinavian living room",
-        "sofa": "black fabric futon sofa",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V060",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "walking",
-      "template": "N10",
-      "target": "sofa",
-      "suggested_filename": "V060_neg_walking.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black-and-tan Rottweiler puppy in a minimalist white living room at night, recorded in black-and-white infrared night-vision mode. There is a olive green corduroy loveseat in the room. The dog trots across the room, passing in front of the sofa without stopping or touching it, and walks out of the frame. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black-and-tan Rottweiler puppy",
-        "room": "minimalist white living room",
-        "sofa": "olive green corduroy loveseat",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V061",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P01",
-      "target": "corner of back cushion",
-      "suggested_filename": "V061_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a white standard poodle in a minimalist white living room at night, recorded in black-and-white infrared night-vision mode. There is a charcoal tweed sofa with wooden legs in the room. The dog walks up to the sofa, grips the corner of a back cushion with its teeth and starts chewing and tugging at it, shaking its head from side to side. The fabric becomes visibly frayed and a small amount of stuffing appears. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "white standard poodle",
-        "room": "minimalist white living room",
-        "sofa": "charcoal tweed sofa with wooden legs",
-        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V062",
-      "priority": 2,
-      "label": "uncertain",
-      "behavior": "unobservable",
-      "template": "N17",
-      "target": "sofa",
-      "suggested_filename": "V062_unc_unobservable.mp4",
-      "prompt": "A photorealistic CCTV-style video of a golden retriever in a modern Scandinavian living room in the early evening under warm lamp light. There is a navy blue velvet sofa in the room. The dog stands on the far side of the sofa facing away from the camera, its head hidden behind the backrest so its mouth is never visible, then lies down out of view. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "golden retriever",
-        "room": "modern Scandinavian living room",
-        "sofa": "navy blue velvet sofa",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V063",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "resting",
-      "template": "N02",
-      "target": "sofa",
-      "suggested_filename": "V063_neg_resting.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black Labrador retriever in a suburban living room with a fireplace in the late morning with strong sunlight and sharp shadows across the floor. There is a olive green corduroy loveseat in the room. The dog stands beside the sofa and rests its chin on the armrest with its mouth closed, tail wagging slowly, then lifts its head and looks around the room. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black Labrador retriever",
-        "room": "suburban living room with a fireplace",
-        "sofa": "olive green corduroy loveseat",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V064",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P02",
-      "target": "front edge of seat cushion",
-      "suggested_filename": "V064_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a gray Weimaraner in a modern Scandinavian living room in the late morning with strong sunlight and sharp shadows across the floor. There is a cognac faux-leather sofa in the room. The dog is lying on the floor next to the sofa, then turns and gnaws on the front edge of a seat cushion for several seconds, pulling at it with its teeth. Visible tooth marks and a small tear appear in the leather. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "gray Weimaraner",
-        "room": "modern Scandinavian living room",
-        "sofa": "cognac faux-leather sofa",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V065",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "carrying",
-      "template": "N11",
-      "target": "sofa",
-      "suggested_filename": "V065_neg_carrying.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Australian shepherd with a merle coat in a minimalist white living room at night, recorded in black-and-white infrared night-vision mode. There is a cognac faux-leather sofa in the room. The dog walks past the sofa carrying a tennis ball in its mouth without stopping, then lies down on the rug away from the sofa and drops the ball. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Australian shepherd with a merle coat",
-        "room": "minimalist white living room",
-        "sofa": "cognac faux-leather sofa",
-        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V066",
-      "priority": 2,
-      "label": "uncertain",
-      "behavior": "unobservable",
-      "template": "N17",
-      "target": "sofa",
-      "suggested_filename": "V066_unc_unobservable.mp4",
-      "prompt": "A photorealistic CCTV-style video of a apricot toy poodle in a minimalist white living room on an overcast afternoon with soft, flat daylight. There is a mustard yellow two-seat sofa in the room. The dog stands on the far side of the sofa facing away from the camera, its head hidden behind the backrest so its mouth is never visible, then lies down out of view. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "apricot toy poodle",
-        "room": "minimalist white living room",
-        "sofa": "mustard yellow two-seat sofa",
-        "camera": "Fixed indoor camera on a side table",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V067",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P03",
-      "target": "fabric skirt at bottom of sofa",
-      "suggested_filename": "V067_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a scruffy medium-sized mixed-breed dog in a mid-century modern living room with wood paneling in the early evening under warm lamp light. There is a cream fabric sofa with a chaise in the room. The dog climbs onto the sofa and bites into the fabric skirt at the bottom of the sofa, pulling hard with its teeth for several seconds. The fabric becomes visibly frayed and a small amount of stuffing appears. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "scruffy medium-sized mixed-breed dog",
-        "room": "mid-century modern living room with wood paneling",
-        "sofa": "cream fabric sofa with a chaise",
-        "camera": "Fixed indoor camera on a side table",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V068",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "resting",
-      "template": "N01",
-      "target": "sofa",
-      "suggested_filename": "V068_neg_resting.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Pembroke Welsh corgi in a family living room with a few kids' toys on the floor at night, recorded in black-and-white infrared night-vision mode. There is a cream fabric sofa with a chaise in the room. The dog walks to the sofa, climbs onto it, circles once and lies down with its head on its front paws. It falls asleep and barely moves for the rest of the clip. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Pembroke Welsh corgi",
-        "room": "family living room with a few kids' toys on the floor",
-        "sofa": "cream fabric sofa with a chaise",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V069",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "sitting",
-      "template": "N03",
-      "target": "sofa",
-      "suggested_filename": "V069_neg_sitting.mp4",
-      "prompt": "A photorealistic CCTV-style video of a tricolor beagle in a cozy rustic living room with a brick wall in the late morning with strong sunlight and sharp shadows across the floor. There is a olive green corduroy loveseat in the room. The dog jumps onto the sofa, turns around and sits upright on the seat cushion, calmly looking out of the window, then lies down. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "tricolor beagle",
-        "room": "cozy rustic living room with a brick wall",
-        "sofa": "olive green corduroy loveseat",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V070",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P04",
-      "target": "corner of chaise",
-      "suggested_filename": "V070_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black-and-white border collie in a compact studio apartment on an overcast afternoon with soft, flat daylight. There is a gray fabric sectional sofa in the room. The dog stands with its front paws on the sofa and repeatedly chews on the corner of the chaise, pausing briefly and then biting again. The fabric becomes visibly frayed and a small amount of stuffing appears. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black-and-white border collie",
-        "room": "compact studio apartment",
-        "sofa": "gray fabric sectional sofa",
-        "camera": "Fixed fisheye home security camera with a dark circular vignette",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V071",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "scratching_self",
-      "template": "N13",
-      "target": "sofa",
-      "suggested_filename": "V071_neg_scratching_self.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Bernese mountain dog puppy in a family living room with a few kids' toys on the floor in the late morning with strong sunlight and sharp shadows across the floor. There is a navy blue velvet sofa in the room. The dog sits on the sofa and scratches behind its ear with its hind leg, then shakes its head and lies down. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Bernese mountain dog puppy",
-        "room": "family living room with a few kids' toys on the floor",
-        "sofa": "navy blue velvet sofa",
-        "camera": "Fixed fisheye home security camera with a dark circular vignette",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V072",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "person_present",
-      "template": "N15",
-      "target": "sofa",
-      "suggested_filename": "V072_neg_person_present.mp4",
-      "prompt": "A photorealistic CCTV-style video of a chocolate Labrador retriever in a living room with dark green walls and plants in the late morning with strong sunlight and sharp shadows across the floor. There is a light blue slipcovered sofa in the room. A person walks into the room and rearranges the sofa cushions while the dog sits calmly on the floor and watches. The dog never touches the sofa. The person then leaves. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "chocolate Labrador retriever",
-        "room": "living room with dark green walls and plants",
-        "sofa": "light blue slipcovered sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V073",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P05",
-      "target": "sofarmrest",
-      "suggested_filename": "V073_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a white standard poodle in a small city apartment living room during bright daytime. There is a light blue slipcovered sofa in the room. The dog lies on the sofa and chews on the sofa armrest slowly and steadily, holding it in place with one paw. The fabric becomes visibly frayed and a small amount of stuffing appears. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "white standard poodle",
-        "room": "small city apartment living room",
-        "sofa": "light blue slipcovered sofa",
-        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V074",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "chewing_toy",
-      "template": "N09",
-      "target": "sofa",
-      "suggested_filename": "V074_neg_chewing_toy.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black Labrador retriever in a mid-century modern living room with wood paneling in the early evening under warm lamp light. There is a gray fabric sectional sofa in the room. The dog lies on the sofa gnawing a large chew bone. Only the bone is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black Labrador retriever",
-        "room": "mid-century modern living room with wood paneling",
-        "sofa": "gray fabric sectional sofa",
-        "camera": "Fixed indoor camera on a side table",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V075",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "chewing_toy",
-      "template": "N08",
-      "target": "sofa",
-      "suggested_filename": "V075_neg_chewing_toy.mp4",
-      "prompt": "A photorealistic CCTV-style video of a gray Weimaraner in a cozy rustic living room with a brick wall during bright daytime. There is a black fabric futon sofa in the room. The dog lies on the sofa chewing and tugging a rope toy held between its paws. Only the rope toy is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "gray Weimaraner",
-        "room": "cozy rustic living room with a brick wall",
-        "sofa": "black fabric futon sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V076",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P01",
-      "target": "front edge of seat cushion",
-      "suggested_filename": "V076_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black pug in a cozy rustic living room with a brick wall at night, recorded in black-and-white infrared night-vision mode. There is a cream fabric sofa with a chaise in the room. The dog walks up to the sofa, grips the front edge of a seat cushion with its teeth and starts chewing and tugging at it, shaking its head from side to side. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black pug",
-        "room": "cozy rustic living room with a brick wall",
-        "sofa": "cream fabric sofa with a chaise",
-        "camera": "Fixed indoor camera on a side table",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V077",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "walking",
-      "template": "N10",
-      "target": "sofa",
-      "suggested_filename": "V077_neg_walking.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black Labrador retriever in a bright loft with large windows in the early evening under warm lamp light. There is a black fabric futon sofa in the room. The dog trots across the room, passing in front of the sofa without stopping or touching it, and walks out of the frame. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black Labrador retriever",
-        "room": "bright loft with large windows",
-        "sofa": "black fabric futon sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V078",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "licking_object",
-      "template": "N06",
-      "target": "sofa",
-      "suggested_filename": "V078_neg_licking_object.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Siberian husky in a suburban living room with a fireplace at night, recorded in black-and-white infrared night-vision mode. There is a white boucle sofa in the room. The dog briefly licks the sofa armrest once or twice with its tongue, without biting or pulling, then sits down on the floor and scratches its ear. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Siberian husky",
-        "room": "suburban living room with a fireplace",
-        "sofa": "white boucle sofa",
-        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V079",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P02",
-      "target": "corner of back cushion",
-      "suggested_filename": "V079_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Pembroke Welsh corgi in a living room with dark green walls and plants in the early evening under warm lamp light. There is a olive green corduroy loveseat in the room. The dog is lying on the floor next to the sofa, then turns and gnaws on the corner of a back cushion for several seconds, pulling at it with its teeth. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Pembroke Welsh corgi",
-        "room": "living room with dark green walls and plants",
-        "sofa": "olive green corduroy loveseat",
-        "camera": "Fixed fisheye home security camera with a dark circular vignette",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V080",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "sniffing",
-      "template": "N05",
-      "target": "sofa",
-      "suggested_filename": "V080_neg_sniffing.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Jack Russell terrier in a cozy rustic living room with a brick wall on an overcast afternoon with soft, flat daylight. There is a mustard yellow two-seat sofa in the room. The dog walks up to the sofa and sniffs slowly along the seat cushion and the armrest with its nose close to the fabric, mouth closed, then loses interest and walks away. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Jack Russell terrier",
-        "room": "cozy rustic living room with a brick wall",
-        "sofa": "mustard yellow two-seat sofa",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V081",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "walking",
-      "template": "N10",
-      "target": "sofa",
-      "suggested_filename": "V081_neg_walking.mp4",
-      "prompt": "A photorealistic CCTV-style video of a long-haired dachshund in a cozy rustic living room with a brick wall on an overcast afternoon with soft, flat daylight. There is a mustard yellow two-seat sofa in the room. The dog trots across the room, passing in front of the sofa without stopping or touching it, and walks out of the frame. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "long-haired dachshund",
-        "room": "cozy rustic living room with a brick wall",
-        "sofa": "mustard yellow two-seat sofa",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V082",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P03",
-      "target": "throw pillow lying on sofa",
-      "suggested_filename": "V082_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a red Shiba Inu in a suburban living room with a fireplace during bright daytime. There is a mustard yellow two-seat sofa in the room. The dog climbs onto the sofa and bites into a throw pillow lying on the sofa, pulling hard with its teeth for several seconds. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "red Shiba Inu",
-        "room": "suburban living room with a fireplace",
-        "sofa": "mustard yellow two-seat sofa",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V083",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "chewing_toy",
-      "template": "N07",
-      "target": "sofa",
-      "suggested_filename": "V083_neg_chewing_toy.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Pembroke Welsh corgi in a minimalist white living room in the early evening under warm lamp light. There is a charcoal tweed sofa with wooden legs in the room. The dog lies on the floor right next to the sofa, holding a bright rubber chew toy between its front paws and chewing it enthusiastically. Only the toy is ever in its mouth. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Pembroke Welsh corgi",
-        "room": "minimalist white living room",
-        "sofa": "charcoal tweed sofa with wooden legs",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V084",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "chewing_toy",
-      "template": "N09",
-      "target": "sofa",
-      "suggested_filename": "V084_neg_chewing_toy.mp4",
-      "prompt": "A photorealistic CCTV-style video of a brindle French bulldog in a family living room with a few kids' toys on the floor in the late morning with strong sunlight and sharp shadows across the floor. There is a light blue slipcovered sofa in the room. The dog lies on the sofa gnawing a large chew bone. Only the bone is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "brindle French bulldog",
-        "room": "family living room with a few kids' toys on the floor",
-        "sofa": "light blue slipcovered sofa",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V085",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P04",
-      "target": "fabric skirt at bottom of sofa",
-      "suggested_filename": "V085_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a yellow Labrador puppy in a bright loft with large windows on an overcast afternoon with soft, flat daylight. There is a white boucle sofa in the room. The dog stands with its front paws on the sofa and repeatedly chews on the fabric skirt at the bottom of the sofa, pausing briefly and then biting again. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "yellow Labrador puppy",
-        "room": "bright loft with large windows",
-        "sofa": "white boucle sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V086",
-      "priority": 2,
-      "label": "uncertain",
-      "behavior": "unobservable",
-      "template": "N17",
-      "target": "sofa",
-      "suggested_filename": "V086_unc_unobservable.mp4",
-      "prompt": "A photorealistic CCTV-style video of a cream-colored Maltese in a family living room with a few kids' toys on the floor at night, recorded in black-and-white infrared night-vision mode. There is a cognac faux-leather sofa in the room. The dog stands on the far side of the sofa facing away from the camera, its head hidden behind the backrest so its mouth is never visible, then lies down out of view. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "cream-colored Maltese",
-        "room": "family living room with a few kids' toys on the floor",
-        "sofa": "cognac faux-leather sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V087",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "chewing_toy",
-      "template": "N08",
-      "target": "sofa",
-      "suggested_filename": "V087_neg_chewing_toy.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Jack Russell terrier in a bright loft with large windows on an overcast afternoon with soft, flat daylight. There is a charcoal tweed sofa with wooden legs in the room. The dog lies on the sofa chewing and tugging a rope toy held between its paws. Only the rope toy is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Jack Russell terrier",
-        "room": "bright loft with large windows",
-        "sofa": "charcoal tweed sofa with wooden legs",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V088",
-      "priority": 2,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P05",
-      "target": "front edge of seat cushion",
-      "suggested_filename": "V088_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a brindle boxer in a family living room with a few kids' toys on the floor in the late morning with strong sunlight and sharp shadows across the floor. There is a cognac faux-leather sofa in the room. The dog lies on the sofa and chews on the front edge of a seat cushion slowly and steadily, holding it in place with one paw. Visible tooth marks and a small tear appear in the leather. It keeps chewing until the end of the clip. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "brindle boxer",
-        "room": "family living room with a few kids' toys on the floor",
-        "sofa": "cognac faux-leather sofa",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V089",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "person_present",
-      "template": "N15",
-      "target": "sofa",
-      "suggested_filename": "V089_neg_person_present.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black-and-white border collie in a compact studio apartment on an overcast afternoon with soft, flat daylight. There is a olive green corduroy loveseat in the room. A person walks into the room and rearranges the sofa cushions while the dog sits calmly on the floor and watches. The dog never touches the sofa. The person then leaves. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black-and-white border collie",
-        "room": "compact studio apartment",
-        "sofa": "olive green corduroy loveseat",
-        "camera": "Fixed fisheye home security camera with a dark circular vignette",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V090",
-      "priority": 2,
-      "label": "negative",
-      "behavior": "resting",
-      "template": "N01",
-      "target": "sofa",
-      "suggested_filename": "V090_neg_resting.mp4",
-      "prompt": "A photorealistic CCTV-style video of a scruffy medium-sized mixed-breed dog in a small city apartment living room during bright daytime. There is a cognac faux-leather sofa in the room. The dog walks to the sofa, climbs onto it, circles once and lies down with its head on its front paws. It falls asleep and barely moves for the rest of the clip. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "scruffy medium-sized mixed-breed dog",
-        "room": "small city apartment living room",
-        "sofa": "cognac faux-leather sofa",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V091",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P01",
-      "target": "sofarmrest",
-      "suggested_filename": "V091_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a German shepherd in a modern Scandinavian living room in the early evening under warm lamp light. There is a black fabric futon sofa in the room. The dog walks up to the sofa, grips the sofa armrest with its teeth and starts chewing and tugging at it, shaking its head from side to side. The fabric becomes visibly frayed and a small amount of stuffing appears. It then stops, steps back and lies down next to the damage. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "German shepherd",
-        "room": "modern Scandinavian living room",
-        "sofa": "black fabric futon sofa",
-        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V092",
-      "priority": 3,
-      "label": "negative",
-      "behavior": "chewing_toy",
-      "template": "N07",
-      "target": "sofa",
-      "suggested_filename": "V092_neg_chewing_toy.mp4",
-      "prompt": "A photorealistic CCTV-style video of a golden retriever in a suburban living room with a fireplace in the late morning with strong sunlight and sharp shadows across the floor. There is a olive green corduroy loveseat in the room. The dog lies on the floor right next to the sofa, holding a bright rubber chew toy between its front paws and chewing it enthusiastically. Only the toy is ever in its mouth. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "golden retriever",
-        "room": "suburban living room with a fireplace",
-        "sofa": "olive green corduroy loveseat",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V093",
-      "priority": 3,
-      "label": "negative",
-      "behavior": "carrying",
-      "template": "N11",
-      "target": "sofa",
-      "suggested_filename": "V093_neg_carrying.mp4",
-      "prompt": "A photorealistic CCTV-style video of a gray Weimaraner in a living room with dark green walls and plants during bright daytime. There is a brown leather three-seat sofa in the room. The dog walks past the sofa carrying a tennis ball in its mouth without stopping, then lies down on the rug away from the sofa and drops the ball. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "gray Weimaraner",
-        "room": "living room with dark green walls and plants",
-        "sofa": "brown leather three-seat sofa",
-        "camera": "Fixed indoor camera on a side table",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V094",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P02",
-      "target": "front edge of seat cushion",
-      "suggested_filename": "V094_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a cream-colored Maltese in a compact studio apartment in the late morning with strong sunlight and sharp shadows across the floor. There is a charcoal tweed sofa with wooden legs in the room. The dog is lying on the floor next to the sofa, then turns and gnaws on the front edge of a seat cushion for several seconds, pulling at it with its teeth. The fabric becomes visibly frayed and a small amount of stuffing appears. It then stops, steps back and lies down next to the damage. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "cream-colored Maltese",
-        "room": "compact studio apartment",
-        "sofa": "charcoal tweed sofa with wooden legs",
-        "camera": "Fixed fisheye home security camera with a dark circular vignette",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V095",
-      "priority": 3,
-      "label": "negative",
-      "behavior": "sniffing",
-      "template": "N05",
-      "target": "sofa",
-      "suggested_filename": "V095_neg_sniffing.mp4",
-      "prompt": "A photorealistic CCTV-style video of a fawn French bulldog in a suburban living room with a fireplace in the late morning with strong sunlight and sharp shadows across the floor. There is a white boucle sofa in the room. The dog walks up to the sofa and sniffs slowly along the seat cushion and the armrest with its nose close to the fabric, mouth closed, then loses interest and walks away. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "fawn French bulldog",
-        "room": "suburban living room with a fireplace",
-        "sofa": "white boucle sofa",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V096",
-      "priority": 3,
-      "label": "negative",
-      "behavior": "licking_self",
-      "template": "N04",
-      "target": "sofa",
-      "suggested_filename": "V096_neg_licking_self.mp4",
-      "prompt": "A photorealistic CCTV-style video of a chocolate Labrador retriever in a living room with dark green walls and plants during bright daytime. There is a cognac faux-leather sofa in the room. The dog lies on the sofa and repeatedly licks its own front paw. Its mouth only ever touches its own paw, never the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "chocolate Labrador retriever",
-        "room": "living room with dark green walls and plants",
-        "sofa": "cognac faux-leather sofa",
-        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V097",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P03",
-      "target": "corner of back cushion",
-      "suggested_filename": "V097_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Siberian husky in a minimalist white living room during bright daytime. There is a beige linen two-seat sofa in the room. The dog climbs onto the sofa and bites into the corner of a back cushion, pulling hard with its teeth for several seconds. The fabric becomes visibly frayed and a small amount of stuffing appears. It then stops, steps back and lies down next to the damage. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Siberian husky",
-        "room": "minimalist white living room",
-        "sofa": "beige linen two-seat sofa",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V098",
-      "priority": 3,
-      "label": "negative",
-      "behavior": "chewing_toy",
-      "template": "N07",
-      "target": "sofa",
-      "suggested_filename": "V098_neg_chewing_toy.mp4",
-      "prompt": "A photorealistic CCTV-style video of a red Shiba Inu in a family living room with a few kids' toys on the floor on an overcast afternoon with soft, flat daylight. There is a beige linen two-seat sofa in the room. The dog lies on the floor right next to the sofa, holding a bright rubber chew toy between its front paws and chewing it enthusiastically. Only the toy is ever in its mouth. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "red Shiba Inu",
-        "room": "family living room with a few kids' toys on the floor",
-        "sofa": "beige linen two-seat sofa",
-        "camera": "Fixed fisheye home security camera with a dark circular vignette",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V099",
-      "priority": 3,
-      "label": "negative",
-      "behavior": "sniffing",
-      "template": "N05",
-      "target": "sofa",
-      "suggested_filename": "V099_neg_sniffing.mp4",
-      "prompt": "A photorealistic CCTV-style video of a white standard poodle in a living room with dark green walls and plants in the late morning with strong sunlight and sharp shadows across the floor. There is a navy blue velvet sofa in the room. The dog walks up to the sofa and sniffs slowly along the seat cushion and the armrest with its nose close to the fabric, mouth closed, then loses interest and walks away. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "white standard poodle",
-        "room": "living room with dark green walls and plants",
-        "sofa": "navy blue velvet sofa",
-        "camera": "Fixed fisheye home security camera with a dark circular vignette",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V100",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P04",
-      "target": "throw pillow lying on sofa",
-      "suggested_filename": "V100_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a chocolate Labrador retriever in a small city apartment living room on an overcast afternoon with soft, flat daylight. There is a navy blue velvet sofa in the room. The dog stands with its front paws on the sofa and repeatedly chews on a throw pillow lying on the sofa, pausing briefly and then biting again. The fabric becomes visibly frayed and a small amount of stuffing appears. It then stops, steps back and lies down next to the damage. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "chocolate Labrador retriever",
-        "room": "small city apartment living room",
-        "sofa": "navy blue velvet sofa",
-        "camera": "Fixed indoor camera on a side table",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V101",
-      "priority": 3,
-      "label": "negative",
-      "behavior": "sitting",
-      "template": "N03",
-      "target": "sofa",
-      "suggested_filename": "V101_neg_sitting.mp4",
-      "prompt": "A photorealistic CCTV-style video of a golden retriever in a family living room with a few kids' toys on the floor on an overcast afternoon with soft, flat daylight. There is a brown leather three-seat sofa in the room. The dog jumps onto the sofa, turns around and sits upright on the seat cushion, calmly looking out of the window, then lies down. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "golden retriever",
-        "room": "family living room with a few kids' toys on the floor",
-        "sofa": "brown leather three-seat sofa",
-        "camera": "Fixed fisheye home security camera with a dark circular vignette",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V102",
-      "priority": 3,
-      "label": "negative",
-      "behavior": "resting",
-      "template": "N01",
-      "target": "sofa",
-      "suggested_filename": "V102_neg_resting.mp4",
-      "prompt": "A photorealistic CCTV-style video of a yellow Labrador puppy in a minimalist white living room in the early evening under warm lamp light. There is a gray fabric sectional sofa in the room. The dog walks to the sofa, climbs onto it, circles once and lies down with its head on its front paws. It falls asleep and barely moves for the rest of the clip. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "yellow Labrador puppy",
-        "room": "minimalist white living room",
-        "sofa": "gray fabric sectional sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V103",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P05",
-      "target": "fabric skirt at bottom of sofa",
-      "suggested_filename": "V103_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black Labrador retriever in a bright loft with large windows at night, recorded in black-and-white infrared night-vision mode. There is a gray fabric sectional sofa in the room. The dog lies on the sofa and chews on the fabric skirt at the bottom of the sofa slowly and steadily, holding it in place with one paw. The fabric becomes visibly frayed and a small amount of stuffing appears. It then stops, steps back and lies down next to the damage. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black Labrador retriever",
-        "room": "bright loft with large windows",
-        "sofa": "gray fabric sectional sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V104",
-      "priority": 3,
-      "label": "negative",
-      "behavior": "carrying",
-      "template": "N11",
-      "target": "sofa",
-      "suggested_filename": "V104_neg_carrying.mp4",
-      "prompt": "A photorealistic CCTV-style video of a yellow Labrador puppy in a living room with dark green walls and plants during bright daytime. There is a gray fabric sectional sofa in the room. The dog walks past the sofa carrying a tennis ball in its mouth without stopping, then lies down on the rug away from the sofa and drops the ball. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "yellow Labrador puppy",
-        "room": "living room with dark green walls and plants",
-        "sofa": "gray fabric sectional sofa",
-        "camera": "Fixed fisheye home security camera with a dark circular vignette",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V105",
-      "priority": 3,
-      "label": "negative",
-      "behavior": "scratching_self",
-      "template": "N13",
-      "target": "sofa",
-      "suggested_filename": "V105_neg_scratching_self.mp4",
-      "prompt": "A photorealistic CCTV-style video of a red Shiba Inu in a cozy rustic living room with a brick wall at night, recorded in black-and-white infrared night-vision mode. There is a cream fabric sofa with a chaise in the room. The dog sits on the sofa and scratches behind its ear with its hind leg, then shakes its head and lies down. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "red Shiba Inu",
-        "room": "cozy rustic living room with a brick wall",
-        "sofa": "cream fabric sofa with a chaise",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V106",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P01",
-      "target": "throw pillow lying on sofa",
-      "suggested_filename": "V106_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a tricolor beagle in a mid-century modern living room with wood paneling at night, recorded in black-and-white infrared night-vision mode. There is a brown leather three-seat sofa in the room. The dog walks up to the sofa, grips a throw pillow lying on the sofa with its teeth and starts chewing and tugging at it, shaking its head from side to side. Visible tooth marks and a small tear appear in the leather. It then lets go, wags its tail and walks away from the sofa. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "tricolor beagle",
-        "room": "mid-century modern living room with wood paneling",
-        "sofa": "brown leather three-seat sofa",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V107",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P02",
-      "target": "sofarmrest",
-      "suggested_filename": "V107_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Australian shepherd with a merle coat in a cozy rustic living room with a brick wall during bright daytime. There is a black fabric futon sofa in the room. The dog is lying on the floor next to the sofa, then turns and gnaws on the sofa armrest for several seconds, pulling at it with its teeth. The fabric becomes visibly frayed and a small amount of stuffing appears. It then lets go, wags its tail and walks away from the sofa. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Australian shepherd with a merle coat",
-        "room": "cozy rustic living room with a brick wall",
-        "sofa": "black fabric futon sofa",
-        "camera": "Fixed wide-angle camera above the TV",
-        "lighting": "during bright daytime"
-      }
-    },
-    {
-      "id": "V108",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P03",
-      "target": "front edge of seat cushion",
-      "suggested_filename": "V108_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a scruffy medium-sized mixed-breed dog in a suburban living room with a fireplace in the late morning with strong sunlight and sharp shadows across the floor. There is a cognac faux-leather sofa in the room. The dog climbs onto the sofa and bites into the front edge of a seat cushion, pulling hard with its teeth for several seconds. Visible tooth marks and a small tear appear in the leather. It then lets go, wags its tail and walks away from the sofa. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "scruffy medium-sized mixed-breed dog",
-        "room": "suburban living room with a fireplace",
-        "sofa": "cognac faux-leather sofa",
-        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V109",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P04",
-      "target": "corner of back cushion",
-      "suggested_filename": "V109_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a long-haired dachshund in a family living room with a few kids' toys on the floor in the early evening under warm lamp light. There is a light blue slipcovered sofa in the room. The dog stands with its front paws on the sofa and repeatedly chews on the corner of a back cushion, pausing briefly and then biting again. The fabric becomes visibly frayed and a small amount of stuffing appears. It then lets go, wags its tail and walks away from the sofa. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "long-haired dachshund",
-        "room": "family living room with a few kids' toys on the floor",
-        "sofa": "light blue slipcovered sofa",
-        "camera": "Fixed fisheye home security camera with a dark circular vignette",
-        "lighting": "in the early evening under warm lamp light"
-      }
-    },
-    {
-      "id": "V110",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P05",
-      "target": "throw pillow lying on sofa",
-      "suggested_filename": "V110_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a golden retriever in a living room with dark green walls and plants on an overcast afternoon with soft, flat daylight. There is a gray fabric sectional sofa in the room. The dog lies on the sofa and chews on a throw pillow lying on the sofa slowly and steadily, holding it in place with one paw. The fabric becomes visibly frayed and a small amount of stuffing appears. It then lets go, wags its tail and walks away from the sofa. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "golden retriever",
-        "room": "living room with dark green walls and plants",
-        "sofa": "gray fabric sectional sofa",
-        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V111",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P01",
-      "target": "fabric skirt at bottom of sofa",
-      "suggested_filename": "V111_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a fawn French bulldog in a living room with dark green walls and plants on an overcast afternoon with soft, flat daylight. There is a mustard yellow two-seat sofa in the room. The dog walks up to the sofa, grips the fabric skirt at the bottom of the sofa with its teeth and starts chewing and tugging at it, shaking its head from side to side. The fabric becomes visibly frayed and a small amount of stuffing appears. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "fawn French bulldog",
-        "room": "living room with dark green walls and plants",
-        "sofa": "mustard yellow two-seat sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
-    },
-    {
-      "id": "V112",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P02",
-      "target": "corner of chaise",
-      "suggested_filename": "V112_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a Jack Russell terrier in a bright loft with large windows at night, recorded in black-and-white infrared night-vision mode. There is a olive green corduroy loveseat in the room. The dog is lying on the floor next to the sofa, then turns and gnaws on the corner of the chaise for several seconds, pulling at it with its teeth. The fabric becomes visibly frayed and a small amount of stuffing appears. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "Jack Russell terrier",
-        "room": "bright loft with large windows",
-        "sofa": "olive green corduroy loveseat",
-        "camera": "Fixed indoor camera on a side table",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
-    },
-    {
-      "id": "V113",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P03",
-      "target": "sofarmrest",
-      "suggested_filename": "V113_pos_chewing_furniture.mp4",
+      "target": "sofa armrest",
+      "suggested_filename": "v26.mp4",
       "prompt": "A photorealistic CCTV-style video of a black-and-white border collie in a suburban living room with a fireplace in the early evening under warm lamp light. There is a white boucle sofa in the room. The dog climbs onto the sofa and bites into the sofa armrest, pulling hard with its teeth for several seconds. The fabric becomes visibly frayed and a small amount of stuffing appears. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "black-and-white border collie",
@@ -1933,16 +454,269 @@
         "sofa": "white boucle sofa",
         "camera": "Fixed wide-angle camera above the TV",
         "lighting": "in the early evening under warm lamp light"
-      }
+      },
+      "source_id": "V113"
     },
     {
-      "id": "V114",
-      "priority": 3,
+      "id": "V027",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "chewing_toy",
+      "template": "N08",
+      "target": "sofa",
+      "suggested_filename": "v27.mp4",
+      "prompt": "A photorealistic CCTV-style video of a chocolate Labrador retriever in a family living room with a few kids' toys on the floor in the late morning with strong sunlight and sharp shadows across the floor. There is a cognac faux-leather sofa in the room. The dog lies on the sofa chewing and tugging a rope toy held between its paws. Only the rope toy is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "chocolate Labrador retriever",
+        "room": "family living room with a few kids' toys on the floor",
+        "sofa": "cognac faux-leather sofa",
+        "camera": "Fixed wide-angle camera above the TV",
+        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
+      },
+      "source_id": "V054"
+    },
+    {
+      "id": "V028",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "chewing_toy",
+      "template": "N08",
+      "target": "sofa",
+      "suggested_filename": "v28.mp4",
+      "prompt": "A photorealistic CCTV-style video of a gray Weimaraner in a cozy rustic living room with a brick wall during bright daytime. There is a black fabric futon sofa in the room. The dog lies on the sofa chewing and tugging a rope toy held between its paws. Only the rope toy is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "gray Weimaraner",
+        "room": "cozy rustic living room with a brick wall",
+        "sofa": "black fabric futon sofa",
+        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
+        "lighting": "during bright daytime"
+      },
+      "source_id": "V075"
+    },
+    {
+      "id": "V029",
+      "priority": 1,
+      "label": "positive",
+      "behavior": "chewing_furniture",
+      "template": "P05",
+      "target": "sofa armrest",
+      "suggested_filename": "v29.mp4",
+      "prompt": "A photorealistic CCTV-style video of a white standard poodle in a small city apartment living room during bright daytime. There is a light blue slipcovered sofa in the room. The dog lies on the sofa and chews on the sofa armrest slowly and steadily, holding it in place with one paw. The fabric becomes visibly frayed and a small amount of stuffing appears. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "white standard poodle",
+        "room": "small city apartment living room",
+        "sofa": "light blue slipcovered sofa",
+        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
+        "lighting": "during bright daytime"
+      },
+      "source_id": "V073"
+    },
+    {
+      "id": "V030",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "chewing_toy",
+      "template": "N09",
+      "target": "sofa",
+      "suggested_filename": "v30.mp4",
+      "prompt": "A photorealistic CCTV-style video of a brindle French bulldog in a family living room with a few kids' toys on the floor in the late morning with strong sunlight and sharp shadows across the floor. There is a light blue slipcovered sofa in the room. The dog lies on the sofa gnawing a large chew bone. Only the bone is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "brindle French bulldog",
+        "room": "family living room with a few kids' toys on the floor",
+        "sofa": "light blue slipcovered sofa",
+        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
+        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
+      },
+      "source_id": "V084"
+    },
+    {
+      "id": "V031",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "chewing_toy",
+      "template": "N09",
+      "target": "sofa",
+      "suggested_filename": "v31.mp4",
+      "prompt": "A photorealistic CCTV-style video of a black Labrador retriever in a mid-century modern living room with wood paneling in the early evening under warm lamp light. There is a gray fabric sectional sofa in the room. The dog lies on the sofa gnawing a large chew bone. Only the bone is in its mouth; its teeth never touch the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "black Labrador retriever",
+        "room": "mid-century modern living room with wood paneling",
+        "sofa": "gray fabric sectional sofa",
+        "camera": "Fixed indoor camera on a side table",
+        "lighting": "in the early evening under warm lamp light"
+      },
+      "source_id": "V074"
+    },
+    {
+      "id": "V032",
+      "priority": 1,
+      "label": "positive",
+      "behavior": "chewing_furniture",
+      "template": "P04",
+      "target": "sofa armrest",
+      "suggested_filename": "v32.mp4",
+      "prompt": "A photorealistic CCTV-style video of a black-and-tan Rottweiler puppy in a small city apartment living room on an overcast afternoon with soft, flat daylight. There is a white boucle sofa in the room. The dog stands with its front paws on the sofa and repeatedly chews on the sofa armrest, pausing briefly and then biting again. The fabric becomes visibly frayed and a small amount of stuffing appears. It then lets go, wags its tail and walks away from the sofa. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "black-and-tan Rottweiler puppy",
+        "room": "small city apartment living room",
+        "sofa": "white boucle sofa",
+        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
+        "lighting": "on an overcast afternoon with soft, flat daylight"
+      },
+      "source_id": "V055"
+    },
+    {
+      "id": "V033",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "chewing_toy",
+      "template": "N07",
+      "target": "sofa",
+      "suggested_filename": "v33.mp4",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a suburban living room with a fireplace in the late morning with strong sunlight and sharp shadows across the floor. There is a olive green corduroy loveseat in the room. The dog lies on the floor right next to the sofa, holding a bright rubber chew toy between its front paws and chewing it enthusiastically. Only the toy is ever in its mouth. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "golden retriever",
+        "room": "suburban living room with a fireplace",
+        "sofa": "olive green corduroy loveseat",
+        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
+        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
+      },
+      "source_id": "V092"
+    },
+    {
+      "id": "V034",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "chewing_toy",
+      "template": "N07",
+      "target": "sofa",
+      "suggested_filename": "v34.mp4",
+      "prompt": "A photorealistic CCTV-style video of a yellow Labrador puppy in a mid-century modern living room with wood paneling on an overcast afternoon with soft, flat daylight. There is a cream fabric sofa with a chaise in the room. The dog lies on the floor right next to the sofa, holding a bright rubber chew toy between its front paws and chewing it enthusiastically. Only the toy is ever in its mouth. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "yellow Labrador puppy",
+        "room": "mid-century modern living room with wood paneling",
+        "sofa": "cream fabric sofa with a chaise",
+        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
+        "lighting": "on an overcast afternoon with soft, flat daylight"
+      },
+      "source_id": "V042"
+    },
+    {
+      "id": "V035",
+      "priority": 1,
       "label": "positive",
       "behavior": "chewing_furniture",
       "template": "P04",
       "target": "front edge of seat cushion",
-      "suggested_filename": "V114_pos_chewing_furniture.mp4",
+      "suggested_filename": "v35.mp4",
+      "prompt": "A photorealistic CCTV-style video of a cream-colored Maltese in a modern Scandinavian living room in the late morning with strong sunlight and sharp shadows across the floor. There is a beige linen two-seat sofa in the room. The dog stands with its front paws on the sofa and repeatedly chews on the front edge of a seat cushion, pausing briefly and then biting again. The fabric becomes visibly frayed and a small amount of stuffing appears. It then stops, steps back and lies down next to the damage. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "cream-colored Maltese",
+        "room": "modern Scandinavian living room",
+        "sofa": "beige linen two-seat sofa",
+        "camera": "Fixed indoor camera on a side table",
+        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
+      },
+      "source_id": "V040"
+    },
+    {
+      "id": "V036",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "sniffing",
+      "template": "N05",
+      "target": "sofa",
+      "suggested_filename": "v36.mp4",
+      "prompt": "A photorealistic CCTV-style video of a Jack Russell terrier in a cozy rustic living room with a brick wall on an overcast afternoon with soft, flat daylight. There is a mustard yellow two-seat sofa in the room. The dog walks up to the sofa and sniffs slowly along the seat cushion and the armrest with its nose close to the fabric, mouth closed, then loses interest and walks away. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "Jack Russell terrier",
+        "room": "cozy rustic living room with a brick wall",
+        "sofa": "mustard yellow two-seat sofa",
+        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
+        "lighting": "on an overcast afternoon with soft, flat daylight"
+      },
+      "source_id": "V080"
+    },
+    {
+      "id": "V037",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "sniffing",
+      "template": "N05",
+      "target": "sofa",
+      "suggested_filename": "v37.mp4",
+      "prompt": "A photorealistic CCTV-style video of a white standard poodle in a living room with dark green walls and plants in the late morning with strong sunlight and sharp shadows across the floor. There is a navy blue velvet sofa in the room. The dog walks up to the sofa and sniffs slowly along the seat cushion and the armrest with its nose close to the fabric, mouth closed, then loses interest and walks away. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "white standard poodle",
+        "room": "living room with dark green walls and plants",
+        "sofa": "navy blue velvet sofa",
+        "camera": "Fixed fisheye home security camera with a dark circular vignette",
+        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
+      },
+      "source_id": "V099"
+    },
+    {
+      "id": "V038",
+      "priority": 1,
+      "label": "positive",
+      "behavior": "chewing_furniture",
+      "template": "P01",
+      "target": "front edge of seat cushion",
+      "suggested_filename": "v38.mp4",
+      "prompt": "A photorealistic CCTV-style video of a black pug in a cozy rustic living room with a brick wall at night, recorded in black-and-white infrared night-vision mode. There is a cream fabric sofa with a chaise in the room. The dog walks up to the sofa, grips the front edge of a seat cushion with its teeth and starts chewing and tugging at it, shaking its head from side to side. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "black pug",
+        "room": "cozy rustic living room with a brick wall",
+        "sofa": "cream fabric sofa with a chaise",
+        "camera": "Fixed indoor camera on a side table",
+        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
+      },
+      "source_id": "V076"
+    },
+    {
+      "id": "V039",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "sniffing",
+      "template": "N05",
+      "target": "sofa",
+      "suggested_filename": "v39.mp4",
+      "prompt": "A photorealistic CCTV-style video of a fawn French bulldog in a suburban living room with a fireplace in the late morning with strong sunlight and sharp shadows across the floor. There is a white boucle sofa in the room. The dog walks up to the sofa and sniffs slowly along the seat cushion and the armrest with its nose close to the fabric, mouth closed, then loses interest and walks away. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "fawn French bulldog",
+        "room": "suburban living room with a fireplace",
+        "sofa": "white boucle sofa",
+        "camera": "Fixed wide-angle camera above the TV",
+        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
+      },
+      "source_id": "V095"
+    },
+    {
+      "id": "V040",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "sniffing",
+      "template": "N05",
+      "target": "sofa",
+      "suggested_filename": "v40.mp4",
+      "prompt": "A photorealistic CCTV-style video of a Siberian husky in a mid-century modern living room with wood paneling at night, recorded in black-and-white infrared night-vision mode. There is a gray fabric sectional sofa in the room. The dog walks up to the sofa and sniffs slowly along the seat cushion and the armrest with its nose close to the fabric, mouth closed, then loses interest and walks away. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "Siberian husky",
+        "room": "mid-century modern living room with wood paneling",
+        "sofa": "gray fabric sectional sofa",
+        "camera": "Fixed fisheye home security camera with a dark circular vignette",
+        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
+      },
+      "source_id": "V050"
+    },
+    {
+      "id": "V041",
+      "priority": 1,
+      "label": "positive",
+      "behavior": "chewing_furniture",
+      "template": "P04",
+      "target": "front edge of seat cushion",
+      "suggested_filename": "v41.mp4",
       "prompt": "A photorealistic CCTV-style video of a Bernese mountain dog puppy in a family living room with a few kids' toys on the floor during bright daytime. There is a charcoal tweed sofa with wooden legs in the room. The dog stands with its front paws on the sofa and repeatedly chews on the front edge of a seat cushion, pausing briefly and then biting again. The fabric becomes visibly frayed and a small amount of stuffing appears. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "Bernese mountain dog puppy",
@@ -1950,109 +724,351 @@
         "sofa": "charcoal tweed sofa with wooden legs",
         "camera": "Fixed indoor camera on a side table",
         "lighting": "during bright daytime"
-      }
+      },
+      "source_id": "V114"
     },
     {
-      "id": "V115",
-      "priority": 3,
+      "id": "V042",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "licking_object",
+      "template": "N06",
+      "target": "sofa",
+      "suggested_filename": "v42.mp4",
+      "prompt": "A photorealistic CCTV-style video of a black-and-tan Rottweiler puppy in a small city apartment living room in the early evening under warm lamp light. There is a mustard yellow two-seat sofa in the room. The dog briefly licks the sofa armrest once or twice with its tongue, without biting or pulling, then sits down on the floor and scratches its ear. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "black-and-tan Rottweiler puppy",
+        "room": "small city apartment living room",
+        "sofa": "mustard yellow two-seat sofa",
+        "camera": "Fixed indoor camera on a side table",
+        "lighting": "in the early evening under warm lamp light"
+      },
+      "source_id": "V048"
+    },
+    {
+      "id": "V043",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "licking_object",
+      "template": "N06",
+      "target": "sofa",
+      "suggested_filename": "v43.mp4",
+      "prompt": "A photorealistic CCTV-style video of a black-and-white border collie in a compact studio apartment in the early evening under warm lamp light. There is a light blue slipcovered sofa in the room. The dog briefly licks the sofa armrest once or twice with its tongue, without biting or pulling, then sits down on the floor and scratches its ear. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "black-and-white border collie",
+        "room": "compact studio apartment",
+        "sofa": "light blue slipcovered sofa",
+        "camera": "Fixed wide-angle camera above the TV",
+        "lighting": "in the early evening under warm lamp light"
+      },
+      "source_id": "V053"
+    },
+    {
+      "id": "V044",
+      "priority": 1,
+      "label": "positive",
+      "behavior": "chewing_furniture",
+      "template": "P03",
+      "target": "corner of back cushion",
+      "suggested_filename": "v44.mp4",
+      "prompt": "A photorealistic CCTV-style video of a Siberian husky in a minimalist white living room during bright daytime. There is a beige linen two-seat sofa in the room. The dog climbs onto the sofa and bites into the corner of a back cushion, pulling hard with its teeth for several seconds. The fabric becomes visibly frayed and a small amount of stuffing appears. It then stops, steps back and lies down next to the damage. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "Siberian husky",
+        "room": "minimalist white living room",
+        "sofa": "beige linen two-seat sofa",
+        "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
+        "lighting": "during bright daytime"
+      },
+      "source_id": "V097"
+    },
+    {
+      "id": "V045",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "licking_object",
+      "template": "N06",
+      "target": "sofa",
+      "suggested_filename": "v45.mp4",
+      "prompt": "A photorealistic CCTV-style video of a Siberian husky in a suburban living room with a fireplace at night, recorded in black-and-white infrared night-vision mode. There is a white boucle sofa in the room. The dog briefly licks the sofa armrest once or twice with its tongue, without biting or pulling, then sits down on the floor and scratches its ear. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "Siberian husky",
+        "room": "suburban living room with a fireplace",
+        "sofa": "white boucle sofa",
+        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
+        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
+      },
+      "source_id": "V078"
+    },
+    {
+      "id": "V046",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "resting",
+      "template": "N02",
+      "target": "sofa",
+      "suggested_filename": "v46.mp4",
+      "prompt": "A photorealistic CCTV-style video of a cream-colored Maltese in a cozy rustic living room with a brick wall in the early evening under warm lamp light. There is a beige linen two-seat sofa in the room. The dog stands beside the sofa and rests its chin on the armrest with its mouth closed, tail wagging slowly, then lifts its head and looks around the room. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "cream-colored Maltese",
+        "room": "cozy rustic living room with a brick wall",
+        "sofa": "beige linen two-seat sofa",
+        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
+        "lighting": "in the early evening under warm lamp light"
+      },
+      "source_id": "V039"
+    },
+    {
+      "id": "V047",
+      "priority": 1,
       "label": "positive",
       "behavior": "chewing_furniture",
       "template": "P05",
       "target": "corner of back cushion",
-      "suggested_filename": "V115_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a apricot toy poodle in a small city apartment living room in the late morning with strong sunlight and sharp shadows across the floor. There is a cream fabric sofa with a chaise in the room. The dog lies on the sofa and chews on the corner of a back cushion slowly and steadily, holding it in place with one paw. The fabric becomes visibly frayed and a small amount of stuffing appears. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "suggested_filename": "v47.mp4",
+      "prompt": "A photorealistic CCTV-style video of a fawn French bulldog in a suburban living room with a fireplace at night, recorded in black-and-white infrared night-vision mode. There is a navy blue velvet sofa in the room. The dog lies on the sofa and chews on the corner of a back cushion slowly and steadily, holding it in place with one paw. The fabric becomes visibly frayed and a small amount of stuffing appears. It then stops, steps back and lies down next to the damage. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
-        "dog": "apricot toy poodle",
-        "room": "small city apartment living room",
-        "sofa": "cream fabric sofa with a chaise",
-        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
-    },
-    {
-      "id": "V116",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P01",
-      "target": "throw pillow lying on sofa",
-      "suggested_filename": "V116_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black-and-tan Rottweiler puppy in a mid-century modern living room with wood paneling in the late morning with strong sunlight and sharp shadows across the floor. There is a navy blue velvet sofa in the room. The dog walks up to the sofa, grips a throw pillow lying on the sofa with its teeth and starts chewing and tugging at it, shaking its head from side to side. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
-      "scene": {
-        "dog": "black-and-tan Rottweiler puppy",
-        "room": "mid-century modern living room with wood paneling",
+        "dog": "fawn French bulldog",
+        "room": "suburban living room with a fireplace",
         "sofa": "navy blue velvet sofa",
-        "camera": "Fixed fisheye home security camera with a dark circular vignette",
-        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
-      }
+        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
+        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
+      },
+      "source_id": "V043"
     },
     {
-      "id": "V117",
-      "priority": 3,
-      "label": "positive",
-      "behavior": "chewing_furniture",
-      "template": "P02",
-      "target": "corner of back cushion",
-      "suggested_filename": "V117_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a brindle French bulldog in a compact studio apartment during bright daytime. There is a brown leather three-seat sofa in the room. The dog is lying on the floor next to the sofa, then turns and gnaws on the corner of a back cushion for several seconds, pulling at it with its teeth. Visible tooth marks and a small tear appear in the leather. It keeps chewing until the end of the clip. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "id": "V048",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "resting",
+      "template": "N01",
+      "target": "sofa",
+      "suggested_filename": "v48.mp4",
+      "prompt": "A photorealistic CCTV-style video of a brindle French bulldog in a modern Scandinavian living room on an overcast afternoon with soft, flat daylight. There is a black fabric futon sofa in the room. The dog walks to the sofa, climbs onto it, circles once and lies down with its head on its front paws. It falls asleep and barely moves for the rest of the clip. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
         "dog": "brindle French bulldog",
-        "room": "compact studio apartment",
-        "sofa": "brown leather three-seat sofa",
-        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
-        "lighting": "during bright daytime"
-      }
+        "room": "modern Scandinavian living room",
+        "sofa": "black fabric futon sofa",
+        "camera": "Fixed wide-angle camera above the TV",
+        "lighting": "on an overcast afternoon with soft, flat daylight"
+      },
+      "source_id": "V059"
     },
     {
-      "id": "V118",
-      "priority": 3,
+      "id": "V049",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "licking_self",
+      "template": "N04",
+      "target": "sofa",
+      "suggested_filename": "v49.mp4",
+      "prompt": "A photorealistic CCTV-style video of a black-and-tan Rottweiler puppy in a minimalist white living room at night, recorded in black-and-white infrared night-vision mode. There is a black fabric futon sofa in the room. The dog lies on the sofa and repeatedly licks its own front paw. Its mouth only ever touches its own paw, never the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "black-and-tan Rottweiler puppy",
+        "room": "minimalist white living room",
+        "sofa": "black fabric futon sofa",
+        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
+        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
+      },
+      "source_id": "V057"
+    },
+    {
+      "id": "V050",
+      "priority": 1,
       "label": "positive",
       "behavior": "chewing_furniture",
       "template": "P03",
       "target": "corner of chaise",
-      "suggested_filename": "V118_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a gray Weimaraner in a cozy rustic living room with a brick wall at night, recorded in black-and-white infrared night-vision mode. There is a beige linen two-seat sofa in the room. The dog climbs onto the sofa and bites into the corner of the chaise, pulling hard with its teeth for several seconds. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "suggested_filename": "v50.mp4",
+      "prompt": "A photorealistic CCTV-style video of a Jack Russell terrier in a compact studio apartment in the late morning with strong sunlight and sharp shadows across the floor. There is a olive green corduroy loveseat in the room. The dog climbs onto the sofa and bites into the corner of the chaise, pulling hard with its teeth for several seconds. The fabric becomes visibly frayed and a small amount of stuffing appears. It then lets go, wags its tail and walks away from the sofa. Fixed indoor pet camera placed on a bookshelf at about seat height, looking across the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
-        "dog": "gray Weimaraner",
-        "room": "cozy rustic living room with a brick wall",
-        "sofa": "beige linen two-seat sofa",
+        "dog": "Jack Russell terrier",
+        "room": "compact studio apartment",
+        "sofa": "olive green corduroy loveseat",
         "camera": "Fixed indoor pet camera placed on a bookshelf at about seat height",
-        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
-      }
+        "lighting": "in the late morning with strong sunlight and sharp shadows across the floor"
+      },
+      "source_id": "V052"
     },
     {
-      "id": "V119",
-      "priority": 3,
+      "id": "V051",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "sitting",
+      "template": "N03",
+      "target": "sofa",
+      "suggested_filename": "v51.mp4",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a family living room with a few kids' toys on the floor on an overcast afternoon with soft, flat daylight. There is a brown leather three-seat sofa in the room. The dog jumps onto the sofa, turns around and sits upright on the seat cushion, calmly looking out of the window, then lies down. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "golden retriever",
+        "room": "family living room with a few kids' toys on the floor",
+        "sofa": "brown leather three-seat sofa",
+        "camera": "Fixed fisheye home security camera with a dark circular vignette",
+        "lighting": "on an overcast afternoon with soft, flat daylight"
+      },
+      "source_id": "V101"
+    },
+    {
+      "id": "V052",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "carrying",
+      "template": "N11",
+      "target": "sofa",
+      "suggested_filename": "v52.mp4",
+      "prompt": "A photorealistic CCTV-style video of a Australian shepherd with a merle coat in a minimalist white living room at night, recorded in black-and-white infrared night-vision mode. There is a cognac faux-leather sofa in the room. The dog walks past the sofa carrying a tennis ball in its mouth without stopping, then lies down on the rug away from the sofa and drops the ball. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "Australian shepherd with a merle coat",
+        "room": "minimalist white living room",
+        "sofa": "cognac faux-leather sofa",
+        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
+        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
+      },
+      "source_id": "V065"
+    },
+    {
+      "id": "V053",
+      "priority": 1,
       "label": "positive",
       "behavior": "chewing_furniture",
       "template": "P04",
-      "target": "sofarmrest",
-      "suggested_filename": "V119_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black pug in a minimalist white living room on an overcast afternoon with soft, flat daylight. There is a mustard yellow two-seat sofa in the room. The dog stands with its front paws on the sofa and repeatedly chews on the sofa armrest, pausing briefly and then biting again. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "target": "corner of chaise",
+      "suggested_filename": "v53.mp4",
+      "prompt": "A photorealistic CCTV-style video of a black-and-white border collie in a compact studio apartment on an overcast afternoon with soft, flat daylight. There is a gray fabric sectional sofa in the room. The dog stands with its front paws on the sofa and repeatedly chews on the corner of the chaise, pausing briefly and then biting again. The fabric becomes visibly frayed and a small amount of stuffing appears. It then pauses, hears a sound, and looks directly toward the camera with an innocent expression. Fixed fisheye home security camera with a dark circular vignette, mounted on the wall opposite the sofa, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
-        "dog": "black pug",
-        "room": "minimalist white living room",
-        "sofa": "mustard yellow two-seat sofa",
+        "dog": "black-and-white border collie",
+        "room": "compact studio apartment",
+        "sofa": "gray fabric sectional sofa",
         "camera": "Fixed fisheye home security camera with a dark circular vignette",
         "lighting": "on an overcast afternoon with soft, flat daylight"
-      }
+      },
+      "source_id": "V070"
     },
     {
-      "id": "V120",
-      "priority": 3,
+      "id": "V054",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "carrying",
+      "template": "N11",
+      "target": "sofa",
+      "suggested_filename": "v54.mp4",
+      "prompt": "A photorealistic CCTV-style video of a gray Weimaraner in a living room with dark green walls and plants during bright daytime. There is a brown leather three-seat sofa in the room. The dog walks past the sofa carrying a tennis ball in its mouth without stopping, then lies down on the rug away from the sofa and drops the ball. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "gray Weimaraner",
+        "room": "living room with dark green walls and plants",
+        "sofa": "brown leather three-seat sofa",
+        "camera": "Fixed indoor camera on a side table",
+        "lighting": "during bright daytime"
+      },
+      "source_id": "V093"
+    },
+    {
+      "id": "V055",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "walking",
+      "template": "N10",
+      "target": "sofa",
+      "suggested_filename": "v55.mp4",
+      "prompt": "A photorealistic CCTV-style video of a long-haired dachshund in a cozy rustic living room with a brick wall on an overcast afternoon with soft, flat daylight. There is a mustard yellow two-seat sofa in the room. The dog trots across the room, passing in front of the sofa without stopping or touching it, and walks out of the frame. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "long-haired dachshund",
+        "room": "cozy rustic living room with a brick wall",
+        "sofa": "mustard yellow two-seat sofa",
+        "camera": "Fixed wide-angle camera above the TV",
+        "lighting": "on an overcast afternoon with soft, flat daylight"
+      },
+      "source_id": "V081"
+    },
+    {
+      "id": "V056",
+      "priority": 1,
       "label": "positive",
       "behavior": "chewing_furniture",
       "template": "P05",
-      "target": "front edge of seat cushion",
-      "suggested_filename": "V120_pos_chewing_furniture.mp4",
-      "prompt": "A photorealistic CCTV-style video of a black-and-white border collie in a modern Scandinavian living room in the early evening under warm lamp light. There is a light blue slipcovered sofa in the room. The dog lies on the sofa and chews on the front edge of a seat cushion slowly and steadily, holding it in place with one paw. The fabric becomes visibly frayed and a small amount of stuffing appears. It keeps chewing until the end of the clip. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "target": "throw pillow lying on sofa",
+      "suggested_filename": "v56.mp4",
+      "prompt": "A photorealistic CCTV-style video of a golden retriever in a living room with dark green walls and plants on an overcast afternoon with soft, flat daylight. There is a gray fabric sectional sofa in the room. The dog lies on the sofa and chews on a throw pillow lying on the sofa slowly and steadily, holding it in place with one paw. The fabric becomes visibly frayed and a small amount of stuffing appears. It then lets go, wags its tail and walks away from the sofa. Fixed wide-angle surveillance camera view from a high corner of the room, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
       "scene": {
-        "dog": "black-and-white border collie",
-        "room": "modern Scandinavian living room",
-        "sofa": "light blue slipcovered sofa",
-        "camera": "Fixed indoor camera on a side table",
+        "dog": "golden retriever",
+        "room": "living room with dark green walls and plants",
+        "sofa": "gray fabric sectional sofa",
+        "camera": "Fixed wide-angle surveillance camera view from a high corner of the room",
+        "lighting": "on an overcast afternoon with soft, flat daylight"
+      },
+      "source_id": "V110"
+    },
+    {
+      "id": "V057",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "walking",
+      "template": "N10",
+      "target": "sofa",
+      "suggested_filename": "v57.mp4",
+      "prompt": "A photorealistic CCTV-style video of a black Labrador retriever in a bright loft with large windows in the early evening under warm lamp light. There is a black fabric futon sofa in the room. The dog trots across the room, passing in front of the sofa without stopping or touching it, and walks out of the frame. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "black Labrador retriever",
+        "room": "bright loft with large windows",
+        "sofa": "black fabric futon sofa",
+        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
         "lighting": "in the early evening under warm lamp light"
-      }
+      },
+      "source_id": "V077"
+    },
+    {
+      "id": "V058",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "playing",
+      "template": "N12",
+      "target": "sofa",
+      "suggested_filename": "v58.mp4",
+      "prompt": "A photorealistic CCTV-style video of a white standard poodle in a mid-century modern living room with wood paneling in the early evening under warm lamp light. There is a charcoal tweed sofa with wooden legs in the room. The dog plays with a squeaky toy on the floor in front of the sofa, tossing it into the air and pouncing on it. The dog never bites the sofa. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed ceiling-mounted camera looking down at the room at a steep angle, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "white standard poodle",
+        "room": "mid-century modern living room with wood paneling",
+        "sofa": "charcoal tweed sofa with wooden legs",
+        "camera": "Fixed ceiling-mounted camera looking down at the room at a steep angle",
+        "lighting": "in the early evening under warm lamp light"
+      },
+      "source_id": "V026"
+    },
+    {
+      "id": "V059",
+      "priority": 1,
+      "label": "negative",
+      "behavior": "scratching_self",
+      "template": "N13",
+      "target": "sofa",
+      "suggested_filename": "v59.mp4",
+      "prompt": "A photorealistic CCTV-style video of a red Shiba Inu in a cozy rustic living room with a brick wall at night, recorded in black-and-white infrared night-vision mode. There is a cream fabric sofa with a chaise in the room. The dog sits on the sofa and scratches behind its ear with its hind leg, then shakes its head and lies down. The sofa stays completely intact: no biting of the sofa, no torn fabric, no stuffing. Fixed wide-angle camera above the TV, facing the sofa straight on, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic infrared night-vision footage, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "red Shiba Inu",
+        "room": "cozy rustic living room with a brick wall",
+        "sofa": "cream fabric sofa with a chaise",
+        "camera": "Fixed wide-angle camera above the TV",
+        "lighting": "at night, recorded in black-and-white infrared night-vision mode"
+      },
+      "source_id": "V105"
+    },
+    {
+      "id": "V060",
+      "priority": 1,
+      "label": "uncertain",
+      "behavior": "unobservable",
+      "template": "N17",
+      "target": "sofa",
+      "suggested_filename": "v60.mp4",
+      "prompt": "A photorealistic CCTV-style video of a apricot toy poodle in a minimalist white living room on an overcast afternoon with soft, flat daylight. There is a mustard yellow two-seat sofa in the room. The dog stands on the far side of the sofa facing away from the camera, its head hidden behind the backrest so its mouth is never visible, then lies down out of view. Fixed indoor camera on a side table, slightly tilted, with the sofa seen from the side, single continuous shot, no cuts, no camera movement, realistic dog behaviour, realistic indoor lighting, no humans, no text overlays, no subtitles, no cartoon style, no dramatic cinematic effects.",
+      "scene": {
+        "dog": "apricot toy poodle",
+        "room": "minimalist white living room",
+        "sofa": "mustard yellow two-seat sofa",
+        "camera": "Fixed indoor camera on a side table",
+        "lighting": "on an overcast afternoon with soft, flat daylight"
+      },
+      "source_id": "V066"
     }
-  ]
+  ],
+  "curated": "2026-10-20: kept V001–V025, selected 35 from the remaining 95 (11 positive, 23 negative, 1 uncertain), deleted the rest."
 }
