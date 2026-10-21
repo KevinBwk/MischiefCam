@@ -19,7 +19,7 @@ from pathlib import Path
 
 from . import labels as L
 from .branding import load_branding
-from .config import resolve
+from .config import bind_free_port, resolve
 
 STATIC = Path(__file__).resolve().parent / "static" / "label_tool.html"
 VIDEO_EXT = {".mp4", ".mov", ".m4v", ".webm"}
@@ -190,8 +190,8 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     state = LabelState(resolve(args.folder), resolve(args.labels), resolve(args.prompts),
                        resolve(args.suggest) if args.suggest else None)
-    server = make_server(state, args.port)
-    url = f"http://127.0.0.1:{args.port}/"
+    server, port = bind_free_port(lambda p: make_server(state, p), args.port)
+    url = f"http://127.0.0.1:{port}/"
     mode = f"AI suggestions from {args.suggest}" if args.suggest else "blind (no AI suggestions)"
     print(f"Labeling tool: {url}  ({len(state.clips)} clips, {mode}, saving to {state.labels_path}; Ctrl+C to stop)")
     if not args.no_browser:

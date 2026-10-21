@@ -31,3 +31,16 @@ def resolve(path: str | Path) -> Path:
     """Resolve config-relative paths against the project root."""
     p = Path(path)
     return p if p.is_absolute() else PROJECT_ROOT / p
+
+
+def bind_free_port(make, start: int, tries: int = 10):
+    """Bind on `start`, or the next free port if another tool is already using it."""
+    import errno
+    for port in range(start, start + tries):
+        try:
+            return make(port), port
+        except OSError as exc:
+            if exc.errno != errno.EADDRINUSE:
+                raise
+            print(f"[info] port {port} is in use (another tool is open?), trying {port + 1}")
+    raise SystemExit(f"No free port in {start}-{start + tries - 1}; close another tool or pass --port")

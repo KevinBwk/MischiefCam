@@ -21,7 +21,7 @@ import cv2
 import numpy as np
 
 from .branding import load_branding
-from .config import resolve
+from .config import bind_free_port, resolve
 from .roi import load_rois
 
 STATIC = Path(__file__).resolve().parent / "static" / "roi_editor.html"
@@ -215,8 +215,8 @@ def main(argv: list[str] | None = None) -> int:
             raise SystemExit(f"Cannot read image: {args.image}")
         state = EditorState(frame, resolve(args.out), str(args.image))
 
-    server = make_server(state, args.port)
-    url = f"http://127.0.0.1:{args.port}/"
+    server, port = bind_free_port(lambda p: make_server(state, p), args.port)
+    url = f"http://127.0.0.1:{port}/"
     print(f"Zone editor: {url}  (saving to {state.out_path}; Ctrl+C to stop)")
     if not args.no_browser:
         webbrowser.open(url)
