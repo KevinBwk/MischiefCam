@@ -194,3 +194,20 @@ def test_ai_assisted_flag_is_saved(tmp_path):
     state.save_clip(0, {"segments": [{"start_s": 0, "end_s": -1, "label": "positive"}], "ai_assisted": True})
     saved = json.loads((tmp_path / "labels.json").read_text())["clips"]["v1.mp4"]
     assert saved["ai_assisted"] is True and state.listing()[0]["ai_assisted"] is True
+
+
+# ---------------------------------------------------------------- dog selection
+def test_pick_dog_prefers_dog_at_couch_over_bigger_dog():
+    from core.probe import pick_dog
+    from core.types import Detection
+    big_far = Detection((800, 400, 1200, 700), 0.9, "dog")       # big dog lying in a bed, away from the sofa
+    small_at_sofa = Detection((100, 300, 250, 420), 0.8, "dog")  # smaller dog chewing the sofa
+    couch = Detection((0, 200, 400, 450), 0.9, "couch")
+    assert pick_dog([big_far, small_at_sofa, couch]) == small_at_sofa.bbox
+
+
+def test_pick_dog_falls_back_to_largest_without_couch():
+    from core.probe import pick_dog
+    from core.types import Detection
+    a, b = Detection((0, 0, 10, 10), 0.9, "dog"), Detection((0, 0, 50, 50), 0.9, "dog")
+    assert pick_dog([a, b]) == b.bbox and pick_dog([]) is None

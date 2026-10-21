@@ -33,7 +33,7 @@ def main() -> int:
 
     from core.detector import UltralyticsDetector
 
-    detector = UltralyticsDetector(str(resolve("models/yolov8m.pt")), "mps", ["dog"])
+    detector = UltralyticsDetector(str(resolve("models/yolov8m.pt")), "mps", ["dog", "couch"])
     embedder = CLIPEmbedder(DEFAULT_EMBED_MODEL)
     sampler = make_sampler(detector)
     clips, origin = [], {}

@@ -33,7 +33,7 @@ def main(argv: list[str] | None = None) -> int:
 
     labels = L.load(resolve(args.labels))
     print(f"labels: {len(labels['clips'])} clips in {resolve(args.labels)}")
-    detector = UltralyticsDetector(str(resolve("models/yolov8m.pt")), "mps", ["dog"])
+    detector = UltralyticsDetector(str(resolve("models/yolov8m.pt")), "mps", ["dog", "couch"])
     embedder = CLIPEmbedder(args.embed_model)
     clips = build_dataset(resolve(args.folder), labels, embedder, make_sampler(detector), args.fps,
                           resolve("outputs/cache/embeddings"))

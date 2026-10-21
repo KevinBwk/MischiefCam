@@ -137,8 +137,46 @@ def cache_key(path: Path, model_id: str, fps: float, crop: str, expand: float) -
 FrameSampler = Callable[[Path, float], list[tuple[float, object]]]  # -> [(t, PIL crop or None)]
 
 
+SAMPLER_VERSION = "couchpref-v2"  # part of the embedding cache key; bump when frame/dog selection changes
+
+
+def _area(b) -> float:
+    return max(0.0, b[2] - b[0]) * max(0.0, b[3] - b[1])
+
+
+def _inter(a, b) -> float:
+    return _area((max(a[0], b[0]), max(a[1], b[1]), min(a[2], b[2]), min(a[3], b[3])))
+
+
+def pick_dog(dets, expand: float = 0.15):
+    """Choose which dog to crop when several are visible.
+
+    Prefer the dog whose (expanded) box overlaps a detected couch the most, because the
+    question is whether a dog is chewing the sofa; fall back to the largest dog when no
+    couch is detected or no dog touches one. Returns the bbox or None.
+    """
+    dogs = [d.bbox for d in dets if d.class_name == "dog"]
+    couches = [d.bbox for d in dets if d.class_name == "couch"]
+    if not dogs:
+        return None
+
+    def grow(b):
+        dx, dy = (b[2] - b[0]) * expand, (b[3] - b[1]) * expand
+        return (b[0] - dx, b[1] - dy, b[2] + dx, b[3] + dy)
+
+    if couches:
+        scored = [(max(_inter(grow(d), c) for c in couches) / max(_area(grow(d)), 1e-6), d) for d in dogs]
+        best_overlap, best = max(scored, key=lambda s: s[0])
+        if best_overlap > 0:
+            return best
+    return max(dogs, key=_area)
+
+
 def make_sampler(detector, size: int = 336, expand: float = 0.15) -> FrameSampler:
-    """Sample frames at `fps`, find the largest dog box and return the animal crop (or None)."""
+    """Sample frames at `fps` and return the crop of the dog most likely to be at the sofa (or None).
+
+    The detector should include the "couch" class (see pick_dog); with dogs only it picks the largest dog.
+    """
     import cv2
 
     from .crop import interaction_crop
@@ -156,9 +194,8 @@ def make_sampler(detector, size: int = 336, expand: float = 0.15) -> FrameSample
             ok, frame = cap.read()
             if not ok:
                 break
-            dets = detector.detect_once(frame)
-            if dets:
-                box = max(dets, key=lambda d: (d.bbox[2] - d.bbox[0]) * (d.bbox[3] - d.bbox[1])).bbox
+            box = pick_dog(detector.detect_once(frame), expand)
+            if box is not None:
                 out.append((t, interaction_crop(frame, box, whole, size, expand, "animal")))
             else:
                 out.append((t, None))
@@ -171,7 +208,7 @@ def make_sampler(detector, size: int = 336, expand: float = 0.15) -> FrameSample
 
 def build_dataset(
     folder: Path, labels: dict, embedder: Embedder, sampler: FrameSampler, fps: float,
-    cache_dir: Path | None, crop: str = "animal", expand: float = 0.15, log=print,
+    cache_dir: Path | None, crop: str = "animal-" + SAMPLER_VERSION, expand: float = 0.15, log=print,
 ) -> list[ClipFrames]:
     from . import labels as L
 
