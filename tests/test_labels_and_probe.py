@@ -211,3 +211,19 @@ def test_pick_dog_falls_back_to_largest_without_couch():
     from core.types import Detection
     a, b = Detection((0, 0, 10, 10), 0.9, "dog"), Detection((0, 0, 50, 50), 0.9, "dog")
     assert pick_dog([a, b]) == b.bbox and pick_dog([]) is None
+
+
+def test_probe_backend_k_of_n(tmp_path):
+    import numpy as np
+    from core.probe import ProbeBackend
+    clf = tmp_path / "clf.json"
+    clf.write_text(json.dumps({"threshold": 0.5, "episode_rule": {"k": 2, "m": 4}, "bias": 0.0,
+                               "weights": [1.0], "embedding_model": "fake"}))
+    class Emb:
+        model_id = "fake"
+        def __init__(self, vals): self.vals = vals
+        def embed(self, images): return np.array([[v] for v in self.vals[:len(images)]], dtype=np.float32)
+    one_hit = ProbeBackend(clf, embedder=Emb([5, -5, -5, -5])).infer(VLMRequest(images=(1, 2, 3, 4), prompt=""))
+    two_hits = ProbeBackend(clf, embedder=Emb([5, -5, 5, -5])).infer(VLMRequest(images=(1, 2, 3, 4), prompt=""))
+    single = ProbeBackend(clf, embedder=Emb([5])).infer(VLMRequest(images=(1,), prompt=""))
+    assert one_hit.decision == "normal" and two_hits.decision == "suspect" and single.decision == "suspect"

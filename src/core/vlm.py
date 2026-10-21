@@ -29,8 +29,22 @@ PROMPT_TEMPLATE = (
 )
 
 
-def build_prompt(target: str) -> str:
-    return PROMPT_TEMPLATE.format(target=target)
+MULTI_FRAME_TEMPLATE = (
+    "You are checking {n} frames from a fixed home camera, in time order, about {gap:.1f} s apart. "
+    "Focus on the dog and the {target}.\n"
+    "Reply with JSON only, no other text: "
+    '{{"decision": "suspect" | "normal" | "insufficient", "reason": "<at most 12 words>"}}\n'
+    "- suspect: in these frames the dog's mouth is on the {target} and it is biting, chewing or tugging it.\n"
+    "- normal: the dog is not chewing the {target} (resting, walking, sniffing, licking itself, "
+    "or chewing its own toy or something lying on the floor).\n"
+    "- insufficient: the dog's mouth or the {target} is not clearly visible in any frame."
+)
+
+
+def build_prompt(target: str, n_frames: int = 1, gap_s: float = 0.5) -> str:
+    if n_frames <= 1:
+        return PROMPT_TEMPLATE.format(target=target)
+    return MULTI_FRAME_TEMPLATE.format(target=target, n=n_frames, gap=gap_s)
 
 
 def parse_decision(text: str) -> tuple[Decision, str]:
@@ -114,8 +128,35 @@ class MLXVLMBackend:
         pass
 
 
+class EitherBackend:
+    """Alert if either judge says suspect: the trained probe (fast, runs first) or the VLM.
+
+    Used because on the 75-clip evaluation the two caught different clips; the VLM is skipped
+    when the probe already says suspect.
+    """
+
+    def __init__(self, probe: VLMBackend, vlm: VLMBackend):
+        self.probe = probe
+        self.vlm = vlm
+
+    def infer(self, request: VLMRequest) -> VLMResult:
+        t0 = time.perf_counter()
+        p = self.probe.infer(request)
+        if p.decision == "suspect":
+            return VLMResult("suspect", f"probe: {p.raw_text}", (time.perf_counter() - t0) * 1000, p.reason)
+        v = self.vlm.infer(request)
+        return VLMResult(v.decision, f"probe: {p.raw_text} | vlm: {v.raw_text}", (time.perf_counter() - t0) * 1000,
+                         v.reason if v.decision != "normal" else f"{p.reason}; vlm normal")
+
+    def close(self) -> None:
+        self.probe.close()
+        self.vlm.close()
+
+
 def make_backend(cfg: dict) -> VLMBackend:
     kind = cfg.get("backend", "mlx")
+    if kind == "either":
+        return EitherBackend(make_backend({**cfg, "backend": "probe"}), make_backend({**cfg, "backend": "mlx"}))
     if kind == "fake":
         return FakeVLMBackend()
     if kind == "mlx":
@@ -125,4 +166,4 @@ def make_backend(cfg: dict) -> VLMBackend:
         from .probe import ProbeBackend
 
         return ProbeBackend(resolve(cfg.get("classifier", "models/classifier.json")))
-    raise ValueError(f"Unknown VLM backend {kind!r} (hailo backend is planned for Stage II)")
+    raise ValueError(f"Unknown judge backend {kind!r} (hailo backend is planned for Stage II)")

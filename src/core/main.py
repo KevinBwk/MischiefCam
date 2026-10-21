@@ -33,7 +33,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--video", required=True, help="Path to a local video file")
     ap.add_argument("--config", help="Optional TOML file overriding config/default.toml")
     ap.add_argument("--rois", help="ROI JSON (default: [roi].file in config)")
-    ap.add_argument("--vlm", choices=["mlx", "fake", "probe"], help="Override judge backend (probe = trained classifier)")
+    ap.add_argument("--vlm", choices=["mlx", "fake", "probe", "either"],
+                    help="Override judge backend (probe = trained classifier, either = probe OR VLM)")
+    ap.add_argument("--frames", type=int, help="Frames per judgement (multi-frame when > 1)")
     ap.add_argument("--target-class", action="append", help="Override detector classes (repeatable), e.g. person for dry runs")
     ap.add_argument("--annotate", action="store_true", help="Write an annotated video next to the run outputs")
     ap.add_argument("--run-name", help="Output folder name under [output].dir (default: run_<timestamp>)")
@@ -45,6 +47,8 @@ def main(argv: list[str] | None = None) -> int:
         cfg["vlm"]["backend"] = args.vlm
     if args.target_class:
         cfg["detector"]["target_classes"] = args.target_class
+    if args.frames:
+        cfg["vlm"]["frames"] = args.frames
 
     run_dir = resolve(cfg["output"]["dir"]) / (args.run_name or datetime.now().strftime("run_%Y%m%d_%H%M%S"))
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -71,7 +75,8 @@ def main(argv: list[str] | None = None) -> int:
         StateConfig(**cfg["state"]),
         PipelineConfig(bbox_expand=cfg["roi"]["bbox_expand"], min_overlap=cfg["roi"]["min_overlap"],
                        vlm_input_size=vcfg["input_size"], crop_mode=vcfg.get("crop", "animal"),
-                       max_new_tokens=vcfg["max_new_tokens"], save_crops=cfg["output"]["save_crops"],
+                       max_new_tokens=vcfg["max_new_tokens"], frames=vcfg.get("frames", 1),
+                       frame_gap_s=vcfg.get("frame_gap_s", 0.5), save_crops=cfg["output"]["save_crops"],
                        output_dir=run_dir),
         annotate_path=run_dir / "annotated.mp4" if args.annotate else None,
     )

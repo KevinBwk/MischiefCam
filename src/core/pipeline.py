@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+from collections import deque
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -27,6 +28,8 @@ class PipelineConfig:
     vlm_input_size: int = 336
     crop_mode: str = "animal"
     max_new_tokens: int = 48
+    frames: int = 1            # frames per judgement (multi-frame when > 1)
+    frame_gap_s: float = 0.5   # minimum media-time gap between the frames sent together
     save_crops: bool = True
     output_dir: Path = Path("outputs")
 
@@ -69,6 +72,7 @@ class Pipeline:
         self.annotate_path = annotate_path
         self._last_det: dict[int, Detection] = {}
         self._episode_meta: dict[str, tuple[int, str]] = {}  # episode_id -> (track_id, roi_id)
+        self._history: dict[int, deque] = {}  # track_id -> recent (pts, crop) while the dog is in a zone
 
     # ---------------------------------------------------------------------
     def run(self, drain_timeout_s: float = 120.0) -> RunStats:
@@ -101,6 +105,9 @@ class Pipeline:
                         if box_overlap_fraction(box, roi, width, height) >= self.cfg.min_overlap:
                             present.add((tid, roi.id))
 
+                if self.cfg.frames > 1:
+                    self._remember_crops(frame.image, frame.pts_s, {tid for tid, _ in present})
+
                 transition = self.tracker.update(frame.pts_s, present)
                 for req in transition.reviews:
                     self._submit_review(frame.image, req.episode_id, req.track_id, req.roi_id, frame.pts_s)
@@ -121,17 +128,46 @@ class Pipeline:
         return self.stats
 
     # ---------------------------------------------------------------------
+    def _remember_crops(self, image: np.ndarray, pts: float, track_ids: set[int]) -> None:
+        """Keep a short history of crops for dogs that are in a zone (needed for multi-frame judgements)."""
+        any_roi = next(iter(self.rois.values()), None)
+        for tid in track_ids:
+            det = self._last_det.get(tid)
+            if det is None or any_roi is None:
+                continue
+            crop = interaction_crop(image, det.bbox, any_roi, self.cfg.vlm_input_size, self.cfg.bbox_expand, "animal")
+            hist = self._history.setdefault(tid, deque(maxlen=max(8, self.cfg.frames * 6)))
+            hist.append((pts, crop))
+        for tid in list(self._history):
+            if tid not in track_ids and self._history[tid] and pts - self._history[tid][-1][0] > 3.0:
+                del self._history[tid]
+
+    def _select_frames(self, track_id: int, latest) -> list:
+        """Newest crop plus older ones spaced at least frame_gap_s apart, returned oldest first."""
+        chosen = [latest]
+        last_pts = latest[0]
+        for pts, crop in reversed(self._history.get(track_id, ())):
+            if len(chosen) >= self.cfg.frames:
+                break
+            if last_pts - pts >= self.cfg.frame_gap_s - 1e-6:
+                chosen.append((pts, crop))
+                last_pts = pts
+        return [c for _, c in reversed(chosen)]
+
     def _submit_review(self, image: np.ndarray, episode_id: str, track_id: int, roi_id: str, pts: float) -> None:
         det = self._last_det.get(track_id)
         roi = self.rois[roi_id]
         if det is None:
             return
         crop = interaction_crop(image, det.bbox, roi, self.cfg.vlm_input_size, self.cfg.bbox_expand, self.cfg.crop_mode)
+        images = self._select_frames(track_id, (pts, crop)) if self.cfg.frames > 1 else [crop]
         if self.cfg.save_crops:
             crop_dir = self.cfg.output_dir / "crops"
             crop_dir.mkdir(parents=True, exist_ok=True)
-            crop.save(crop_dir / f"{episode_id}_{int(pts * 1000)}.jpg")
-        request = VLMRequest(images=(crop,), prompt=build_prompt(roi.name), max_new_tokens=self.cfg.max_new_tokens)
+            for i, im in enumerate(images):
+                im.save(crop_dir / f"{episode_id}_{int(pts * 1000)}_{i}.jpg")
+        request = VLMRequest(images=tuple(images), prompt=build_prompt(roi.name, len(images), self.cfg.frame_gap_s),
+                             max_new_tokens=self.cfg.max_new_tokens)
         self._episode_meta[episode_id] = (track_id, roi_id)
         self.worker.submit(episode_id, pts, request)
         self.stats.reviews_requested += 1

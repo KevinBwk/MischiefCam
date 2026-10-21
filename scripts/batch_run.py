@@ -31,6 +31,8 @@ def main() -> int:
     ap.add_argument("--labels", help="JSON mapping file name -> positive/negative/uncertain")
     ap.add_argument("--rois", required=True)
     ap.add_argument("--name", default=datetime.now().strftime("batch_%Y%m%d_%H%M%S"))
+    ap.add_argument("--vlm", help="judge backend passed to mcam (mlx | probe | either)")
+    ap.add_argument("--frames", type=int, help="frames per judgement passed to mcam")
     args = ap.parse_args()
 
     lab_data = L.load(args.labels) if args.labels else L.empty()
@@ -39,7 +41,8 @@ def main() -> int:
     for clip in clips:
         run_name = f"{args.name}/{clip.stem}"
         with contextlib.redirect_stdout(io.StringIO()):
-            run_clip(["--video", str(clip), "--rois", args.rois, "--run-name", run_name, "--annotate"])
+            extra = (["--vlm", args.vlm] if args.vlm else []) + (["--frames", str(args.frames)] if args.frames else [])
+            run_clip(["--video", str(clip), "--rois", args.rois, "--run-name", run_name, "--annotate"] + extra)
         run_dir = resolve("outputs") / run_name
         events = [json.loads(l) for l in (run_dir / "events.jsonl").read_text(encoding="utf-8").splitlines()]
         verdicts = [f"{e['pts_s']:.1f}s:{e['decision'] or e['kind']}" for e in events

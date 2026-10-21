@@ -339,14 +339,19 @@ class ProbeBackend:
     def __init__(self, classifier_path: Path | str, embedder: Embedder | None = None):
         data = json.loads(Path(classifier_path).read_text(encoding="utf-8"))
         self.threshold = float(data["threshold"])
+        self.k = int(data.get("episode_rule", {}).get("k", 2))
         self.probe = LogisticProbe(np.array(data["weights"], dtype=np.float32), float(data["bias"]))
         self.embedder = embedder or CLIPEmbedder(data["embedding_model"])
 
     def infer(self, request: VLMRequest) -> VLMResult:
+        """One frame: p >= threshold. Several frames: at least k of them (k from training, capped at n)."""
         t0 = time.perf_counter()
-        p = float(self.probe.proba(self.embedder.embed(list(request.images)))[0])
-        decision = "suspect" if p >= self.threshold else "normal"
-        return VLMResult(decision, f"p={p:.3f}", (time.perf_counter() - t0) * 1000, f"probe p={p:.2f}")
+        ps = self.probe.proba(self.embedder.embed(list(request.images)))
+        hits = int((ps >= self.threshold).sum())
+        need = min(self.k, len(ps)) if len(ps) > 1 else 1
+        decision = "suspect" if hits >= need else "normal"
+        raw = "p=" + ",".join(f"{p:.3f}" for p in ps)
+        return VLMResult(decision, raw, (time.perf_counter() - t0) * 1000, f"probe {hits}/{len(ps)} frames >= {self.threshold:.2f}")
 
     def close(self) -> None:
         pass

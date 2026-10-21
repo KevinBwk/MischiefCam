@@ -25,11 +25,13 @@ reobserve_insufficient_s = 2.0  # after "insufficient" (or a backend error), loo
 cooldown_s = 60.0          # after an alert, stay quiet for this long on the same (track, roi)
 
 [vlm]
-backend = "mlx"            # "mlx" (Mac VLM) | "probe" (trained classifier) | "fake" (tests) | Stage II: "hailo"
+backend = "mlx"            # "mlx" (VLM) | "probe" (trained classifier) | "either" (probe OR VLM) | "fake" | Stage II: "hailo"
 classifier = "models/classifier.json"  # used when backend = "probe" (output of mcam-train)
 model = "mlx-community/Qwen2-VL-2B-Instruct-4bit"
 input_size = 336           # Hailo Qwen2-VL-2B vision encoder input is 336x336
 crop = "animal"            # "animal" (expanded dog box) | "union" (dog box ∪ zone box)
+frames = 1                # frames per judgement; 4 = multi-frame (oldest to newest, see frame_gap_s)
+frame_gap_s = 0.5         # minimum media-time gap between frames sent together
 max_new_tokens = 48
 queue_size = 2             # bounded queue; oldest pending request is dropped when full
 max_age_s = 10.0           # drop requests that waited longer than this (wall-clock)

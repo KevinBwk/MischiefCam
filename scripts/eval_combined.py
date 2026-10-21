@@ -2,16 +2,17 @@
 
 Needs the VLM batch summaries in outputs/eval_close|eval_medium|eval_wide and cached embeddings (run scripts/eval_probe.py first).
 """
-import json, random, numpy as np, collections
+import json, random, sys, numpy as np, collections
 from core import labels as L
 from core.config import resolve
 from core.probe import DEFAULT_EMBED_MODEL, LogisticProbe, build_dataset, clip_alert, pick_threshold
 class CacheOnly:
     model_id = DEFAULT_EMBED_MODEL
     def embed(self, images): raise RuntimeError("cache miss")
-SETS = [("close", "data/Videos", "data/labels_videos.json", "eval_close"),
-        ("medium", "data/Medium-Videos", "data/labels_medium.json", "eval_medium"),
-        ("wide", "data/Wide-Videos", "data/labels_wide.json", "eval_wide")]
+SUFFIX = sys.argv[1] if len(sys.argv) > 1 else ""  # e.g. "_mf4" to score the 4-frame VLM runs
+SETS = [("close", "data/Videos", "data/labels_videos.json", "eval_close" + SUFFIX),
+        ("medium", "data/Medium-Videos", "data/labels_medium.json", "eval_medium" + SUFFIX),
+        ("wide", "data/Wide-Videos", "data/labels_wide.json", "eval_wide" + SUFFIX)]
 clips, view, vlm, truth = [], {}, {}, {}
 for v, folder, lab, batch in SETS:
     d = L.load(resolve(lab))

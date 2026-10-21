@@ -76,3 +76,26 @@ def test_worker_reports_backend_errors():
     out = w.outcomes.get_nowait()
     assert out.result is None and "device lost" in out.error
     w.close()
+
+
+# ---------------------------------------------------------------- multi-frame + either
+def test_multi_frame_prompt_mentions_count_and_floor():
+    p = build_prompt("sofa", 4, 0.5)
+    assert "4 frames" in p and "floor" in p and "sofa" in p
+    assert build_prompt("sofa") == build_prompt("sofa", 1)
+
+
+def test_either_backend_short_circuits_on_probe():
+    from core.vlm import EitherBackend
+    probe = FakeVLMBackend('{"decision": "suspect"}')
+    vlm = FakeVLMBackend('{"decision": "normal"}')
+    r = EitherBackend(probe, vlm).infer(_req())
+    assert r.decision == "suspect" and vlm.calls == 0
+
+
+def test_either_backend_uses_vlm_when_probe_normal():
+    from core.vlm import EitherBackend
+    probe = FakeVLMBackend('{"decision": "normal"}')
+    vlm = FakeVLMBackend('{"decision": "suspect", "reason": "biting"}')
+    r = EitherBackend(probe, vlm).infer(_req())
+    assert r.decision == "suspect" and vlm.calls == 1 and "vlm" in r.raw_text

@@ -20,6 +20,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Train the chewing classifier (linear probe on CLIP embeddings).")
     ap.add_argument("--folder", default="data/Videos")
     ap.add_argument("--labels", default="data/labels_videos.json")
+    ap.add_argument("--set", action="append", metavar="FOLDER:LABELS",
+                    help="train on several folders (repeatable); overrides --folder/--labels")
     ap.add_argument("--out", default="models/classifier.json")
     ap.add_argument("--embed-model", default=DEFAULT_EMBED_MODEL)
     ap.add_argument("--fps", type=float, default=2.0, help="frames sampled per second inside labeled segments")
@@ -31,12 +33,18 @@ def main(argv: list[str] | None = None) -> int:
 
     from .detector import UltralyticsDetector
 
-    labels = L.load(resolve(args.labels))
-    print(f"labels: {len(labels['clips'])} clips in {resolve(args.labels)}")
+    pairs = [tuple(s.split(":", 1)) for s in args.set] if args.set else [(args.folder, args.labels)]
     detector = UltralyticsDetector(str(resolve("models/yolov8m.pt")), "mps", ["dog", "couch"])
     embedder = CLIPEmbedder(args.embed_model)
-    clips = build_dataset(resolve(args.folder), labels, embedder, make_sampler(detector), args.fps,
-                          resolve("outputs/cache/embeddings"))
+    clips = []
+    for folder, lab in pairs:
+        labels = L.load(resolve(lab))
+        print(f"labels: {len(labels['clips'])} clips in {resolve(lab)}")
+        got = build_dataset(resolve(folder), labels, embedder, make_sampler(detector), args.fps,
+                            resolve("outputs/cache/embeddings"))
+        for c in got:
+            c.clip = f"{folder}/{c.clip}" if len(pairs) > 1 else c.clip
+        clips += got
     report = train_and_evaluate(clips, args.folds, args.max_fp_rate, args.k, args.m)
     data = save_classifier(resolve(args.out), report, args.embed_model, args.fps, "animal", 0.15, 336, args.k, args.m)
 
