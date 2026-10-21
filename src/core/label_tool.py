@@ -107,7 +107,10 @@ def make_handler(state: LabelState, page: str):
                 self.send_header(k, v)
             self.end_headers()
             if self.command != "HEAD":
-                self.wfile.write(body)
+                try:
+                    self.wfile.write(body)
+                except (BrokenPipeError, ConnectionResetError):
+                    pass  # the browser cancelled the request (switched clip or seeked); nothing to do
 
         def _json(self, status, obj):
             self._send(status, json.dumps(obj, ensure_ascii=False).encode(), "application/json; charset=utf-8")
