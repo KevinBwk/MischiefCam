@@ -54,6 +54,7 @@ class VLMResult:
     raw_text: str
     elapsed_ms: float
     reason: str = ""
+    source: str = ""  # "vlm" | "probe" | "": which judge produced the decision
 
 
 class EpisodeState(str, Enum):
@@ -75,7 +76,7 @@ class ReviewRequest:
 
 @dataclass
 class Event:
-    kind: Literal["alert", "insufficient", "review", "episode_closed", "error", "dropped"]
+    kind: Literal["alert", "insufficient", "review", "confirming", "episode_closed", "error", "dropped"]
     episode_id: str
     track_id: int
     roi_id: str

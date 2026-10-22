@@ -93,3 +93,34 @@ def test_insufficient_reobserves_sooner_than_normal():
     assert reviews == []
     reviews, _ = feed(tr, 3.5, 3.5)  # 1.5 s later
     assert len(reviews) == 1
+
+
+def test_vlm_needs_two_suspects_in_a_row():
+    cfg = StateConfig(dwell_s=2.0, leave_grace_s=1.0, reobserve_s=5.0, reobserve_insufficient_s=1.5,
+                      cooldown_s=30.0, vlm_confirmations=2, confirm_gap_s=1.0)
+    tr = EpisodeTracker(cfg)
+    (req,), _ = feed(tr, 0.0, 2.0)
+    assert tr.on_verdict(req.episode_id, "sofa", "suspect", 2.0, required=2) is False
+    reviews, _ = feed(tr, 2.5, 2.5)
+    assert reviews == []                      # waits confirm_gap_s
+    (req2,), _ = feed(tr, 3.0, 3.0)
+    assert tr.on_verdict(req2.episode_id, "sofa", "suspect", 3.0, required=2) is True
+
+
+def test_normal_between_suspects_resets_confirmation():
+    cfg = StateConfig(dwell_s=2.0, leave_grace_s=1.0, reobserve_s=1.0, reobserve_insufficient_s=1.0,
+                      cooldown_s=30.0, vlm_confirmations=2, confirm_gap_s=1.0)
+    tr = EpisodeTracker(cfg)
+    (req,), _ = feed(tr, 0.0, 2.0)
+    assert tr.on_verdict(req.episode_id, "sofa", "suspect", 2.0, required=2) is False
+    (r2,), _ = feed(tr, 3.0, 3.0)
+    assert tr.on_verdict(r2.episode_id, "sofa", "normal", 3.0, required=2) is False
+    (r3,), _ = feed(tr, 4.0, 4.0)
+    assert tr.on_verdict(r3.episode_id, "sofa", "suspect", 4.0, required=2) is False
+
+
+def test_classifier_suspect_alerts_immediately():
+    cfg = StateConfig(dwell_s=2.0, leave_grace_s=1.0, vlm_confirmations=2)
+    tr = EpisodeTracker(cfg)
+    (req,), _ = feed(tr, 0.0, 2.0)
+    assert tr.on_verdict(req.episode_id, "sofa", "suspect", 2.0, required=1) is True

@@ -126,7 +126,8 @@
       el.querySelector('.msg').textContent = e.message;
     } else {
       el.className = 'card small';
-      const what = e.kind === 'review' ? `checking dog #${e.dog} near the ${e.zone}…`
+      const what = e.kind === 'confirming' ? `looks like chewing — double-checking dog #${e.dog} at ${e.t}…`
+        : e.kind === 'review' ? `checking dog #${e.dog} near the ${e.zone}…`
         : `couldn't see dog #${e.dog}'s mouth clearly at ${e.t} — looking again`;
       el.innerHTML = `<div class="msg"></div>`;
       el.querySelector('.msg').textContent = what;

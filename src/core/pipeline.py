@@ -195,7 +195,11 @@ class Pipeline:
             self.stats.vlm_ms.append(res.elapsed_ms)
             self.last_verdict[track_id] = {"decision": res.decision, "pts": job.pts_s, "reason": res.reason,
                                            "ms": round(res.elapsed_ms), "raw": res.raw_text}
-            alert = self.tracker.on_verdict(job.episode_id, roi_id, res.decision, job.pts_s)
+            need = self.tracker.cfg.vlm_confirmations if res.source == "vlm" else 1
+            alert = self.tracker.on_verdict(job.episode_id, roi_id, res.decision, job.pts_s, required=need)
+            if res.decision == "suspect" and not alert:
+                self._publish("confirming", job.episode_id, track_id, roi_id, job.pts_s, res.decision, res.reason,
+                              {"raw": res.raw_text, "vlm_ms": round(res.elapsed_ms, 1)})
             extra = {"raw": res.raw_text, "vlm_ms": round(res.elapsed_ms, 1)}
             if alert:
                 self.stats.alerts += 1

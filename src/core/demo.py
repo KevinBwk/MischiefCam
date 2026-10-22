@@ -247,7 +247,7 @@ class Runner(threading.Thread):
         bus.subscribe(sink)
 
         def on_event(ev: Event) -> None:
-            if ev.kind not in ("alert", "insufficient", "review"):
+            if ev.kind not in ("alert", "insufficient", "review", "confirming"):
                 return
             v = ev.extra or {}
             card = {"kind": ev.kind, "clip": item.get("caption", ""), "t": fmt_time(ev.pts_s), "pts": ev.pts_s,

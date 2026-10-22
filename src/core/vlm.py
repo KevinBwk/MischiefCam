@@ -143,10 +143,10 @@ class EitherBackend:
         t0 = time.perf_counter()
         p = self.probe.infer(request)
         if p.decision == "suspect":
-            return VLMResult("suspect", f"probe: {p.raw_text}", (time.perf_counter() - t0) * 1000, p.reason)
+            return VLMResult("suspect", f"probe: {p.raw_text}", (time.perf_counter() - t0) * 1000, p.reason, source="probe")
         v = self.vlm.infer(request)
         return VLMResult(v.decision, f"probe: {p.raw_text} | vlm: {v.raw_text}", (time.perf_counter() - t0) * 1000,
-                         v.reason if v.decision != "normal" else f"{p.reason}; vlm normal")
+                         v.reason if v.decision != "normal" else f"{p.reason}; vlm normal", source="vlm")
 
     def close(self) -> None:
         self.probe.close()

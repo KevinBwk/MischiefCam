@@ -351,7 +351,8 @@ class ProbeBackend:
         need = min(self.k, len(ps)) if len(ps) > 1 else 1
         decision = "suspect" if hits >= need else "normal"
         raw = "p=" + ",".join(f"{p:.3f}" for p in ps)
-        return VLMResult(decision, raw, (time.perf_counter() - t0) * 1000, f"probe {hits}/{len(ps)} frames >= {self.threshold:.2f}")
+        return VLMResult(decision, raw, (time.perf_counter() - t0) * 1000, f"probe {hits}/{len(ps)} frames >= {self.threshold:.2f}",
+                         source="probe")
 
     def close(self) -> None:
         pass

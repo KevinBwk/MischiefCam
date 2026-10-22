@@ -24,6 +24,8 @@ class StateConfig:
     reobserve_s: float = 6.0
     reobserve_insufficient_s: float = 2.0  # "couldn't see" -> look again soon
     cooldown_s: float = 60.0
+    vlm_confirmations: int = 1  # VLM "suspect" verdicts needed in a row before alerting (classifier: always 1)
+    confirm_gap_s: float = 1.0  # look again this soon to confirm a first VLM "suspect"
 
 
 @dataclass
@@ -38,6 +40,7 @@ class Episode:
     next_gap_s: float = 0.0  # wait this long after last_review_pts before asking again
     reviews: int = 0
     verdicts: list[Decision] = field(default_factory=list)
+    suspect_streak: int = 0
 
 
 @dataclass
@@ -106,16 +109,32 @@ class EpisodeTracker:
                 out.reviews.append(ReviewRequest(ep.episode_id, ep.track_id, ep.roi_id, pts))
 
     # -- verdicts ----------------------------------------------------------
-    def on_verdict(self, episode_id: str, roi_id: str, decision: Decision | None, pts: float) -> bool:
-        """Apply a VLM verdict (None = backend error/dropped). Returns True if an alert should fire."""
+    def on_verdict(self, episode_id: str, roi_id: str, decision: Decision | None, pts: float,
+                   required: int = 1) -> bool:
+        """Apply a verdict (None = backend error/dropped). Returns True if an alert should fire.
+
+        required: "suspect" verdicts needed in a row (use cfg.vlm_confirmations for VLM verdicts).
+        A first suspect that still needs confirmation schedules a quick re-look instead of alerting.
+        """
         ep = self.by_id.get(episode_id)
+        if ep is not None and decision == "suspect":
+            ep.suspect_streak += 1
+            if ep.suspect_streak < required:
+                ep.verdicts.append(decision)
+                ep.state = EpisodeState.OBSERVING
+                ep.last_review_pts = pts
+                ep.next_gap_s = self.cfg.confirm_gap_s
+                return False
         if decision == "suspect":
             self.roi_cooldown_until[roi_id] = pts + self.cfg.cooldown_s
         if ep is None:
             return decision == "suspect"
         if decision is not None:
             ep.verdicts.append(decision)
+        if decision == "normal":
+            ep.suspect_streak = 0
         if decision == "suspect":
+            ep.suspect_streak = 0
             ep.state = EpisodeState.COOLDOWN
             return True
         # keep watching: re-ask soon after insufficient/error, later after a confident "normal"

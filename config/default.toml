@@ -23,6 +23,8 @@ leave_grace_s = 1.5        # tolerate short detection gaps before closing an epi
 reobserve_s = 6.0          # after a "normal" verdict, ask again after this long
 reobserve_insufficient_s = 2.0  # after "insufficient" (or a backend error), look again sooner
 cooldown_s = 60.0          # after an alert, stay quiet for this long on the same (track, roi)
+vlm_confirmations = 1      # >1: VLM must say "suspect" that many times in a row (2 tested 2026-10-22: worse, see notes)
+confirm_gap_s = 1.0        # re-look this soon to confirm a first VLM "suspect"
 
 [vlm]
 backend = "mlx"            # "mlx" (VLM) | "probe" (trained classifier) | "either" (probe OR VLM) | "fake" | Stage II: "hailo"

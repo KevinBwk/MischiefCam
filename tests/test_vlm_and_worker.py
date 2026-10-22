@@ -99,3 +99,4 @@ def test_either_backend_uses_vlm_when_probe_normal():
     vlm = FakeVLMBackend('{"decision": "suspect", "reason": "biting"}')
     r = EitherBackend(probe, vlm).infer(_req())
     assert r.decision == "suspect" and vlm.calls == 1 and "vlm" in r.raw_text
+
