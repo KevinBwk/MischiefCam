@@ -46,6 +46,7 @@ class VLMRequest:
     images: tuple  # PIL.Image.Image, RGB; a tuple so multi-frame / video backends fit later
     prompt: str
     max_new_tokens: int = 48
+    probe_images: tuple = ()  # classifier input when it uses a different crop than the VLM (else `images`)
 
 
 @dataclass(frozen=True)

@@ -16,7 +16,7 @@ from .pipeline import Pipeline, PipelineConfig
 from .roi import load_rois
 from .sources import make_source
 from .state import StateConfig
-from .vlm import make_backend
+from .vlm import make_backend, probe_crop
 from .worker import VLMWorker
 
 
@@ -58,7 +58,8 @@ def main(argv: list[str] | None = None) -> int:
     source = make_source(args.video, args.camera, cfg["source"]["target_fps"])
     det_cfg = cfg["detector"]
     detector = UltralyticsDetector(str(resolve(det_cfg["model"])), det_cfg["device"], det_cfg["target_classes"],
-                                   det_cfg["min_score"], det_cfg["tracker"])
+                                   det_cfg["min_score"], det_cfg["tracker"],
+                                   det_cfg.get("context_classes", []))
     roi_path = resolve(args.rois or cfg["roi"]["file"])
     if not roi_path.exists() and not args.rois:
         roi_path = resolve("config/rois.example.json")
@@ -76,7 +77,8 @@ def main(argv: list[str] | None = None) -> int:
         source, detector, rois, worker, bus,
         StateConfig(**cfg["state"]),
         PipelineConfig(bbox_expand=cfg["roi"]["bbox_expand"], min_overlap=cfg["roi"]["min_overlap"],
-                       vlm_input_size=vcfg["input_size"], crop_mode=vcfg.get("crop", "animal"),
+                       vlm_input_size=vcfg["input_size"], crop_mode=vcfg.get("crop", "animal"), probe_crop_mode=probe_crop(vcfg),
+                       context_classes=tuple(det_cfg.get("context_classes", [])),
                        max_new_tokens=vcfg["max_new_tokens"], frames=vcfg.get("frames", 1),
                        frame_gap_s=vcfg.get("frame_gap_s", 0.5), save_crops=cfg["output"]["save_crops"],
                        output_dir=run_dir),

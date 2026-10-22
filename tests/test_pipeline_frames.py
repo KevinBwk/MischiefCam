@@ -27,3 +27,36 @@ def test_select_frames_with_short_history():
     p = _pipe()
     latest = (0.2, Image.new("RGB", (4, 4)))
     assert p._select_frames(7, latest) == [latest[1]]
+
+
+def test_contact_crop_uses_touching_couch():
+    import numpy as np
+
+    from core.crop import interaction_crop
+    from core.types import ROI, Detection
+
+    img = np.zeros((400, 600, 3), np.uint8)
+    img[200:300, 250:350] = 255  # bright patch where dog and couch meet
+    whole = ROI("z", "sofa", "forbidden", ((0, 0), (1, 0), (1, 1), (0, 1)))
+    dog = Detection((150, 100, 350, 300), 0.9, "dog", 1)
+    couch = Detection((250, 200, 600, 400), 0.8, "couch")
+    p = Pipeline.__new__(Pipeline)
+    p.cfg = PipelineConfig(crop_mode="contact", context_classes=("couch",))
+    p._context = [couch]
+    got = p._crop(img, dog, whole, "contact")
+    want = interaction_crop(img, dog.bbox, whole, 336, 0.15, "contact", zone_box=couch.bbox)
+    assert list(got.getdata()) == list(want.getdata())
+    p._context = []  # no couch: full-frame zone -> plain animal crop
+    assert list(p._crop(img, dog, whole, "contact").getdata()) == list(
+        interaction_crop(img, dog.bbox, whole, 336, 0.15, "animal").getdata())
+
+
+def test_probe_gets_its_own_crop(tmp_path):
+    import json
+
+    from core.vlm import probe_crop
+
+    clf = tmp_path / "c.json"
+    clf.write_text(json.dumps({"input": {"crop": "contact"}}))
+    assert probe_crop({"backend": "either", "classifier": str(clf)}) == "contact"
+    assert probe_crop({"backend": "mlx", "classifier": str(clf)}) is None

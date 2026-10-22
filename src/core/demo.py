@@ -30,7 +30,7 @@ from .roi import load_rois
 from .sources import CameraSource, VideoFileSource
 from .state import StateConfig
 from .types import ROI, Event
-from .vlm import make_backend
+from .vlm import make_backend, probe_crop
 from .worker import VLMWorker
 
 STATIC = Path(__file__).resolve().parent / "static" / "demo.html"
@@ -200,7 +200,7 @@ class Runner(threading.Thread):
 
             dc, vc = self.cfg["detector"], self.cfg["vlm"]
             detector = UltralyticsDetector(str(resolve(dc["model"])), dc["device"], dc["target_classes"],
-                                           dc["min_score"], dc["tracker"])
+                                           dc["min_score"], dc["tracker"], dc.get("context_classes", []))
             worker = VLMWorker(make_backend(vc), vc["queue_size"], vc["max_age_s"])
         except Exception as exc:  # show the problem on the page instead of a silent dead server
             with st.lock:
@@ -277,7 +277,8 @@ class Runner(threading.Thread):
         vc = cfg["vlm"]
         pipe = Pipeline(source, detector, rois, worker, bus, StateConfig(**cfg["state"]),
                         PipelineConfig(bbox_expand=cfg["roi"]["bbox_expand"], min_overlap=cfg["roi"]["min_overlap"],
-                                       vlm_input_size=vc["input_size"], crop_mode=vc.get("crop", "animal"),
+                                       vlm_input_size=vc["input_size"], crop_mode=vc.get("crop", "animal"), probe_crop_mode=probe_crop(vc),
+                                       context_classes=tuple(self.cfg["detector"].get("context_classes", [])),
                                        max_new_tokens=vc["max_new_tokens"], frames=vc.get("frames", 1),
                                        frame_gap_s=vc.get("frame_gap_s", 0.5), save_crops=False, output_dir=out_dir),
                         on_frame=on_frame)

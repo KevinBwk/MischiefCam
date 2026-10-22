@@ -9,6 +9,7 @@ backend = "ultralytics"    # Stage II: "hailo"
 model = "models/yolov8m.pt"  # same family as the Hailo model zoo yolov8m HEF; git-ignored
 device = "mps"             # "mps" | "cpu"
 target_classes = ["dog"]   # COCO class names
+context_classes = ["couch"]  # detected in the same pass, used only to aim the "contact" crop
 min_score = 0.35
 tracker = "bytetrack.yaml"
 
@@ -31,7 +32,8 @@ backend = "mlx"            # "mlx" (VLM) | "probe" (trained classifier) | "eithe
 classifier = "models/classifier.json"  # used when backend = "probe" (output of mcam-train)
 model = "mlx-community/Qwen2-VL-2B-Instruct-4bit"
 input_size = 336           # Hailo Qwen2-VL-2B vision encoder input is 336x336
-crop = "animal"            # "animal" (expanded dog box) | "union" (dog box ∪ zone box)
+crop = "animal"            # VLM input: "animal" | "contact" | "union". The classifier's crop comes from classifier.json
+                           # (2026-10-22: contact is best for the classifier, animal for the VLM in the pipeline)
 frames = 1                # frames per judgement; 4 = multi-frame (oldest to newest, see frame_gap_s)
 frame_gap_s = 0.5         # minimum media-time gap between frames sent together
 max_new_tokens = 48

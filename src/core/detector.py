@@ -6,6 +6,7 @@ from typing import Protocol
 
 import numpy as np
 
+from .device import torch_gpu_lock
 from .types import Detection
 
 
@@ -21,6 +22,7 @@ class UltralyticsDetector:
         target_classes: list[str] | None = None,
         min_score: float = 0.35,
         tracker: str = "bytetrack.yaml",
+        context_classes: list[str] | None = None,
     ):
         from ultralytics import YOLO
 
@@ -29,7 +31,8 @@ class UltralyticsDetector:
         self.min_score = min_score
         self.tracker = tracker
         names = self.model.names  # {id: name}
-        wanted = set(target_classes or ["dog"])
+        # context classes (e.g. couch) come back from the same pass so crops can zoom on dog-sofa contact
+        wanted = set(target_classes or ["dog"]) | set(context_classes or [])
         unknown = wanted - set(names.values())
         if unknown:
             raise ValueError(f"Classes not in model: {sorted(unknown)}")
@@ -42,30 +45,34 @@ class UltralyticsDetector:
 
     def detect_once(self, image_bgr: np.ndarray) -> list[Detection]:
         """Detection without tracking (for offline sampling of single frames)."""
-        res = self.model.predict(image_bgr, classes=self.class_ids, conf=self.min_score, device=self.device, verbose=False)[0]
-        boxes = res.boxes
-        if boxes is None or len(boxes) == 0:
-            return []
+        with torch_gpu_lock:
+            res = self.model.predict(image_bgr, classes=self.class_ids, conf=self.min_score, device=self.device,
+                                     verbose=False)[0]
+            boxes = res.boxes
+            if boxes is None or len(boxes) == 0:
+                return []
+            xyxy, conf, cls = boxes.xyxy.cpu().numpy(), boxes.conf.cpu().numpy(), boxes.cls.cpu().numpy()
         return [Detection(bbox=tuple(float(v) for v in b), score=float(s), class_name=self.names[int(c)])
-                for b, s, c in zip(boxes.xyxy.cpu().numpy(), boxes.conf.cpu().numpy(), boxes.cls.cpu().numpy())]
+                for b, s, c in zip(xyxy, conf, cls)]
 
     def detect(self, image_bgr: np.ndarray) -> list[Detection]:
-        results = self.model.track(
-            image_bgr,
-            persist=True,
-            tracker=self.tracker,
-            classes=self.class_ids,
-            conf=self.min_score,
-            device=self.device,
-            verbose=False,
-        )
-        boxes = results[0].boxes
-        if boxes is None or len(boxes) == 0:
-            return []
-        xyxy = boxes.xyxy.cpu().numpy()
-        conf = boxes.conf.cpu().numpy()
-        cls = boxes.cls.cpu().numpy().astype(int)
-        ids = boxes.id.cpu().numpy().astype(int) if boxes.id is not None else [None] * len(xyxy)
+        with torch_gpu_lock:
+            results = self.model.track(
+                image_bgr,
+                persist=True,
+                tracker=self.tracker,
+                classes=self.class_ids,
+                conf=self.min_score,
+                device=self.device,
+                verbose=False,
+            )
+            boxes = results[0].boxes
+            if boxes is None or len(boxes) == 0:
+                return []
+            xyxy = boxes.xyxy.cpu().numpy()
+            conf = boxes.conf.cpu().numpy()
+            cls = boxes.cls.cpu().numpy().astype(int)
+            ids = boxes.id.cpu().numpy().astype(int) if boxes.id is not None else [None] * len(xyxy)
         return [
             Detection(
                 bbox=tuple(float(v) for v in xyxy[i]),

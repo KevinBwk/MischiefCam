@@ -13,7 +13,7 @@ import json
 
 from . import labels as L
 from .config import resolve
-from .probe import DEFAULT_EMBED_MODEL, CLIPEmbedder, build_dataset, make_sampler, save_classifier, train_and_evaluate
+from .probe import DEFAULT_EMBED_MODEL, SAMPLER_VERSION, CLIPEmbedder, build_dataset, make_sampler, save_classifier, train_and_evaluate
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -24,6 +24,8 @@ def main(argv: list[str] | None = None) -> int:
                     help="train on several folders (repeatable); overrides --folder/--labels")
     ap.add_argument("--out", default="models/classifier.json")
     ap.add_argument("--embed-model", default=DEFAULT_EMBED_MODEL)
+    ap.add_argument("--crop", default="contact", choices=["animal", "contact", "union"],
+                    help="must match [vlm].crop at run time (the pipeline gives the classifier the same crop)")
     ap.add_argument("--fps", type=float, default=2.0, help="frames sampled per second inside labeled segments")
     ap.add_argument("--folds", type=int, default=5)
     ap.add_argument("--max-fp-rate", type=float, default=0.02, help="frame-level FP rate allowed when picking the threshold")
@@ -40,13 +42,13 @@ def main(argv: list[str] | None = None) -> int:
     for folder, lab in pairs:
         labels = L.load(resolve(lab))
         print(f"labels: {len(labels['clips'])} clips in {resolve(lab)}")
-        got = build_dataset(resolve(folder), labels, embedder, make_sampler(detector), args.fps,
-                            resolve("outputs/cache/embeddings"))
+        got = build_dataset(resolve(folder), labels, embedder, make_sampler(detector, crop=args.crop), args.fps,
+                            resolve("outputs/cache/embeddings"), crop=f"{args.crop}-{SAMPLER_VERSION}")
         for c in got:
             c.clip = f"{folder}/{c.clip}" if len(pairs) > 1 else c.clip
         clips += got
     report = train_and_evaluate(clips, args.folds, args.max_fp_rate, args.k, args.m)
-    data = save_classifier(resolve(args.out), report, args.embed_model, args.fps, "animal", 0.15, 336, args.k, args.m)
+    data = save_classifier(resolve(args.out), report, args.embed_model, args.fps, args.crop, 0.15, 336, args.k, args.m)
 
     tr = data["training"]
     print(json.dumps({k: tr[k] for k in ("clips", "frames")}, ensure_ascii=False))

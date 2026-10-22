@@ -227,3 +227,12 @@ def test_probe_backend_k_of_n(tmp_path):
     two_hits = ProbeBackend(clf, embedder=Emb([5, -5, 5, -5])).infer(VLMRequest(images=(1, 2, 3, 4), prompt=""))
     single = ProbeBackend(clf, embedder=Emb([5])).infer(VLMRequest(images=(1,), prompt=""))
     assert one_hit.decision == "normal" and two_hits.decision == "suspect" and single.decision == "suspect"
+
+
+def test_build_dataset_refuses_held_out_test_set(tmp_path):
+    import pytest
+
+    from core.probe import build_dataset
+
+    with pytest.raises(ValueError, match="held-out test set"):
+        build_dataset(tmp_path / "Test-Videos", {"clips": {}}, None, None, 2.0, None)

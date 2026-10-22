@@ -153,6 +153,17 @@ class EitherBackend:
         self.vlm.close()
 
 
+def probe_crop(cfg: dict) -> str | None:
+    """Crop the trained classifier expects (from classifier.json) when the judge uses it, else None."""
+    if cfg.get("backend") not in ("probe", "either"):
+        return None
+    from .config import resolve
+    from .probe import classifier_crop
+
+    path = resolve(cfg.get("classifier", "models/classifier.json"))
+    return classifier_crop(path) if path.exists() else None
+
+
 def make_backend(cfg: dict) -> VLMBackend:
     kind = cfg.get("backend", "mlx")
     if kind == "either":

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import time
 from dataclasses import dataclass
 from datetime import datetime
@@ -35,18 +36,20 @@ class Embedder(Protocol):
 class CLIPEmbedder:
     def __init__(self, model_id: str = DEFAULT_EMBED_MODEL, device: str = "mps"):
         import torch
-        from transformers import CLIPModel, CLIPProcessor
+        from transformers import AutoImageProcessor, AutoModel
 
-        self.model_id = model_id
+        self.model_id = model_id  # any CLIP or SigLIP checkpoint (both expose get_image_features)
         self.torch = torch
         self.device = device if (device != "mps" or torch.backends.mps.is_available()) else "cpu"
-        self.model = CLIPModel.from_pretrained(model_id).to(self.device).eval()
-        self.processor = CLIPProcessor.from_pretrained(model_id)
+        self.model = AutoModel.from_pretrained(model_id).to(self.device).eval()
+        self.processor = AutoImageProcessor.from_pretrained(model_id)  # images only: no tokenizer deps
 
     def embed(self, images: list) -> np.ndarray:
         if not images:
             return np.zeros((0, 0), dtype=np.float32)
-        with self.torch.no_grad():
+        from .device import torch_gpu_lock
+
+        with torch_gpu_lock, self.torch.no_grad():
             inputs = self.processor(images=images, return_tensors="pt").to(self.device)
             out = self.model.get_image_features(**inputs)
             if isinstance(out, self.torch.Tensor):
@@ -148,6 +151,16 @@ def _inter(a, b) -> float:
     return _area((max(a[0], b[0]), max(a[1], b[1]), min(a[2], b[2]), min(a[3], b[3])))
 
 
+def pick_dog_and_couch(dets, expand: float = 0.15):
+    """Like pick_dog, but also returns the couch box the chosen dog overlaps most (or None)."""
+    dog = pick_dog(dets, expand)
+    if dog is None:
+        return None, None
+    couches = [d.bbox for d in dets if d.class_name == "couch"]
+    best = max(couches, key=lambda c: _inter(dog, c), default=None)
+    return dog, (best if best is not None and _inter(dog, best) > 0 else None)
+
+
 def pick_dog(dets, expand: float = 0.15):
     """Choose which dog to crop when several are visible.
 
@@ -172,7 +185,7 @@ def pick_dog(dets, expand: float = 0.15):
     return max(dogs, key=_area)
 
 
-def make_sampler(detector, size: int = 336, expand: float = 0.15) -> FrameSampler:
+def make_sampler(detector, size: int = 336, expand: float = 0.15, crop: str = "animal") -> FrameSampler:
     """Sample frames at `fps` and return the crop of the dog most likely to be at the sofa (or None).
 
     The detector should include the "couch" class (see pick_dog); with dogs only it picks the largest dog.
@@ -194,9 +207,9 @@ def make_sampler(detector, size: int = 336, expand: float = 0.15) -> FrameSample
             ok, frame = cap.read()
             if not ok:
                 break
-            box = pick_dog(detector.detect_once(frame), expand)
+            box, couch = pick_dog_and_couch(detector.detect_once(frame), expand)
             if box is not None:
-                out.append((t, interaction_crop(frame, box, whole, size, expand, "animal")))
+                out.append((t, interaction_crop(frame, box, whole, size, expand, crop, zone_box=couch)))
             else:
                 out.append((t, None))
             t += 1.0 / fps
@@ -212,6 +225,9 @@ def build_dataset(
 ) -> list[ClipFrames]:
     from . import labels as L
 
+    if "Test-Videos" in Path(folder).parts and os.environ.get("MCAM_ALLOW_TEST_SET") != "1":
+        raise ValueError(f"{folder} is the held-out test set: it must not be used for training or tuning "
+                         "(see prompts/test_set_prompts.md). Evaluate it once with the full pipeline instead.")
     clips = []
     for rel, entry in sorted(labels["clips"].items()):
         lab = L.clip_label(entry)
@@ -333,6 +349,11 @@ def save_classifier(path: Path, report: dict, embed_model: str, fps: float, crop
 
 
 # --------------------------------------------------------------------------- runtime judge
+def classifier_crop(path: Path | str) -> str:
+    """The crop a saved classifier was trained on; the pipeline must feed it the same crop."""
+    return json.loads(Path(path).read_text(encoding="utf-8")).get("input", {}).get("crop", "animal")
+
+
 class ProbeBackend:
     """Drop-in judge for the pipeline (same interface as the VLM backends): vlm.backend = "probe"."""
 
@@ -346,7 +367,7 @@ class ProbeBackend:
     def infer(self, request: VLMRequest) -> VLMResult:
         """One frame: p >= threshold. Several frames: at least k of them (k from training, capped at n)."""
         t0 = time.perf_counter()
-        ps = self.probe.proba(self.embedder.embed(list(request.images)))
+        ps = self.probe.proba(self.embedder.embed(list(request.probe_images or request.images)))
         hits = int((ps >= self.threshold).sum())
         need = min(self.k, len(ps)) if len(ps) > 1 else 1
         decision = "suspect" if hits >= need else "normal"

@@ -27,7 +27,9 @@ class PipelineConfig:
     bbox_expand: float = 0.15
     min_overlap: float = 0.10
     vlm_input_size: int = 336
-    crop_mode: str = "animal"
+    crop_mode: str = "animal"  # "animal" | "union" | "contact" (zoom on where the dog meets the zone/couch)
+    probe_crop_mode: str | None = None  # classifier's crop when it differs from crop_mode (from classifier.json)
+    context_classes: tuple[str, ...] = ()  # detector classes used only as context (e.g. couch), never tracked as pets
     max_new_tokens: int = 48
     frames: int = 1            # frames per judgement (multi-frame when > 1)
     frame_gap_s: float = 0.5   # minimum media-time gap between the frames sent together
@@ -75,6 +77,7 @@ class Pipeline:
         self.on_frame = on_frame  # called after every processed frame (live displays)
         self.last_verdict: dict[int, dict] = {}  # track_id -> latest judgement shown on screen
         self._last_det: dict[int, Detection] = {}
+        self._context: list[Detection] = []  # latest context detections (e.g. couches)
         self._episode_meta: dict[str, tuple[int, str]] = {}  # episode_id -> (track_id, roi_id)
         self._history: dict[int, deque] = {}  # track_id -> recent (pts, crop) while the dog is in a zone
 
@@ -96,6 +99,8 @@ class Pipeline:
 
                 t0 = time.perf_counter()
                 dets = self.detector.detect(frame.image)
+                self._context = [d for d in dets if d.class_name in self.cfg.context_classes]
+                dets = [d for d in dets if d.class_name not in self.cfg.context_classes]
                 self.stats.detector_ms.append((time.perf_counter() - t0) * 1000)
                 self.stats.frames += 1
                 self.stats.detections += len(dets)
@@ -141,12 +146,22 @@ class Pipeline:
             det = self._last_det.get(tid)
             if det is None or any_roi is None:
                 continue
-            crop = interaction_crop(image, det.bbox, any_roi, self.cfg.vlm_input_size, self.cfg.bbox_expand, "animal")
+            crop = self._crop(image, det, any_roi, self.cfg.crop_mode)
             hist = self._history.setdefault(tid, deque(maxlen=max(8, self.cfg.frames * 6)))
             hist.append((pts, crop))
         for tid in list(self._history):
             if tid not in track_ids and self._history[tid] and pts - self._history[tid][-1][0] > 3.0:
                 del self._history[tid]
+
+    def _crop(self, image: np.ndarray, det: Detection, roi: ROI, mode: str):
+        """A judge's input. "contact" zooms on the dog's overlap with the couch it touches most, else the zone."""
+        zone_box = None
+        if mode == "contact" and self._context:
+            best = max(self._context, key=lambda c: _inter(det.bbox, c.bbox))  # same rule as the probe's sampler
+            if _inter(det.bbox, best.bbox) > 0:
+                zone_box = best.bbox
+        return interaction_crop(image, det.bbox, roi, self.cfg.vlm_input_size, self.cfg.bbox_expand, mode,
+                                zone_box=zone_box)
 
     def _select_frames(self, track_id: int, latest) -> list:
         """Newest crop plus older ones spaced at least frame_gap_s apart, returned oldest first."""
@@ -165,15 +180,17 @@ class Pipeline:
         roi = self.rois[roi_id]
         if det is None:
             return
-        crop = interaction_crop(image, det.bbox, roi, self.cfg.vlm_input_size, self.cfg.bbox_expand, self.cfg.crop_mode)
+        crop = self._crop(image, det, roi, self.cfg.crop_mode)
         images = self._select_frames(track_id, (pts, crop)) if self.cfg.frames > 1 else [crop]
+        probe_mode = self.cfg.probe_crop_mode
+        probe_images = (self._crop(image, det, roi, probe_mode),) if probe_mode and probe_mode != self.cfg.crop_mode else ()
         if self.cfg.save_crops:
             crop_dir = self.cfg.output_dir / "crops"
             crop_dir.mkdir(parents=True, exist_ok=True)
             for i, im in enumerate(images):
                 im.save(crop_dir / f"{episode_id}_{int(pts * 1000)}_{i}.jpg")
         request = VLMRequest(images=tuple(images), prompt=build_prompt(roi.name, len(images), self.cfg.frame_gap_s),
-                             max_new_tokens=self.cfg.max_new_tokens)
+                             max_new_tokens=self.cfg.max_new_tokens, probe_images=probe_images)
         self._episode_meta[episode_id] = (track_id, roi_id)
         self.worker.submit(episode_id, pts, request)
         self.stats.reviews_requested += 1
@@ -239,3 +256,7 @@ class Pipeline:
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 200, 0), 2)
         cv2.putText(canvas, f"t={pts:6.2f}s", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
         return canvas
+
+
+def _inter(a, b) -> float:
+    return max(0.0, min(a[2], b[2]) - max(a[0], b[0])) * max(0.0, min(a[3], b[3]) - max(a[1], b[1]))
