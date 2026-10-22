@@ -14,7 +14,7 @@ from .detector import UltralyticsDetector
 from .events import EventBus, JsonlSink, MascotNotifier
 from .pipeline import Pipeline, PipelineConfig
 from .roi import load_rois
-from .sources import VideoFileSource
+from .sources import make_source
 from .state import StateConfig
 from .vlm import make_backend
 from .worker import VLMWorker
@@ -30,7 +30,9 @@ def _pct(values: list[float], q: float) -> float | None:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Run the pet-mischief pipeline on a video file.")
-    ap.add_argument("--video", required=True, help="Path to a local video file")
+    src = ap.add_mutually_exclusive_group(required=True)
+    src.add_argument("--video", help="Path to a local video file")
+    src.add_argument("--camera", help="Live camera: device index (0, 1, …) or rtsp/http stream URL")
     ap.add_argument("--config", help="Optional TOML file overriding config/default.toml")
     ap.add_argument("--rois", help="ROI JSON (default: [roi].file in config)")
     ap.add_argument("--vlm", choices=["mlx", "fake", "probe", "either"],
@@ -53,7 +55,7 @@ def main(argv: list[str] | None = None) -> int:
     run_dir = resolve(cfg["output"]["dir"]) / (args.run_name or datetime.now().strftime("run_%Y%m%d_%H%M%S"))
     run_dir.mkdir(parents=True, exist_ok=True)
 
-    source = VideoFileSource(args.video, cfg["source"]["target_fps"])
+    source = make_source(args.video, args.camera, cfg["source"]["target_fps"])
     det_cfg = cfg["detector"]
     detector = UltralyticsDetector(str(resolve(det_cfg["model"])), det_cfg["device"], det_cfg["target_classes"],
                                    det_cfg["min_score"], det_cfg["tracker"])
@@ -80,7 +82,7 @@ def main(argv: list[str] | None = None) -> int:
                        output_dir=run_dir),
         annotate_path=run_dir / "annotated.mp4" if args.annotate else None,
     )
-    print(f"[{branding.product_name}] running on {args.video} (VLM: {vcfg['backend']}, mascot: {branding.mascot_name})")
+    print(f"[{branding.product_name}] running on {args.video or 'camera ' + str(args.camera)} (VLM: {vcfg['backend']}, mascot: {branding.mascot_name})")
     try:
         stats = pipe.run()
     finally:
@@ -89,7 +91,7 @@ def main(argv: list[str] | None = None) -> int:
 
     summary = {
         "product": branding.product_name,
-        "video": str(args.video),
+        "video": str(args.video or f"camera:{args.camera}"),
         "frames": stats.frames,
         "detections": stats.detections,
         "reviews_requested": stats.reviews_requested,

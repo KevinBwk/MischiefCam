@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{PRODUCT}} Demo</title>
+<style>
+  :root {
+    --bg: #0f1115; --panel: #171a21; --panel2: #1e222b; --line: #2a2f3a; --text: #eef0f4; --muted: #9aa2b1;
+    --alert: #ff5a5f; --ok: #3ccf8e; --watch: #f7b733; --judge: #4ea1ff; --brand: #ffb347;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font: 16px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif; overflow: hidden; }
+  .app { display: grid; grid-template-columns: minmax(0, 1fr) 400px; grid-template-rows: auto minmax(0, 1fr) auto; height: 100vh; gap: 14px; padding: 16px 20px; }
+  header { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; }
+  .logo { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--brand), #ff6f61); display: grid; place-items: center; font-weight: 800; color: #1a1a1a; }
+  header h1 { font-size: 20px; margin: 0; letter-spacing: .2px; }
+  header .tag { color: var(--muted); font-size: 14px; }
+  header .pill { margin-left: auto; padding: 6px 12px; border-radius: 999px; background: #173a2a; color: var(--ok); font-size: 13px; font-weight: 600; border: 1px solid #23573f; }
+  .stage { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+  .caption { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); min-height: 52px; }
+  .caption .scene { color: var(--brand); font-weight: 700; font-size: 14px; white-space: nowrap; }
+  .caption .text { font-size: 18px; font-weight: 600; }
+  .video { flex: 1; min-height: 0; display: grid; place-items: center; background: #000; position: relative; }
+  .video img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+  .overlay { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(8, 10, 14, .82); text-align: center; }
+  .overlay h2 { margin: 0 0 6px; font-size: 28px; }
+  .overlay p { margin: 0 0 18px; color: var(--muted); }
+  .overlay button { font: inherit; font-size: 18px; font-weight: 700; padding: 12px 28px; border-radius: 12px; border: 0; background: var(--brand); color: #1a1a1a; cursor: pointer; }
+  .overlay button:disabled { opacity: .5; cursor: default; }
+  .side { display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+  .phone { background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 14px; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .phone .top { display: flex; align-items: center; gap: 10px; padding: 4px 4px 12px; border-bottom: 1px solid var(--line); }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ffd59e, #ff8a5c); display: grid; place-items: center; font-weight: 800; color: #3a1d0a; font-size: 18px; }
+  .phone .who b { display: block; }
+  .phone .who span { color: var(--muted); font-size: 13px; }
+  .feed { overflow-y: auto; padding-top: 12px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+  .card { background: var(--panel2); border: 1px solid var(--line); border-radius: 14px; padding: 12px; animation: pop .35s ease-out; }
+  .card.alert { border-color: rgba(255, 90, 95, .65); box-shadow: 0 0 0 1px rgba(255, 90, 95, .25), 0 8px 24px rgba(255, 90, 95, .12); }
+  .card.quiet { border-color: rgba(60, 207, 142, .45); }
+  .card .meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+  .card .msg { font-size: 15px; font-weight: 600; }
+  .card.alert .msg::before { content: "⚠️ "; }
+  .card.quiet .msg::before { content: "✓ "; color: var(--ok); }
+  .card img { width: 100%; border-radius: 10px; margin-top: 8px; display: block; }
+  .card .why { color: var(--muted); font-size: 12.5px; margin-top: 6px; }
+  .card.small { padding: 7px 10px; background: transparent; border-style: dashed; }
+  .card.small .msg { font-size: 13px; font-weight: 500; color: var(--muted); }
+  .empty { color: var(--muted); font-size: 14px; text-align: center; margin-top: 30px; }
+  .legend { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; font-size: 13px; color: var(--muted); display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  footer { grid-column: 1 / -1; display: flex; gap: 22px; color: var(--muted); font-size: 13px; align-items: center; }
+  footer b { color: var(--text); font-weight: 600; }
+  footer .spacer { flex: 1; }
+  @keyframes pop { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">M</div>
+    <h1>{{PRODUCT}}</h1>
+    <span class="tag">On-device AI that spots pet mischief before it spreads</span>
+    <span class="pill">● Running on this computer · no cloud</span>
+  </header>
+
+  <section class="stage">
+    <div class="caption"><span class="scene" id="scene"></span><span class="text" id="caption">Loading…</span></div>
+    <div class="video">
+      <img id="video" alt="" hidden>
+      <div class="overlay" id="overlay">
+        <div>
+          <h2 id="ovTitle">Loading models…</h2>
+          <p id="ovText">YOLO + CLIP classifier + Qwen2-VL-2B, all local</p>
+          <button id="start" disabled>Start</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="side">
+    <div class="phone">
+      <div class="top">
+        <div class="avatar" id="avatar"></div>
+        <div class="who"><b>{{MASCOT}}</b><span>your home's mischief minder</span></div>
+      </div>
+      <div class="feed" id="feed"><div class="empty">No notifications yet.</div></div>
+    </div>
+    <div class="legend">
+      <span><i style="background:#5ac85a"></i>dog detected</span>
+      <span><i style="background:#fabe28"></i>in protected zone</span>
+      <span><i style="background:#3ca0f0"></i>AI checking</span>
+      <span><i style="background:#eb2828"></i>chewing → alert</span>
+    </div>
+  </aside>
+
+  <footer>
+    <span>Judge: <b id="judge">–</b></span>
+    <span>Detection: <b id="detMs">–</b> ms</span>
+    <span>Judgement: <b id="judgeMs">–</b> ms</span>
+    <span class="spacer"></span>
+    <span id="status">loading</span>
+  </footer>
+</div>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const seen = new Set();
+  let streamOn = false;
+
+  function card(e) {
+    const el = document.createElement('div');
+    if (e.kind === 'alert') {
+      el.className = 'card alert';
+      el.innerHTML = `<div class="meta"><span></span><span>${e.wall}</span></div><div class="msg"></div>
+        ${e.snap ? `<img src="${e.snap}" alt="">` : ''}<div class="why"></div>`;
+      el.querySelector('.meta span').textContent = e.clip;
+      el.querySelector('.msg').textContent = e.message;
+      el.querySelector('.why').textContent = `${e.judge}${e.ms ? ` · ${Math.round(e.ms)} ms` : ''}${e.reason ? ` · ${e.reason}` : ''}`;
+    } else if (e.kind === 'quiet') {
+      el.className = 'card quiet';
+      el.innerHTML = `<div class="meta"><span></span><span>${e.wall}</span></div><div class="msg"></div>`;
+      el.querySelector('.meta span').textContent = e.clip;
+      el.querySelector('.msg').textContent = e.message;
+    } else {
+      el.className = 'card small';
+      const what = e.kind === 'review' ? `checking dog #${e.dog} near the ${e.zone}…`
+        : `couldn't see clearly at ${e.t} — looking again`;
+      el.innerHTML = `<div class="msg"></div>`;
+      el.querySelector('.msg').textContent = what;
+    }
+    return el;
+  }
+
+  async function tick() {
+    let s;
+    try { s = await (await fetch('/api/state')).json(); } catch { return; }
+    $('judge').textContent = s.backend;
+    $('detMs').textContent = s.det_ms ?? '–';
+    $('judgeMs').textContent = s.judge_ms ?? '–';
+    $('status').textContent = s.status === 'running' ? `scene ${s.index + 1} of ${s.total}` : s.message;
+    if (s.index >= 0) {
+      $('scene').textContent = `Scene ${s.index + 1}/${s.total}`;
+      $('caption').textContent = s.item.caption || '';
+    }
+    const ov = $('overlay');
+    if (s.status === 'loading') { ov.hidden = false; $('ovTitle').textContent = 'Loading models…'; $('start').disabled = true; }
+    else if (s.status === 'ready') { ov.hidden = false; $('ovTitle').textContent = 'Ready'; $('ovText').textContent = 'Start your screen recording, then press Start (or Space).'; $('start').disabled = false; $('caption').textContent = 'Waiting to start'; }
+    else if (s.status === 'error') { ov.hidden = false; $('ovTitle').textContent = 'Error'; $('ovText').textContent = s.message; $('start').hidden = true; }
+    else { ov.hidden = true; }
+    if (s.status === 'running' && !streamOn) { $('video').src = '/stream.mjpg'; $('video').hidden = false; streamOn = true; }
+    const feed = $('feed');
+    for (const e of s.events) {
+      if (seen.has(e.id)) continue;
+      seen.add(e.id);
+      if (feed.querySelector('.empty')) feed.innerHTML = '';
+      if (e.kind === 'review') continue;          // keep the feed readable: show results, not every check
+      feed.appendChild(card(e));
+      while (feed.children.length > 40) feed.removeChild(feed.firstChild);
+      feed.scrollTop = feed.scrollHeight;
+    }
+  }
+
+  async function start() { $('start').disabled = true; await fetch('/api/start', { method: 'POST' }); }
+  $('start').addEventListener('click', start);
+  window.addEventListener('keydown', e => { if (e.key === ' ' && !$('start').disabled) { e.preventDefault(); start(); } });
+  $('avatar').textContent = '{{MASCOT}}'.trim().charAt(0).toUpperCase();
+  setInterval(tick, 250);
+  tick();
+})();
+</script>
+</body>
+</html>

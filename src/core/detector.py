@@ -36,6 +36,10 @@ class UltralyticsDetector:
         self.class_ids = [i for i, n in names.items() if n in wanted]
         self.names = names
 
+    def reset_tracks(self) -> None:
+        """Forget tracker state (call between unrelated videos)."""
+        self.model.predictor = None  # the tracker lives on the predictor; it is rebuilt on the next track() call
+
     def detect_once(self, image_bgr: np.ndarray) -> list[Detection]:
         """Detection without tracking (for offline sampling of single frames)."""
         res = self.model.predict(image_bgr, classes=self.class_ids, conf=self.min_score, device=self.device, verbose=False)[0]

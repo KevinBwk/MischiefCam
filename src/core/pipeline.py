@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 from collections import deque
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -59,6 +60,7 @@ class Pipeline:
         state_cfg: StateConfig,
         cfg: PipelineConfig,
         annotate_path: Path | None = None,
+        on_frame: Callable[[object, list[Detection], dict], None] | None = None,
     ):
         self.source = source
         self.detector = detector
@@ -70,6 +72,8 @@ class Pipeline:
         self.cfg = cfg
         self.stats = RunStats()
         self.annotate_path = annotate_path
+        self.on_frame = on_frame  # called after every processed frame (live displays)
+        self.last_verdict: dict[int, dict] = {}  # track_id -> latest judgement shown on screen
         self._last_det: dict[int, Detection] = {}
         self._episode_meta: dict[str, tuple[int, str]] = {}  # episode_id -> (track_id, roi_id)
         self._history: dict[int, deque] = {}  # track_id -> recent (pts, crop) while the dog is in a zone
@@ -118,6 +122,8 @@ class Pipeline:
                 self._drain_outcomes()
                 if writer is not None:
                     writer.write(self._annotate(frame.image, dets, frame.pts_s))
+                if self.on_frame is not None:
+                    self.on_frame(frame, dets, self.frame_info(present))
                 last_pts = frame.pts_s
 
             self.worker.wait_idle(drain_timeout_s)
@@ -187,6 +193,8 @@ class Pipeline:
                 continue
             res = out.result
             self.stats.vlm_ms.append(res.elapsed_ms)
+            self.last_verdict[track_id] = {"decision": res.decision, "pts": job.pts_s, "reason": res.reason,
+                                           "ms": round(res.elapsed_ms), "raw": res.raw_text}
             alert = self.tracker.on_verdict(job.episode_id, roi_id, res.decision, job.pts_s)
             extra = {"raw": res.raw_text, "vlm_ms": round(res.elapsed_ms, 1)}
             if alert:
@@ -195,6 +203,15 @@ class Pipeline:
             elif res.decision == "insufficient":
                 self.stats.insufficient += 1
                 self._publish("insufficient", job.episode_id, track_id, roi_id, job.pts_s, res.decision, res.reason, extra)
+
+    def frame_info(self, present: set) -> dict:
+        """Per-dog state for live displays: {track_id: {"zones": [...], "state": str, "verdict": {...}}}."""
+        dogs: dict[int, dict] = {}
+        for (tid, roi_id), ep in self.tracker.episodes.items():
+            d = dogs.setdefault(tid, {"zones": [], "state": "", "verdict": self.last_verdict.get(tid)})
+            d["zones"].append(self.rois[roi_id].name if roi_id in self.rois else roi_id)
+            d["state"] = ep.state.value
+        return {"dogs": dogs, "in_zone": sorted({tid for tid, _ in present})}
 
     def _publish(self, kind, episode_id, track_id, roi_id, pts, decision=None, reason="", extra=None) -> None:
         roi = self.rois.get(roi_id)

@@ -1,0 +1,9 @@
+{
+  "note": "Demo scenes for the Stage I video. Clips are AI-generated (synthetic). rois: omit = whole frame counts as the sofa zone.",
+  "items": [
+    {"video": "data/Videos/v27.mp4", "caption": "Dog chews its own rope toy on the sofa — should stay quiet"},
+    {"video": "data/Videos/v20.mp4", "caption": "Dog naps on the sofa — should stay quiet"},
+    {"video": "data/Videos/v4.mp4",  "caption": "Dog starts chewing the sofa — Michelle should alert"},
+    {"video": "data/Wide-Videos/w02.mp4", "caption": "Whole living room view — dog chews the sofa"}
+  ]
+}

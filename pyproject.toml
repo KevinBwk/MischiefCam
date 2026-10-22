@@ -24,6 +24,7 @@ mcam = "core.main:main"
 mcam-roi = "core.roi_editor:main"
 mcam-label = "core.label_tool:main"
 mcam-train = "core.train:main"
+mcam-demo = "core.demo:main"
 
 [build-system]
 requires = ["hatchling"]

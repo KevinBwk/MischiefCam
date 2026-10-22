@@ -1,4 +1,4 @@
-"""Frame sources. Stage I reads local video files; RTSP is a second implementation later."""
+"""Frame sources: local video files and live cameras (device index or rtsp/http stream URL)."""
 
 from __future__ import annotations
 
@@ -55,3 +55,72 @@ class VideoFileSource:
                 yield Frame(image=image, pts_s=pts, index=index - 1)
         finally:
             cap.release()
+
+
+class CameraSource:
+    """Live camera: a device index (USB webcam, iPhone Continuity Camera, Android in USB-webcam mode)
+    or a stream URL (rtsp://… or http://… from an IP-camera app on the local network).
+
+    Media time is wall-clock seconds since the source started, so the state machine behaves as
+    in recorded clips. Frames are sampled at target_fps; older frames are skipped, never queued.
+    """
+
+    def __init__(self, device: int | str = 0, target_fps: float = 10.0, max_seconds: float | None = None):
+        self.device = int(device) if isinstance(device, str) and device.isdigit() else device
+        self.target_fps = target_fps
+        self.max_seconds = max_seconds
+        self.stopped = False
+        self._cap = self._open()
+        ok, frame = self._cap.read()
+        if not ok:
+            self._cap.release()
+            raise RuntimeError(
+                f"Camera {self.device!r} opened but returned no frame. On macOS, allow camera access for the "
+                "app running this command (System Settings > Privacy & Security > Camera) and try again.")
+        h, w = frame.shape[:2]
+        self._size = (w, h)
+
+    def _open(self):
+        if isinstance(self.device, int):
+            cap = cv2.VideoCapture(self.device, cv2.CAP_AVFOUNDATION)
+        else:
+            cap = cv2.VideoCapture(self.device, cv2.CAP_FFMPEG)
+        if not cap.isOpened():
+            raise RuntimeError(f"Cannot open camera {self.device!r} (list devices: ffmpeg -f avfoundation -list_devices true -i \"\")")
+        return cap
+
+    @property
+    def size(self) -> tuple[int, int]:
+        return self._size
+
+    def stop(self) -> None:
+        self.stopped = True
+
+    def frames(self) -> Iterator[Frame]:
+        import time
+
+        start = time.monotonic()
+        step = 1.0 / self.target_fps
+        next_t = 0.0
+        index = 0
+        try:
+            while not self.stopped:
+                ok, image = self._cap.read()
+                if not ok:
+                    break
+                t = time.monotonic() - start
+                if self.max_seconds is not None and t > self.max_seconds:
+                    break
+                if t + 1e-6 < next_t:
+                    continue
+                next_t = t + step
+                yield Frame(image=image, pts_s=t, index=index)
+                index += 1
+        finally:
+            self._cap.release()
+
+
+def make_source(video: str | None = None, camera: str | None = None, target_fps: float = 5.0):
+    if camera is not None:
+        return CameraSource(camera, target_fps)
+    return VideoFileSource(video, target_fps)

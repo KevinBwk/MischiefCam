@@ -63,6 +63,18 @@ in normalized coordinates, which the pipeline reads by default.
 | Train | `uv run mcam-train` | CLIP embeddings of animal crops → logistic-regression probe, cross-validated by clip → `models/classifier.json` |
 | Use | `uv run mcam --video clip.mp4 --vlm probe` | The trained classifier replaces the VLM as the judge |
 
+## Demo view (for the video)
+
+```bash
+uv run mcam-demo --playlist demo/playlist.json      # scenes with captions, real-time playback
+uv run mcam-demo --camera 0                         # live camera: device index, or rtsp/http URL
+```
+
+Local page (127.0.0.1:8768) with the camera view, zone / dog / state overlay, the judge's reason,
+and Michelle's notification cards with snapshots. It opens paused: start the screen recording, then
+press Start or Space. Recorded clips are labelled "synthetic clip — pre-recorded video, live inference".
+Default judge: classifier OR VLM (`--vlm either`). List cameras: `ffmpeg -f avfoundation -list_devices true -i ""`.
+
 ## Run
 
 ```bash
@@ -100,7 +112,8 @@ max detector gap), `crops/`, and `annotated.mp4` with `--annotate`.
 | ROI-only vs ROI+VLM evaluation on held-out clips | planned |
 | Zone editor web page (draw / drag / name / policy / save, localhost only) | implemented, tested |
 | Labeling tool, prompt generator, CLIP linear-probe training with clip-grouped CV | implemented, unit-tested (real training needs labeled clips) |
-| RTSP source, web event page, tap-to-select zones (FastSAM) | planned |
+| Live camera source (device index or rtsp/http URL), demo view | implemented (camera not yet tested on hardware) |
+| Tap-to-select zones (FastSAM) | planned |
 | Hailo backends (`hailo_platform.genai.VLM`, Hailo YOLO HEF) on UGen300 | planned (Stage II) |
 
 ## Repository layout
