@@ -15,6 +15,7 @@ import json
 import threading
 import time
 import webbrowser
+from collections import deque
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -201,7 +202,9 @@ class Runner(threading.Thread):
             dc, vc = self.cfg["detector"], self.cfg["vlm"]
             detector = UltralyticsDetector(str(resolve(dc["model"])), dc["device"], dc["target_classes"],
                                            dc["min_score"], dc["tracker"], dc.get("context_classes", []))
-            worker = VLMWorker(make_backend(vc), vc["queue_size"], vc["max_age_s"])
+            backend = make_backend(vc)
+            # "either": the VLM inside it also writes the visual assessment for classifier alerts
+            worker = VLMWorker(backend, vc["queue_size"], vc["max_age_s"], explainer=getattr(backend, "vlm", None))
         except Exception as exc:  # show the problem on the page instead of a silent dead server
             with st.lock:
                 st.status, st.message = "error", f"Could not load models: {exc}"
@@ -240,16 +243,21 @@ class Runner(threading.Thread):
         with st.lock:
             st.item, st.item_index, st.status, st.message = item, index, "running", item.get("caption", "")
         alerts_before = sum(1 for e in st.events if e["kind"] == "alert")
-        last = {"frame": None}
+        recent: deque = deque(maxlen=120)  # (pts, overlay frame): the alert snapshot is the frame that was judged
         bus = EventBus()
         out_dir.mkdir(parents=True, exist_ok=True)
         sink = JsonlSink(out_dir / "events.jsonl")
         bus.subscribe(sink)
 
         def on_event(ev: Event) -> None:
-            if ev.kind not in ("alert", "insufficient", "review", "confirming"):
+            if ev.kind not in ("alert", "explained", "insufficient", "review", "confirming"):
                 return
             v = ev.extra or {}
+            if ev.kind == "explained":  # updates the alert card in place (no new notification)
+                tone, text = assessment_line(v.get("explanation"))
+                st.add_event({"kind": "explained", "alert_key": f"{index}:{v.get('alert_key')}", "tone": tone, "text": text,
+                              "ms": v.get("vlm_ms")})
+                return
             card = {"kind": ev.kind, "clip": item.get("caption", ""), "t": fmt_time(ev.pts_s), "pts": ev.pts_s,
                     "zone": ev.roi_name, "dog": ev.track_id, "decision": ev.decision, "reason": ev.reason,
                     "judge": _judge_name(v.get("raw", "")), "ms": v.get("vlm_ms")}
@@ -257,7 +265,13 @@ class Runner(threading.Thread):
             if ev.kind == "alert":
                 card["message"] = st.branding.message("suspect", roi=ev.roi_name, time=fmt_time(ev.pts_s),
                                                       decision=ev.decision or "", reason=ev.reason)
-                snap = encode(last["frame"], width=640) if last["frame"] is not None else None
+                card["alert_key"] = f"{index}:{v.get('alert_key')}"  # track ids restart per clip: scope by item
+                if v.get("explaining"):
+                    card["tone"], card["text"] = "pending", f"{st.branding.mascot_name} is taking a closer look"
+                elif v.get("judge_source") == "vlm":  # the VLM itself raised the alert: its reason is the assessment
+                    card["tone"], card["text"] = "ok", f"Visual check: {ev.reason}" if ev.reason else "Visual check: chewing seen"
+                frames = [f for f in recent if f[0] <= ev.pts_s + 1e-3] or list(recent)
+                snap = encode(frames[-1][1], width=640) if frames else None
             if ev.kind in ("alert", "insufficient") and v.get("vlm_ms"):
                 with st.lock:
                     st.judge_ms.append(float(v["vlm_ms"]))
@@ -267,7 +281,7 @@ class Runner(threading.Thread):
 
         def on_frame(frame, dets, info) -> None:
             img = draw_overlay(frame.image, rois, dets, info, frame.pts_s, item)
-            last["frame"] = img
+            recent.append((frame.pts_s, cv2.resize(img, (640, int(img.shape[0] * 640 / img.shape[1])))))
             jpeg = encode(img)
             with st.lock:
                 st.jpeg, st.frame_seq = jpeg, st.frame_seq + 1
@@ -291,6 +305,25 @@ class Runner(threading.Thread):
             st.add_event({"kind": "quiet", "clip": item.get("caption", ""),
                           "message": f"{st.branding.mascot_name} stayed quiet — no chewing on a protected zone."})
         time.sleep(float(cfg["source"].get("demo_pause_s", 1.5)))
+
+
+def assessment_line(expl: dict | None) -> tuple[str, str]:
+    """(tone, text) for the VLM's visual assessment under an alert. Tiered so a true alert does not read as the
+    product doubting itself, but contradicting evidence stays visible and "can't tell" never reads as a yes.
+    tone: "ok" supports the alert, "warn" contradicts it, "muted" cannot tell / unavailable."""
+    if not expl or not expl.get("ok"):
+        return "muted", "Visual assessment unavailable"
+    obs = expl.get("observation", "")
+    if expl["assessment"] == "suspect" and expl["contact"] in ("sofa", "unclear"):
+        return "ok", f"Visual check: {obs}" if obs else "Visual check: teeth on the sofa"
+    if expl["assessment"] == "normal" or expl["contact"] in ("toy", "other", "none"):
+        toy = ", looks like a toy" if expl["contact"] == "toy" else ""
+        return "warn", f"Visual check found no clear chewing on the sofa{toy} — check the snapshot"
+    if expl["contact"] == "sofa":  # visible contact, but no verdict: say exactly that (observation not quoted:
+        return "muted", "Mouth at the sofa — chewing not confirmed from this frame"  # it can contradict itself)
+    if expl["mouth_visibility"] == "hidden" or expl["limitation"] == "occlusion":
+        return "muted", "Mouth hidden from camera"
+    return "muted", "Limited view of mouth–sofa contact"
 
 
 def _judge_name(raw: str) -> str:

@@ -37,3 +37,20 @@ def test_overlay_draws_without_error():
 def test_judge_name():
     assert _judge_name("probe: p=0.1 | vlm: suspect") == "classifier + VLM"
     assert _judge_name("probe: p=0.9") == "classifier" and _judge_name('{"decision":"suspect"}') == "VLM"
+
+
+def test_assessment_line_tiers():
+    from core.demo import assessment_line
+
+    base = {"ok": True, "mouth_visibility": "clear", "contact": "sofa", "limitation": "none", "observation": ""}
+    assert assessment_line({**base, "assessment": "suspect", "observation": "teeth on the armrest"}) == (
+        "ok", "Visual check: teeth on the armrest")
+    tone, text = assessment_line({**base, "assessment": "normal", "contact": "toy"})
+    assert tone == "warn" and "toy" in text            # contradicting evidence stays visible
+    assert assessment_line({**base, "assessment": "insufficient"})[1].startswith("Mouth at the sofa")
+    assert assessment_line({**base, "assessment": "insufficient", "contact": "unclear", "mouth_visibility": "hidden"}) == (
+        "muted", "Mouth hidden from camera")
+    assert assessment_line({**base, "assessment": "insufficient", "contact": "unclear",
+                            "mouth_visibility": "partial"})[1].startswith("Limited")
+    assert assessment_line(None) == ("muted", "Visual assessment unavailable")
+    assert assessment_line({**base, "assessment": "suspect", "ok": False})[0] == "muted"  # never a yes when unparsed

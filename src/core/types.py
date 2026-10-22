@@ -77,7 +77,7 @@ class ReviewRequest:
 
 @dataclass
 class Event:
-    kind: Literal["alert", "insufficient", "review", "confirming", "episode_closed", "error", "dropped"]
+    kind: Literal["alert", "explained", "insufficient", "review", "confirming", "episode_closed", "error", "dropped"]
     episode_id: str
     track_id: int
     roi_id: str

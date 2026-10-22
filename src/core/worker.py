@@ -3,6 +3,10 @@
 Capture and detection never wait for the VLM. When the queue is full the oldest
 pending request is dropped; requests that waited longer than max_age_s are
 dropped too. Every drop/error is reported, never silently turned into "normal".
+
+Two job kinds share the queue: "judge" (a verdict for the state machine) and "explain"
+(a visual assessment for an alert that already fired, sent straight to the VLM). Explanations
+are best-effort: they never evict a judge job, and a full queue drops an explanation first.
 """
 
 from __future__ import annotations
@@ -23,6 +27,7 @@ class Job:
     pts_s: float
     request: VLMRequest
     submitted: float  # wall-clock (time.monotonic)
+    kind: str = "judge"  # "judge" | "explain"
 
 
 @dataclass
@@ -33,8 +38,10 @@ class Outcome:
 
 
 class VLMWorker:
-    def __init__(self, backend: VLMBackend, queue_size: int = 2, max_age_s: float = 10.0):
+    def __init__(self, backend: VLMBackend, queue_size: int = 2, max_age_s: float = 10.0,
+                 explainer: VLMBackend | None = None):
         self.backend = backend
+        self.explainer = explainer  # the VLM itself (not the probe-first "either" judge); None = no explanations
         self.max_age_s = max_age_s
         self._pending: deque[Job] = deque()
         self._queue_size = queue_size
@@ -45,13 +52,23 @@ class VLMWorker:
         self._thread = threading.Thread(target=self._run, name="vlm-worker", daemon=True)
         self._thread.start()
 
-    def submit(self, episode_id: str, pts_s: float, request: VLMRequest) -> None:
+    def submit(self, episode_id: str, pts_s: float, request: VLMRequest, kind: str = "judge") -> None:
+        job = Job(episode_id, pts_s, request, time.monotonic(), kind)
         with self._cv:
-            if any(j.episode_id == episode_id for j in self._pending):
+            if any(j.episode_id == episode_id and j.kind == kind for j in self._pending):
                 return  # same episode already waiting: merge
             if len(self._pending) >= self._queue_size:
-                self.outcomes.put(Outcome(self._pending.popleft(), error="dropped:queue_full"))
-            self._pending.append(Job(episode_id, pts_s, request, time.monotonic()))
+                explains = [j for j in self._pending if j.kind == "explain"]
+                if explains:
+                    victim = explains[0]
+                elif kind == "explain":
+                    self.outcomes.put(Outcome(job, error="dropped:queue_full"))
+                    return
+                else:
+                    victim = self._pending[0]
+                self._pending.remove(victim)
+                self.outcomes.put(Outcome(victim, error="dropped:queue_full"))
+            self._pending.append(job)
             self._cv.notify()
 
     def idle(self) -> bool:
@@ -86,7 +103,10 @@ class VLMWorker:
                 if time.monotonic() - job.submitted > self.max_age_s:
                     self.outcomes.put(Outcome(job, error="dropped:stale"))
                     continue
-                self.outcomes.put(Outcome(job, result=self.backend.infer(job.request)))
+                backend = self.explainer if job.kind == "explain" else self.backend
+                if backend is None:
+                    raise RuntimeError("no explainer backend")
+                self.outcomes.put(Outcome(job, result=backend.infer(job.request)))
             except Exception as exc:  # backend failure must surface as an error, not a verdict
                 self.outcomes.put(Outcome(job, error=f"{type(exc).__name__}: {exc}"))
             finally:

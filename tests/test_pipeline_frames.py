@@ -60,3 +60,43 @@ def test_probe_gets_its_own_crop(tmp_path):
     clf.write_text(json.dumps({"input": {"crop": "contact"}}))
     assert probe_crop({"backend": "either", "classifier": str(clf)}) == "contact"
     assert probe_crop({"backend": "mlx", "classifier": str(clf)}) is None
+
+
+def test_probe_alert_queues_explanation_and_explained_event():
+    from core.events import EventBus
+    from core.pipeline import RunStats
+    from core.state import EpisodeTracker, StateConfig
+    from core.types import ROI, VLMRequest, VLMResult
+    from core.worker import Job, Outcome
+
+    class StubWorker:
+        def __init__(self):
+            import queue
+            self.outcomes, self.explainer, self.submitted = queue.Queue(), object(), []
+
+        def submit(self, episode_id, pts, request, kind="judge"):
+            self.submitted.append((episode_id, pts, request, kind))
+
+    p = Pipeline.__new__(Pipeline)
+    p.cfg = PipelineConfig()
+    p.worker, p.bus, p.stats, p.last_verdict = StubWorker(), EventBus(), RunStats(), {}
+    p.tracker = EpisodeTracker(StateConfig())
+    p.rois = {"z": ROI("z", "sofa", "forbidden", ((0, 0), (1, 0), (1, 1), (0, 1)))}
+    p._episode_meta = {"ep": (1, "z")}
+    seen = []
+    p.bus.subscribe(seen.append)
+    crop = Image.new("RGB", (4, 4))
+    req = VLMRequest(images=(crop,), prompt="judge")
+    p.worker.outcomes.put(Outcome(Job("ep", 3.0, req, 0.0), VLMResult("suspect", "probe: p=0.9", 5.0, "", "probe")))
+    p._drain_outcomes()
+    alert = next(e for e in seen if e.kind == "alert")
+    assert alert.extra["explaining"] and alert.extra["alert_key"] == "ep@3.000"
+    (ep_id, pts, ereq, kind), = p.worker.submitted
+    assert kind == "explain" and ereq.images == (crop,) and "Describe only what is visible" in ereq.prompt
+
+    raw = '{"assessment": "suspect", "mouth_visibility": "clear", "contact": "sofa", "limitation": "none", "observation": "teeth on cushion"}'
+    p.worker.outcomes.put(Outcome(Job("ep", 3.0, ereq, 0.0, "explain"), VLMResult("suspect", raw, 900.0)))
+    p._drain_outcomes()
+    expl = next(e for e in seen if e.kind == "explained")
+    assert expl.extra["alert_key"] == "ep@3.000" and expl.extra["explanation"]["observation"] == "teeth on cushion"
+    assert p.stats.alerts == 1  # the explanation is not a second verdict

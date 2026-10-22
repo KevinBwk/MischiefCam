@@ -46,6 +46,13 @@
   .card.quiet .msg::before { content: "✓ "; color: var(--ok); }
   .card img { width: 100%; border-radius: 10px; margin-top: 8px; display: block; }
   .card .why { color: var(--muted); font-size: 12.5px; margin-top: 6px; }
+  .card .assess { font-size: 13.5px; margin-top: 8px; padding: 6px 9px; border-radius: 8px; background: rgba(255,255,255,.04); }
+  .card .assess.ok { color: var(--text); border-left: 3px solid var(--alert); }
+  .card .assess.warn { color: var(--watch); border-left: 3px solid var(--watch); }
+  .card .assess.muted { color: var(--muted); font-size: 12.5px; }
+  .card .assess.pending { color: var(--judge); font-size: 12.5px; }
+  .card .assess.pending::after { content: ""; display: inline-block; width: 1em; animation: dots 1.2s steps(4) infinite; overflow: hidden; vertical-align: bottom; }
+  @keyframes dots { from { width: 0; } to { width: 1em; } }
   .card.small { padding: 7px 10px; background: transparent; border-style: dashed; }
   .card.small .msg { font-size: 13px; font-weight: 500; color: var(--muted); }
   .empty { color: var(--muted); font-size: 14px; text-align: center; margin-top: 30px; }
@@ -110,14 +117,24 @@
   const seen = new Set();
   let streamOn = false;
 
+  function setAssess(el, tone, text) {
+    const a = el.querySelector('.assess');
+    if (!a) return;
+    a.className = `assess ${tone || 'muted'}`;
+    a.textContent = text;
+    a.hidden = false;
+  }
+
   function card(e) {
     const el = document.createElement('div');
     if (e.kind === 'alert') {
       el.className = 'card alert';
       el.innerHTML = `<div class="meta"><span></span><span>${e.wall}</span></div><div class="msg"></div>
-        ${e.snap ? `<img src="${e.snap}" alt="">` : ''}<div class="why"></div>`;
+        ${e.snap ? `<img src="${e.snap}" alt="">` : ''}<div class="assess" hidden></div><div class="why"></div>`;
       el.querySelector('.meta span').textContent = e.clip;
       el.querySelector('.msg').textContent = e.message;
+      if (e.alert_key) el.dataset.akey = e.alert_key;
+      if (e.text) setAssess(el, e.tone, e.text);
       el.querySelector('.why').textContent = `${e.judge}${e.ms ? ` · ${Math.round(e.ms)} ms` : ''}${e.reason ? ` · ${e.reason}` : ''}`;
     } else if (e.kind === 'quiet') {
       el.className = 'card quiet';
@@ -158,6 +175,11 @@
       seen.add(e.id);
       if (feed.querySelector('.empty')) feed.innerHTML = '';
       if (e.kind === 'review') continue;          // keep the feed readable: show results, not every check
+      if (e.kind === 'explained') {               // the VLM's visual assessment arrives after the alert
+        const target = [...feed.querySelectorAll('.card.alert')].find(c => c.dataset.akey === e.alert_key);
+        if (target) setAssess(target, e.tone, e.text);
+        continue;
+      }
       const lastEl = feed.lastElementChild;
       if (e.kind === 'insufficient' && lastEl && lastEl.dataset.key === `${e.clip}|${e.dog}`) {
         // merge repeated "couldn't see clearly" for the same dog into one card

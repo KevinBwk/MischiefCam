@@ -100,3 +100,59 @@ def test_either_backend_uses_vlm_when_probe_normal():
     r = EitherBackend(probe, vlm).infer(_req())
     assert r.decision == "suspect" and vlm.calls == 1 and "vlm" in r.raw_text
 
+
+
+def _drain(w):
+    outs = []
+    while not w.outcomes.empty():
+        outs.append(w.outcomes.get_nowait())
+    return {(o.job.episode_id, o.job.kind): o for o in outs}
+
+
+def test_explain_jobs_go_to_the_explainer():
+    explainer = FakeVLMBackend('{"assessment": "suspect", "contact": "sofa", "observation": "teeth on cushion"}')
+    w = VLMWorker(FakeVLMBackend('{"decision": "normal"}'), queue_size=2, explainer=explainer)
+    w.submit("ep1", 1.0, _req())
+    w.submit("ep1", 1.0, _req(), kind="explain")  # same episode, different kind: not merged
+    assert w.wait_idle(5)
+    by = _drain(w)
+    assert by[("ep1", "judge")].result.decision == "normal"
+    assert "teeth on cushion" in by[("ep1", "explain")].result.raw_text
+    w.close()
+
+
+def test_explain_never_evicts_a_judge_job():
+    w = VLMWorker(FakeVLMBackend(delay_s=0.3), queue_size=1, explainer=FakeVLMBackend())
+    w.submit("ep1", 1.0, _req())
+    time.sleep(0.05)  # ep1 running
+    w.submit("ep2", 2.0, _req())                  # fills the queue
+    w.submit("ep1", 1.0, _req(), kind="explain")  # full: the explanation is the one dropped
+    w.submit("ep3", 3.0, _req(), kind="explain")
+    assert w.wait_idle(5)
+    by = _drain(w)
+    assert by[("ep2", "judge")].result is not None
+    assert by[("ep1", "explain")].error == "dropped:queue_full"
+    w.close()
+
+
+def test_judge_evicts_a_pending_explanation_first():
+    w = VLMWorker(FakeVLMBackend(delay_s=0.3), queue_size=1, explainer=FakeVLMBackend())
+    w.submit("ep1", 1.0, _req())
+    time.sleep(0.05)
+    w.submit("ep1", 1.0, _req(), kind="explain")
+    w.submit("ep2", 2.0, _req())  # judge job: the pending explanation makes room
+    assert w.wait_idle(5)
+    by = _drain(w)
+    assert by[("ep1", "explain")].error == "dropped:queue_full"
+    assert by[("ep2", "judge")].result is not None
+    w.close()
+
+
+def test_parse_explanation_validates_fields():
+    from core.vlm import parse_explanation
+
+    e = parse_explanation('{"assessment": "SUSPECT", "contact": "pizza", "mouth_visibility": "clear", '
+                          '"observation": "one two three four five six seven eight nine ten eleven twelve thirteen"}')
+    assert e["ok"] and e["assessment"] == "suspect" and e["contact"] == "unclear"
+    assert len(e["observation"].split()) == 12
+    assert parse_explanation("no json here")["ok"] is False

@@ -66,7 +66,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[warn] no zones drawn yet — using example zones ({roi_path}). Draw yours with: uv run mcam-roi --video <clip>")
     rois = load_rois(roi_path)
     vcfg = cfg["vlm"]
-    worker = VLMWorker(make_backend(vcfg), vcfg["queue_size"], vcfg["max_age_s"])
+    backend = make_backend(vcfg)
+    worker = VLMWorker(backend, vcfg["queue_size"], vcfg["max_age_s"], explainer=getattr(backend, "vlm", None))
 
     bus = EventBus()
     sink = JsonlSink(run_dir / "events.jsonl")

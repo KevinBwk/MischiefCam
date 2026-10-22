@@ -18,7 +18,7 @@ from .roi import box_overlap_fraction, expand_box
 from .sources import FrameSource
 from .state import EpisodeTracker, StateConfig
 from .types import ROI, Detection, Event, VLMRequest
-from .vlm import build_prompt
+from .vlm import build_explain_prompt, build_prompt, parse_explanation
 from .worker import VLMWorker
 
 
@@ -31,6 +31,7 @@ class PipelineConfig:
     probe_crop_mode: str | None = None  # classifier's crop when it differs from crop_mode (from classifier.json)
     context_classes: tuple[str, ...] = ()  # detector classes used only as context (e.g. couch), never tracked as pets
     max_new_tokens: int = 48
+    explain_max_new_tokens: int = 96  # the visual-assessment JSON is longer than a verdict
     frames: int = 1            # frames per judgement (multi-frame when > 1)
     frame_gap_s: float = 0.5   # minimum media-time gap between the frames sent together
     save_crops: bool = True
@@ -131,8 +132,9 @@ class Pipeline:
                     self.on_frame(frame, dets, self.frame_info(present))
                 last_pts = frame.pts_s
 
-            self.worker.wait_idle(drain_timeout_s)
-            self._drain_outcomes(final_pts=last_pts)
+            for _ in range(2):  # a last alert can queue its explanation while draining: wait once more for it
+                self.worker.wait_idle(drain_timeout_s)
+                self._drain_outcomes(final_pts=last_pts)
         finally:
             if writer is not None:
                 writer.release()
@@ -201,6 +203,14 @@ class Pipeline:
             out = self.worker.outcomes.get_nowait()
             job = out.job
             track_id, roi_id = self._episode_meta[job.episode_id]
+            if job.kind == "explain":  # assessment for an alert that already fired: never a verdict
+                expl = parse_explanation(out.result.raw_text) if out.result else None
+                self._publish("explained", job.episode_id, track_id, roi_id, job.pts_s,
+                              expl["assessment"] if expl else None, (expl or {}).get("observation", ""),
+                              {"alert_key": _alert_key(job.episode_id, job.pts_s), "explanation": expl,
+                               "error": out.error, "raw": out.result.raw_text if out.result else "",
+                               "vlm_ms": round(out.result.elapsed_ms, 1) if out.result else None})
+                continue
             if out.error:
                 kind = "dropped" if out.error.startswith("dropped") else "error"
                 self.stats.dropped += kind == "dropped"
@@ -220,10 +230,22 @@ class Pipeline:
             extra = {"raw": res.raw_text, "vlm_ms": round(res.elapsed_ms, 1)}
             if alert:
                 self.stats.alerts += 1
+                extra["alert_key"] = _alert_key(job.episode_id, job.pts_s)
+                extra["judge_source"] = res.source
+                # Classifier alerts go out at once; the VLM's visual assessment follows as an "explained" event.
+                extra["explaining"] = res.source == "probe" and self.worker.explainer is not None
                 self._publish("alert", job.episode_id, track_id, roi_id, job.pts_s, res.decision, res.reason, extra)
+                if extra["explaining"]:
+                    self._request_explanation(job.episode_id, roi_id, job.pts_s, job.request.images)
             elif res.decision == "insufficient":
                 self.stats.insufficient += 1
                 self._publish("insufficient", job.episode_id, track_id, roi_id, job.pts_s, res.decision, res.reason, extra)
+
+    def _request_explanation(self, episode_id: str, roi_id: str, pts: float, images: tuple) -> None:
+        roi = self.rois[roi_id]
+        req = VLMRequest(images=images[-1:], prompt=build_explain_prompt(roi.name),
+                         max_new_tokens=self.cfg.explain_max_new_tokens)
+        self.worker.submit(episode_id, pts, req, kind="explain")
 
     def frame_info(self, present: set) -> dict:
         """Per-dog state for live displays: {track_id: {"zones": [...], "state": str, "verdict": {...}}}."""
@@ -260,3 +282,8 @@ class Pipeline:
 
 def _inter(a, b) -> float:
     return max(0.0, min(a[2], b[2]) - max(a[0], b[0])) * max(0.0, min(a[3], b[3]) - max(a[1], b[1]))
+
+
+def _alert_key(episode_id: str, pts: float) -> str:
+    """Links an alert to its later "explained" event (and to the reviewed frame)."""
+    return f"{episode_id}@{pts:.3f}"

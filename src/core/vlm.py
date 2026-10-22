@@ -47,6 +47,55 @@ def build_prompt(target: str, n_frames: int = 1, gap_s: float = 0.5) -> str:
     return MULTI_FRAME_TEMPLATE.format(target=target, n=n_frames, gap=gap_s)
 
 
+# Visual assessment shown on an alert card after the classifier fired. Deliberately not told that an alert
+# happened (so it cannot just agree) and asked for visible evidence only; independent of the alert decision.
+EXPLAIN_TEMPLATE = (
+    "You are looking at a still frame from a fixed home camera showing a dog near a {target}.\n"
+    "Describe only what is visible. Do not guess motion from a single image.\n"
+    "Reply with JSON only, no other text:\n"
+    '{{"assessment": "suspect" | "normal" | "insufficient", '
+    '"mouth_visibility": "clear" | "partial" | "hidden" | "unknown", '
+    '"contact": "sofa" | "toy" | "other" | "none" | "unclear", '
+    '"limitation": "none" | "occlusion" | "blur" | "crop" | "other" | "unknown", '
+    '"observation": "<at most 12 words, visible evidence only>"}}\n'
+    "- assessment suspect: the dog's teeth are visibly on the {target}; normal: they are not; "
+    "insufficient: you cannot tell.\n"
+    "- contact: what the dog's mouth is touching. Cushions and throw pillows on the {target} count as "
+    "\"sofa\"; a toy, bone or scrap of cloth counts as \"toy\" or \"other\", even when it lies on the {target}."
+)
+EXPLANATION_FIELDS = {
+    "assessment": DECISIONS,
+    "mouth_visibility": ("clear", "partial", "hidden", "unknown"),
+    "contact": ("sofa", "toy", "other", "none", "unclear"),
+    "limitation": ("none", "occlusion", "blur", "crop", "other", "unknown"),
+}
+
+
+def build_explain_prompt(target: str) -> str:
+    return EXPLAIN_TEMPLATE.format(target=target)
+
+
+def parse_explanation(text: str) -> dict:
+    """Validate the explanation JSON. Unknown/missing values become the field's "don't know" value;
+    unparseable output gives assessment "insufficient" and ok=False."""
+    out = {"assessment": "insufficient", "mouth_visibility": "unknown", "contact": "unclear",
+           "limitation": "unknown", "observation": "", "ok": False}
+    match = re.search(r"\{.*?\}", text, flags=re.DOTALL)
+    if not match:
+        return out
+    try:
+        data = json.loads(match.group(0))
+    except json.JSONDecodeError:
+        return out
+    for key, allowed in EXPLANATION_FIELDS.items():
+        value = str(data.get(key, "")).strip().lower()
+        if value in allowed:
+            out[key] = value
+    out["observation"] = " ".join(str(data.get("observation", "")).split()[:12])
+    out["ok"] = True
+    return out
+
+
 def parse_decision(text: str) -> tuple[Decision, str]:
     """Extract (decision, reason) from model output. Unparseable output -> insufficient.
 

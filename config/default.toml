@@ -28,7 +28,7 @@ vlm_confirmations = 1      # >1: VLM must say "suspect" that many times in a row
 confirm_gap_s = 1.0        # re-look this soon to confirm a first VLM "suspect"
 
 [vlm]
-backend = "mlx"            # "mlx" (VLM) | "probe" (trained classifier) | "either" (probe OR VLM) | "fake" | Stage II: "hailo"
+backend = "either"         # "mlx" (VLM) | "probe" (trained classifier) | "either" (probe OR VLM) | "fake" | Stage II: "hailo"
 classifier = "models/classifier.json"  # used when backend = "probe" (output of mcam-train)
 model = "mlx-community/Qwen2-VL-2B-Instruct-4bit"
 input_size = 336           # Hailo Qwen2-VL-2B vision encoder input is 336x336
