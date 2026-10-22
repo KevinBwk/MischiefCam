@@ -71,14 +71,28 @@ class CameraSource:
         self.max_seconds = max_seconds
         self.stopped = False
         self._cap = self._open()
-        ok, frame = self._cap.read()
+        ok, frame = self._read_first_frame()
         if not ok:
             self._cap.release()
             raise RuntimeError(
-                f"Camera {self.device!r} opened but returned no frame. On macOS, allow camera access for the "
-                "app running this command (System Settings > Privacy & Security > Camera) and try again.")
+                f"Camera {self.device!r} opened but returned no frame within 4 s. On macOS, allow camera access for the "
+                "app that runs this terminal (System Settings > Privacy & Security > Camera; for the Claude app's "
+                "terminal that is Claude) and try again, or try another --camera index.")
         h, w = frame.shape[:2]
         self._size = (w, h)
+
+    def _read_first_frame(self, timeout_s: float = 4.0):
+        """macOS cameras often return nothing for the first reads while they warm up; retry briefly."""
+        import time
+
+        deadline = time.monotonic() + timeout_s
+        while True:
+            ok, frame = self._cap.read()
+            if ok and frame is not None:
+                return ok, frame
+            if time.monotonic() > deadline:
+                return False, None
+            time.sleep(0.1)
 
     def _open(self):
         if isinstance(self.device, int):
