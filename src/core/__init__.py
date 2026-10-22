@@ -10,3 +10,9 @@ _os.environ.setdefault("YOLO_CONFIG_DIR", str(_ROOT / ".yolo_config"))
 _os.environ.setdefault("HF_HOME", str(_ROOT / ".hf_cache"))
 _os.environ.setdefault("HF_HUB_DISABLE_TELEMETRY", "1")
 _os.environ.setdefault("YOLO_OFFLINE", "1")
+
+# Once models are in the project cache, run fully offline by default (no Hub update checks at runtime).
+# To download a new model on purpose:  HF_HUB_OFFLINE=0 uv run ...
+if (_ROOT / ".hf_cache" / "hub").is_dir():
+    _os.environ.setdefault("HF_HUB_OFFLINE", "1")
+    _os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
