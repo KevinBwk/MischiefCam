@@ -12,7 +12,8 @@ class CacheOnly:
 SUFFIX = sys.argv[1] if len(sys.argv) > 1 else ""  # e.g. "_mf4" to score the 4-frame VLM runs
 SETS = [("close", "data/Videos", "data/labels_videos.json", "eval_close" + SUFFIX),
         ("medium", "data/Medium-Videos", "data/labels_medium.json", "eval_medium" + SUFFIX),
-        ("wide", "data/Wide-Videos", "data/labels_wide.json", "eval_wide" + SUFFIX)]
+        ("wide", "data/Wide-Videos", "data/labels_wide.json", "eval_wide" + SUFFIX),
+        ("hardneg", "data/HardNeg-Videos", "data/labels_hardneg.json", "eval_hardneg" + SUFFIX)]
 clips, view, vlm, truth = [], {}, {}, {}
 for v, folder, lab, batch in SETS:
     d = L.load(resolve(lab))
@@ -45,8 +46,8 @@ def score(alerts, keys):
     fp = sum(truth[k] == "negative" and alerts.get(k, False) for k in keys)
     return tp, fp
 print(f"{'view':7s} {'pos/neg':8s} | {'VLM':>11s} | {'classifier (mean of 20)':>24s} | {'VLM OR classifier':>20s}")
-for v in ("close", "medium", "wide", "all"):
-    keys = [k for k in truth if v == "all" or view.get(k) == v or (k not in view and k.split('/')[1] == {'close':'Videos','medium':'Medium-Videos','wide':'Wide-Videos'}.get(v))]
+for v in ("close", "medium", "wide", "hardneg", "all"):
+    keys = [k for k in truth if v == "all" or view.get(k) == v or (k not in view and k.split('/')[1] == {'close':'Videos','medium':'Medium-Videos','wide':'Wide-Videos','hardneg':'HardNeg-Videos'}.get(v))]
     npos = sum(truth[k] == "positive" for k in keys); nneg = sum(truth[k] == "negative" for k in keys)
     vt, vf = score(vlm, keys)
     pr = [score(r, keys) for r in runs]; un = [score({k: vlm[k] or r.get(k, False) for k in keys}, keys) for r in runs]
