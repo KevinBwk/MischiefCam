@@ -193,6 +193,7 @@ class Runner(threading.Thread):
         super().__init__(daemon=True, name="demo-runner")
         self.state, self.items, self.cfg, self.loop = state, items, cfg, loop
         self.camera: CameraSource | None = None
+        self.plays = 0  # playback counter: card keys stay unique when the playlist loops
 
     def run(self) -> None:
         st = self.state
@@ -218,7 +219,8 @@ class Runner(threading.Thread):
                 for i, item in enumerate(self.items):
                     if st.stop_requested:
                         break
-                    self.play(i, item, detector, worker, out_root / f"{i:02d}")
+                    self.plays += 1
+                    self.play(i, item, detector, worker, out_root / f"{self.plays:03d}_{i:02d}")
                 if not self.loop or st.stop_requested:
                     break
         except Exception as exc:
@@ -243,6 +245,7 @@ class Runner(threading.Thread):
         with st.lock:
             st.item, st.item_index, st.status, st.message = item, index, "running", item.get("caption", "")
         alerts_before = sum(1 for e in st.events if e["kind"] == "alert")
+        play = self.plays
         recent: deque = deque(maxlen=120)  # (pts, overlay frame): the alert snapshot is the frame that was judged
         bus = EventBus()
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -255,7 +258,7 @@ class Runner(threading.Thread):
             v = ev.extra or {}
             if ev.kind == "explained":  # updates the alert card in place (no new notification)
                 tone, text = assessment_line(v.get("explanation"))
-                st.add_event({"kind": "explained", "alert_key": f"{index}:{v.get('alert_key')}", "tone": tone, "text": text,
+                st.add_event({"kind": "explained", "alert_key": f"{play}:{v.get('alert_key')}", "tone": tone, "text": text,
                               "ms": v.get("vlm_ms")})
                 return
             card = {"kind": ev.kind, "clip": item.get("caption", ""), "t": fmt_time(ev.pts_s), "pts": ev.pts_s,
@@ -265,13 +268,13 @@ class Runner(threading.Thread):
             if ev.kind == "alert":
                 card["message"] = st.branding.message("suspect", roi=ev.roi_name, time=fmt_time(ev.pts_s),
                                                       decision=ev.decision or "", reason=ev.reason)
-                card["alert_key"] = f"{index}:{v.get('alert_key')}"  # track ids restart per clip: scope by item
+                card["alert_key"] = f"{play}:{v.get('alert_key')}"  # track ids restart per clip: scope by playback
                 if v.get("explaining"):
                     card["tone"], card["text"] = "pending", f"{st.branding.mascot_name} is taking a closer look"
                 elif v.get("judge_source") == "vlm":  # the VLM itself raised the alert: its reason is the assessment
                     card["tone"], card["text"] = "ok", f"Visual check: {ev.reason}" if ev.reason else "Visual check: chewing seen"
-                frames = [f for f in recent if f[0] <= ev.pts_s + 1e-3] or list(recent)
-                snap = encode(frames[-1][1], width=640) if frames else None
+                judged = min(recent, key=lambda f: abs(f[0] - ev.pts_s), default=None)  # the reviewed frame
+                snap = encode(judged[1], width=640) if judged is not None else None
             if ev.kind in ("alert", "insufficient") and v.get("vlm_ms"):
                 with st.lock:
                     st.judge_ms.append(float(v["vlm_ms"]))
@@ -314,16 +317,17 @@ def assessment_line(expl: dict | None) -> tuple[str, str]:
     if not expl or not expl.get("ok"):
         return "muted", "Visual assessment unavailable"
     obs = expl.get("observation", "")
-    if expl["assessment"] == "suspect" and expl["contact"] in ("sofa", "unclear"):
-        return "ok", f"Visual check: {obs}" if obs else "Visual check: teeth on the sofa"
+    # support needs consistent visible evidence: a yes, on the sofa, mouth actually seen, and an observation
+    if (expl["assessment"] == "suspect" and expl["contact"] == "sofa" and obs
+            and expl["mouth_visibility"] in ("clear", "partial")):
+        return "ok", f"Visual check: {obs}"
     if expl["assessment"] == "normal" or expl["contact"] in ("toy", "other", "none"):
         toy = ", looks like a toy" if expl["contact"] == "toy" else ""
         return "warn", f"Visual check found no clear chewing on the sofa{toy} — check the snapshot"
-    if expl["contact"] == "sofa":  # visible contact, but no verdict: say exactly that (observation not quoted:
-        return "muted", "Mouth at the sofa — chewing not confirmed from this frame"  # it can contradict itself)
     if expl["mouth_visibility"] == "hidden" or expl["limitation"] == "occlusion":
-        return "muted", "Mouth hidden from camera"
-    return "muted", "Limited view of mouth–sofa contact"
+        return "muted", "Mouth hidden from camera — check the snapshot"
+    # no "mouth at the sofa" tier: on 2026-10-22 the VLM said contact=sofa for a toy-chewing false alert too
+    return "muted", "Limited view of the mouth — check the snapshot"
 
 
 def _judge_name(raw: str) -> str:

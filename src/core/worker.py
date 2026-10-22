@@ -28,6 +28,7 @@ class Job:
     request: VLMRequest
     submitted: float  # wall-clock (time.monotonic)
     kind: str = "judge"  # "judge" | "explain"
+    owner: object = None  # who submitted it (a Pipeline); a worker reused across clips can return a late job
 
 
 @dataclass
@@ -52,8 +53,9 @@ class VLMWorker:
         self._thread = threading.Thread(target=self._run, name="vlm-worker", daemon=True)
         self._thread.start()
 
-    def submit(self, episode_id: str, pts_s: float, request: VLMRequest, kind: str = "judge") -> None:
-        job = Job(episode_id, pts_s, request, time.monotonic(), kind)
+    def submit(self, episode_id: str, pts_s: float, request: VLMRequest, kind: str = "judge",
+               owner: object = None) -> None:
+        job = Job(episode_id, pts_s, request, time.monotonic(), kind, owner)
         with self._cv:
             if any(j.episode_id == episode_id and j.kind == kind for j in self._pending):
                 return  # same episode already waiting: merge
@@ -97,7 +99,8 @@ class VLMWorker:
                     self._cv.wait()
                 if self._stop:
                     return
-                job = self._pending.popleft()
+                job = next((j for j in self._pending if j.kind == "judge"), self._pending[0])  # judges run first
+                self._pending.remove(job)
                 self._busy = True
             try:
                 if time.monotonic() - job.submitted > self.max_age_s:

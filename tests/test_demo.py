@@ -47,9 +47,11 @@ def test_assessment_line_tiers():
         "ok", "Visual check: teeth on the armrest")
     tone, text = assessment_line({**base, "assessment": "normal", "contact": "toy"})
     assert tone == "warn" and "toy" in text            # contradicting evidence stays visible
-    assert assessment_line({**base, "assessment": "insufficient"})[1].startswith("Mouth at the sofa")
+    assert assessment_line({**base, "assessment": "insufficient"})[0] == "muted"  # contact alone is not support
+    assert assessment_line({**base, "assessment": "suspect", "contact": "unclear", "observation": "x"})[0] == "muted"
+    assert assessment_line({**base, "assessment": "suspect", "observation": ""})[0] == "muted"
     assert assessment_line({**base, "assessment": "insufficient", "contact": "unclear", "mouth_visibility": "hidden"}) == (
-        "muted", "Mouth hidden from camera")
+        "muted", "Mouth hidden from camera — check the snapshot")
     assert assessment_line({**base, "assessment": "insufficient", "contact": "unclear",
                             "mouth_visibility": "partial"})[1].startswith("Limited")
     assert assessment_line(None) == ("muted", "Visual assessment unavailable")

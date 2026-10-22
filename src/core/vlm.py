@@ -58,8 +58,9 @@ EXPLAIN_TEMPLATE = (
     '"contact": "sofa" | "toy" | "other" | "none" | "unclear", '
     '"limitation": "none" | "occlusion" | "blur" | "crop" | "other" | "unknown", '
     '"observation": "<at most 12 words, visible evidence only>"}}\n'
-    "- assessment suspect: the dog's teeth are visibly on the {target}; normal: they are not; "
-    "insufficient: you cannot tell.\n"
+    "- assessment suspect: visible evidence that the dog is biting, gripping or tugging the {target}'s "
+    "material; normal: visibly not doing that; insufficient: you cannot tell. Teeth merely near or "
+    "touching the {target} is not enough for suspect.\n"
     "- contact: what the dog's mouth is touching. Cushions and throw pillows on the {target} count as "
     "\"sofa\"; a toy, bone or scrap of cloth counts as \"toy\" or \"other\", even when it lies on the {target}."
 )

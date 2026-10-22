@@ -125,11 +125,11 @@ class Pipeline:
                     self._publish("episode_closed", ep.episode_id, ep.track_id, ep.roi_id, frame.pts_s,
                                   extra={"verdicts": ep.verdicts, "duration_s": round(ep.last_seen - ep.first_seen, 2)})
 
+                if self.on_frame is not None:  # before draining: an alert's snapshot frame must already be shown
+                    self.on_frame(frame, dets, self.frame_info(present))
                 self._drain_outcomes()
                 if writer is not None:
                     writer.write(self._annotate(frame.image, dets, frame.pts_s))
-                if self.on_frame is not None:
-                    self.on_frame(frame, dets, self.frame_info(present))
                 last_pts = frame.pts_s
 
             for _ in range(2):  # a last alert can queue its explanation while draining: wait once more for it
@@ -158,10 +158,12 @@ class Pipeline:
     def _crop(self, image: np.ndarray, det: Detection, roi: ROI, mode: str):
         """A judge's input. "contact" zooms on the dog's overlap with the couch it touches most, else the zone."""
         zone_box = None
-        if mode == "contact" and self._context:
-            best = max(self._context, key=lambda c: _inter(det.bbox, c.bbox))  # same rule as the probe's sampler
-            if _inter(det.bbox, best.bbox) > 0:
+        if mode == "contact":
+            best = max(self._context, key=lambda c: _inter(det.bbox, c.bbox), default=None)  # sampler's rule
+            if best is not None and _inter(det.bbox, best.bbox) > 0:
                 zone_box = best.bbox
+            else:
+                mode = "animal"  # no touching couch: training (whole-frame zone) fell back to the animal crop too
         return interaction_crop(image, det.bbox, roi, self.cfg.vlm_input_size, self.cfg.bbox_expand, mode,
                                 zone_box=zone_box)
 
@@ -194,7 +196,7 @@ class Pipeline:
         request = VLMRequest(images=tuple(images), prompt=build_prompt(roi.name, len(images), self.cfg.frame_gap_s),
                              max_new_tokens=self.cfg.max_new_tokens, probe_images=probe_images)
         self._episode_meta[episode_id] = (track_id, roi_id)
-        self.worker.submit(episode_id, pts, request)
+        self.worker.submit(episode_id, pts, request, owner=self)
         self.stats.reviews_requested += 1
         self._publish("review", episode_id, track_id, roi_id, pts)
 
@@ -202,6 +204,8 @@ class Pipeline:
         while not self.worker.outcomes.empty():
             out = self.worker.outcomes.get_nowait()
             job = out.job
+            if job.owner is not None and job.owner is not self:
+                continue  # late result from an earlier clip on a shared worker
             track_id, roi_id = self._episode_meta[job.episode_id]
             if job.kind == "explain":  # assessment for an alert that already fired: never a verdict
                 expl = parse_explanation(out.result.raw_text) if out.result else None
@@ -245,7 +249,7 @@ class Pipeline:
         roi = self.rois[roi_id]
         req = VLMRequest(images=images[-1:], prompt=build_explain_prompt(roi.name),
                          max_new_tokens=self.cfg.explain_max_new_tokens)
-        self.worker.submit(episode_id, pts, req, kind="explain")
+        self.worker.submit(episode_id, pts, req, kind="explain", owner=self)
 
     def frame_info(self, present: set) -> dict:
         """Per-dog state for live displays: {track_id: {"zones": [...], "state": str, "verdict": {...}}}."""

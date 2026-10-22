@@ -156,3 +156,25 @@ def test_parse_explanation_validates_fields():
     assert e["ok"] and e["assessment"] == "suspect" and e["contact"] == "unclear"
     assert len(e["observation"].split()) == 12
     assert parse_explanation("no json here")["ok"] is False
+
+
+def test_judge_jobs_run_before_queued_explanations():
+    order = []
+
+    class Rec(FakeVLMBackend):
+        def __init__(self, tag):
+            super().__init__(delay_s=0.1)
+            self.tag = tag
+
+        def infer(self, request):
+            order.append(self.tag)
+            return super().infer(request)
+
+    w = VLMWorker(Rec("judge"), queue_size=3, explainer=Rec("explain"))
+    w.submit("ep0", 0.0, _req())
+    time.sleep(0.03)  # ep0 running
+    w.submit("ep1", 1.0, _req(), kind="explain")
+    w.submit("ep2", 2.0, _req())
+    assert w.wait_idle(5)
+    assert order == ["judge", "judge", "explain"]
+    w.close()

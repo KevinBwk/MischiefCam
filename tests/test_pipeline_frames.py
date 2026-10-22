@@ -74,7 +74,7 @@ def test_probe_alert_queues_explanation_and_explained_event():
             import queue
             self.outcomes, self.explainer, self.submitted = queue.Queue(), object(), []
 
-        def submit(self, episode_id, pts, request, kind="judge"):
+        def submit(self, episode_id, pts, request, kind="judge", owner=None):
             self.submitted.append((episode_id, pts, request, kind))
 
     p = Pipeline.__new__(Pipeline)
@@ -100,3 +100,19 @@ def test_probe_alert_queues_explanation_and_explained_event():
     expl = next(e for e in seen if e.kind == "explained")
     assert expl.extra["alert_key"] == "ep@3.000" and expl.extra["explanation"]["observation"] == "teeth on cushion"
     assert p.stats.alerts == 1  # the explanation is not a second verdict
+
+
+def test_late_outcome_from_another_run_is_ignored():
+    import queue
+
+    from core.pipeline import RunStats
+    from core.types import VLMRequest, VLMResult
+    from core.worker import Job, Outcome
+
+    p = Pipeline.__new__(Pipeline)
+    p.worker = type("W", (), {"outcomes": queue.Queue(), "explainer": None})()
+    p._episode_meta, p.stats = {}, RunStats()
+    p.worker.outcomes.put(Outcome(Job("old-ep", 1.0, VLMRequest((), ""), 0.0, owner=object()),
+                                  VLMResult("suspect", "", 1.0)))
+    p._drain_outcomes()  # would KeyError on the unknown episode if not filtered
+    assert p.stats.alerts == 0
