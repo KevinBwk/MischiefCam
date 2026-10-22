@@ -127,7 +127,7 @@
     } else {
       el.className = 'card small';
       const what = e.kind === 'review' ? `checking dog #${e.dog} near the ${e.zone}…`
-        : `couldn't see clearly at ${e.t} — looking again`;
+        : `couldn't see dog #${e.dog}'s mouth clearly at ${e.t} — looking again`;
       el.innerHTML = `<div class="msg"></div>`;
       el.querySelector('.msg').textContent = what;
     }
@@ -157,7 +157,17 @@
       seen.add(e.id);
       if (feed.querySelector('.empty')) feed.innerHTML = '';
       if (e.kind === 'review') continue;          // keep the feed readable: show results, not every check
-      feed.appendChild(card(e));
+      const lastEl = feed.lastElementChild;
+      if (e.kind === 'insufficient' && lastEl && lastEl.dataset.key === `${e.clip}|${e.dog}`) {
+        // merge repeated "couldn't see clearly" for the same dog into one card
+        const n = Number(lastEl.dataset.count) + 1;
+        lastEl.dataset.count = n;
+        lastEl.querySelector('.msg').textContent = `still checking dog #${e.dog} — couldn't see the mouth clearly (×${n}, ${lastEl.dataset.first}–${e.t})`;
+        continue;
+      }
+      const el = card(e);
+      if (e.kind === 'insufficient') { el.dataset.key = `${e.clip}|${e.dog}`; el.dataset.count = 1; el.dataset.first = e.t; }
+      feed.appendChild(el);
       while (feed.children.length > 40) feed.removeChild(feed.firstChild);
       feed.scrollTop = feed.scrollHeight;
     }
