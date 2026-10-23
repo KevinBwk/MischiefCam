@@ -7,7 +7,8 @@ Needs the VLM batch summaries in outputs/eval_<view><suffix> and cached embeddin
 import argparse, json, random, numpy as np, collections
 from core import labels as L
 from core.config import resolve
-from core.probe import DEFAULT_EMBED_MODEL, SAMPLER_VERSION, LogisticProbe, build_dataset, clip_alert, pick_threshold
+from core.probe import (DEFAULT_EMBED_MODEL, SAMPLER_VERSION, LogisticProbe, build_dataset, clip_alert, pick_threshold,
+                        random_group_folds)
 class CacheOnly:
     model_id = DEFAULT_EMBED_MODEL
     def embed(self, images): raise RuntimeError("cache miss")
@@ -19,7 +20,8 @@ args = ap.parse_args()
 SETS = [("close", "data/Videos", "data/labels_videos.json", "eval_close"),
         ("medium", "data/Medium-Videos", "data/labels_medium.json", "eval_medium"),
         ("wide", "data/Wide-Videos", "data/labels_wide.json", "eval_wide"),
-        ("hardneg", "data/HardNeg-Videos", "data/labels_hardneg.json", "eval_hardneg")]
+        ("hardneg", "data/HardNeg-Videos", "data/labels_hardneg.json", "eval_hardneg"),
+        ("pairs", "data/Pairs-Videos", "data/labels_pairs.json", "eval_pairs")]
 clips, view, truth = [], {}, {}
 vlm_runs = [{} for _ in args.suffixes]
 for v, folder, lab, batch in SETS:
@@ -36,10 +38,7 @@ vlm = vlm_runs[0]
 assert all(set(truth) <= set(vr) for vr in vlm_runs), [set(truth) - set(vr) for vr in vlm_runs]
 
 def probe_alerts(seed):
-    rng = random.Random(seed); pos = [c.clip for c in clips if c.label]; neg = [c.clip for c in clips if not c.label]
-    rng.shuffle(pos); rng.shuffle(neg); folds = [set() for _ in range(5)]
-    for i, c in enumerate(pos): folds[i % 5].add(c)
-    for i, c in enumerate(neg): folds[(i + len(pos)) % 5].add(c)
+    folds = random_group_folds([c.clip for c in clips], {c.clip: c.label for c in clips}, 5, random.Random(seed))
     oof = {}
     for fs in folds:
         tr = [c for c in clips if c.clip not in fs]
@@ -57,8 +56,8 @@ def score(alerts, keys):
     return tp, fp
 print(f"classifier crop={args.crop} fpr={args.fpr}; VLM runs: {args.suffixes} (mean)")
 print(f"{'view':7s} {'pos/neg':8s} | {'VLM':>15s} | {'classifier (mean of 20)':>24s} | {'VLM OR classifier':>20s}")
-for v in ("close", "medium", "wide", "hardneg", "all"):
-    keys = [k for k in truth if v == "all" or view.get(k) == v or (k not in view and k.split('/')[1] == {'close':'Videos','medium':'Medium-Videos','wide':'Wide-Videos','hardneg':'HardNeg-Videos'}.get(v))]
+for v in ("close", "medium", "wide", "hardneg", "pairs", "all"):
+    keys = [k for k in truth if v == "all" or view.get(k) == v or (k not in view and k.split('/')[1] == {'close':'Videos','medium':'Medium-Videos','wide':'Wide-Videos','hardneg':'HardNeg-Videos','pairs':'Pairs-Videos'}.get(v))]
     npos = sum(truth[k] == "positive" for k in keys); nneg = sum(truth[k] == "negative" for k in keys)
     m = lambda xs, i: np.mean([x[i] for x in xs])
     vs = [score(vr, keys) for vr in vlm_runs]; vt, vf = m(vs, 0), m(vs, 1)

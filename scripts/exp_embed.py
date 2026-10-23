@@ -21,21 +21,15 @@ from core import labels as L
 from core.config import resolve
 from core.detector import UltralyticsDetector
 from core.probe import (SAMPLER_VERSION, CLIPEmbedder, LogisticProbe, build_dataset, clip_alert, make_sampler,
-                        pick_threshold)
+                        pick_threshold, random_group_folds)
 
 SETS = [("data/Videos", "data/labels_videos.json"), ("data/Medium-Videos", "data/labels_medium.json"),
-        ("data/Wide-Videos", "data/labels_wide.json"), ("data/HardNeg-Videos", "data/labels_hardneg.json")]
+        ("data/Wide-Videos", "data/labels_wide.json"), ("data/HardNeg-Videos", "data/labels_hardneg.json"),
+        ("data/Pairs-Videos", "data/labels_pairs.json")]
 
 
 def random_folds(clips, k, rng):
-    pos = [c.clip for c in clips if c.label == 1]
-    neg = [c.clip for c in clips if c.label == 0]
-    rng.shuffle(pos)
-    rng.shuffle(neg)
-    folds = [set() for _ in range(k)]
-    for i, c in enumerate(pos + neg):
-        folds[i % k].add(c)
-    return folds
+    return random_group_folds([c.clip for c in clips], {c.clip: c.label for c in clips}, k, rng)
 
 
 def evaluate(clips, splits, max_fp_rate, k, m, seed=0):

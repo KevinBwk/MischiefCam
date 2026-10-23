@@ -236,3 +236,30 @@ def test_build_dataset_refuses_held_out_test_set(tmp_path):
 
     with pytest.raises(ValueError, match="held-out test set"):
         build_dataset(tmp_path / "Test-Videos", {"clips": {}}, None, None, 2.0, None)
+
+
+def test_overlapping_segments_positive_wins():
+    from core import labels as L
+
+    entry = {"segments": [{"start_s": 0.0, "end_s": -1.0, "label": "negative"},   # dog B chews a toy
+                          {"start_s": 2.0, "end_s": 5.0, "label": "positive"}]}   # dog A chews the sofa
+    assert L.label_at(entry, 1.0, 8.0) == "negative"
+    assert L.label_at(entry, 3.0, 8.0) == "positive"
+    assert L.label_at(entry, 6.0, 8.0) == "negative"
+
+
+def test_scene_groups_keep_contrast_pairs_together():
+    import random
+
+    from core.probe import group_folds, random_group_folds, scene_group
+
+    assert scene_group("data/Pairs-Videos/p03a.mp4") == scene_group("data/Pairs-Videos/p03b.mp4")
+    assert scene_group("data/Videos/v3.mp4") == "data/Videos/v3.mp4"  # not a pair: its own group
+    ids = [f"data/Pairs-Videos/p{i:02d}{s}.mp4" for i in range(1, 11) for s in "ab"] + [f"v{i}.mp4" for i in range(10)]
+    labels = {c: int(c.endswith("a.mp4") or c in ("v1.mp4", "v2.mp4")) for c in ids}
+    for folds in (group_folds(ids, labels, 5), random_group_folds(ids, labels, 5, random.Random(3))):
+        assert sorted(c for f in folds for c in f) == sorted(ids)
+        for i in range(1, 11):
+            a, b = f"data/Pairs-Videos/p{i:02d}a.mp4", f"data/Pairs-Videos/p{i:02d}b.mp4"
+            assert any(a in f and b in f for f in folds)
+        assert all(any(labels[c] for c in f) and not all(labels[c] for c in f) for f in folds)

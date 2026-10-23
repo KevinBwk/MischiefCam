@@ -13,6 +13,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import time
 from dataclasses import dataclass
 from datetime import datetime
@@ -99,16 +100,48 @@ def clip_alert(probs: np.ndarray, threshold: float, k: int = 2, m: int = 4) -> b
     return any(hits[i:i + window].sum() >= k for i in range(len(hits) - window + 1))
 
 
-def group_folds(clip_ids: list[str], clip_labels: dict[str, int], k: int) -> list[set[str]]:
-    """Split clip ids into k folds, alternating positives and negatives so each fold gets both."""
-    pos = sorted(c for c in clip_ids if clip_labels[c] == 1)
-    neg = sorted(c for c in clip_ids if clip_labels[c] == 0)
+_PAIR = re.compile(r"(p\d+)[ab](\.\w+)?$", re.IGNORECASE)
+
+
+def scene_group(clip_id: str) -> str:
+    """Clips that share a scene must sit on the same side of a split: contrast pairs p01a/p01b -> p01."""
+    head, _, name = clip_id.rpartition("/")
+    m = _PAIR.match(name)
+    return f"{head}/{m.group(1).lower()}" if m else clip_id
+
+
+def _split(groups: dict[str, list[str]], group_label: dict[str, int], k: int, order) -> list[set[str]]:
+    pos = order([g for g in groups if group_label[g] == 1])
+    neg = order([g for g in groups if group_label[g] == 0])
     folds = [set() for _ in range(k)]
-    for i, c in enumerate(pos):
-        folds[i % k].add(c)
-    for i, c in enumerate(neg):
-        folds[(i + len(pos)) % k].add(c)
+    for i, g in enumerate(pos + neg):
+        folds[i % k].update(groups[g])
     return [f for f in folds if f]
+
+
+def _groups(clip_ids, clip_labels):
+    groups: dict[str, list[str]] = {}
+    for c in clip_ids:
+        groups.setdefault(scene_group(c), []).append(c)
+    return groups, {g: max(clip_labels[c] for c in cs) for g, cs in groups.items()}
+
+
+def group_folds(clip_ids: list[str], clip_labels: dict[str, int], k: int) -> list[set[str]]:
+    """Split clip ids into k folds by scene group (see scene_group), alternating positive and negative
+    groups so each fold gets both."""
+    groups, glab = _groups(clip_ids, clip_labels)
+    return _split(groups, glab, k, sorted)
+
+
+def random_group_folds(clip_ids: list[str], clip_labels: dict[str, int], k: int, rng) -> list[set[str]]:
+    """Like group_folds but with shuffled group order (for repeated random splits)."""
+    groups, glab = _groups(clip_ids, clip_labels)
+
+    def shuffled(xs):
+        xs = sorted(xs)
+        rng.shuffle(xs)
+        return xs
+    return _split(groups, glab, k, shuffled)
 
 
 def pick_threshold(probs: np.ndarray, y: np.ndarray, max_fp_rate: float = 0.02) -> float:

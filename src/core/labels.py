@@ -87,9 +87,17 @@ def clip_label(entry: dict) -> str | None:
 
 
 def label_at(entry: dict, t: float, duration: float) -> str | None:
-    """Label covering time t (end_s < 0 means 'until the end of the clip')."""
+    """Label covering time t (end_s < 0 means 'until the end of the clip').
+
+    Overlapping segments (several dogs: one chews the sofa, another a toy) resolve positive > uncertain >
+    negative: any dog chewing the protected object makes that moment positive.
+    """
+    covering = set()
     for s in entry.get("segments", []):
         end = duration if s["end_s"] < 0 else s["end_s"]
         if s["start_s"] <= t <= end:
-            return s["label"]
+            covering.add(s["label"])
+    for lab in ("positive", "uncertain", "negative"):
+        if lab in covering:
+            return lab
     return None
