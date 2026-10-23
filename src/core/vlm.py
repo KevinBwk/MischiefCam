@@ -138,7 +138,8 @@ class FakeVLMBackend:
         if self.delay_s:
             time.sleep(self.delay_s)
         decision, reason = parse_decision(self.reply)
-        return VLMResult(decision, self.reply, (time.perf_counter() - t0) * 1000, reason)
+        ms = (time.perf_counter() - t0) * 1000
+        return VLMResult(decision, self.reply, ms, reason, timings={"fake": ms})
 
     def close(self) -> None:
         pass
@@ -172,7 +173,8 @@ class MLXVLMBackend:
         )
         text = getattr(out, "text", out)  # newer mlx-vlm returns a GenerationResult
         decision, reason = parse_decision(text)
-        return VLMResult(decision, text, (time.perf_counter() - t0) * 1000, reason)
+        ms = (time.perf_counter() - t0) * 1000
+        return VLMResult(decision, text, ms, reason, source="vlm", timings={"qwen": ms})
 
     def close(self) -> None:
         pass
@@ -193,10 +195,12 @@ class EitherBackend:
         t0 = time.perf_counter()
         p = self.probe.infer(request)
         if p.decision == "suspect":
-            return VLMResult("suspect", f"probe: {p.raw_text}", (time.perf_counter() - t0) * 1000, p.reason, source="probe")
+            return VLMResult("suspect", f"probe: {p.raw_text}", (time.perf_counter() - t0) * 1000, p.reason, source="probe",
+                             timings=dict(p.timings))
         v = self.vlm.infer(request)
         return VLMResult(v.decision, f"probe: {p.raw_text} | vlm: {v.raw_text}", (time.perf_counter() - t0) * 1000,
-                         v.reason if v.decision != "normal" else f"{p.reason}; vlm normal", source="vlm")
+                         v.reason if v.decision != "normal" else f"{p.reason}; vlm normal", source="vlm",
+                         timings={**p.timings, **v.timings})
 
     def close(self) -> None:
         self.probe.close()

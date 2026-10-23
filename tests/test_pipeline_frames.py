@@ -87,7 +87,8 @@ def test_probe_alert_queues_explanation_and_explained_event():
     p.bus.subscribe(seen.append)
     crop = Image.new("RGB", (4, 4))
     req = VLMRequest(images=(crop,), prompt="judge")
-    p.worker.outcomes.put(Outcome(Job("ep", 3.0, req, 0.0), VLMResult("suspect", "probe: p=0.9", 5.0, "", "probe")))
+    p.worker.outcomes.put(Outcome(Job("ep", 3.0, req, 0.0), VLMResult("suspect", "probe: p=0.9", 5.0, "", "probe",
+                                                                  {"clip": 5.0})))
     p._drain_outcomes()
     alert = next(e for e in seen if e.kind == "alert")
     assert alert.extra["explaining"] and alert.extra["alert_key"] == "ep@3.000"
@@ -95,11 +96,13 @@ def test_probe_alert_queues_explanation_and_explained_event():
     assert kind == "explain" and ereq.images == (crop,) and "Describe only what is visible" in ereq.prompt
 
     raw = '{"assessment": "suspect", "mouth_visibility": "clear", "contact": "sofa", "limitation": "none", "observation": "teeth on cushion"}'
-    p.worker.outcomes.put(Outcome(Job("ep", 3.0, ereq, 0.0, "explain"), VLMResult("suspect", raw, 900.0)))
+    p.worker.outcomes.put(Outcome(Job("ep", 3.0, ereq, 0.0, "explain"), VLMResult("suspect", raw, 900.0, "", "vlm",
+                                                                                {"qwen": 900.0})))
     p._drain_outcomes()
     expl = next(e for e in seen if e.kind == "explained")
     assert expl.extra["alert_key"] == "ep@3.000" and expl.extra["explanation"]["observation"] == "teeth on cushion"
     assert p.stats.alerts == 1  # the explanation is not a second verdict
+    assert p.stats.judge_ms == {"clip": [5.0], "qwen_explain": [900.0]}  # explain latency kept apart
 
 
 def test_late_outcome_from_another_run_is_ignored():

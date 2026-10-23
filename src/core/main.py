@@ -16,6 +16,7 @@ from .pipeline import Pipeline, PipelineConfig
 from .roi import load_rois
 from .sources import make_source
 from .state import StateConfig
+from .metrics import write_timings
 from .vlm import make_backend, probe_crop
 from .worker import VLMWorker
 
@@ -106,9 +107,11 @@ def main(argv: list[str] | None = None) -> int:
         "detector_ms_p95": _pct(stats.detector_ms, 95),
         "vlm_ms_p50": _pct(stats.vlm_ms, 50),
         "vlm_ms_p95": _pct(stats.vlm_ms, 95),
+        "judge_ms_p50": {k: _pct(v, 50) for k, v in stats.judge_ms.items()},  # incl. warm-up; see latency_report.py
         "max_detector_gap_s": round(stats.max_detector_gap_s, 3),
         "config": cfg,
     }
+    write_timings(stats, run_dir / "timings.json", "realtime" if args.camera is not None else "batch")
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
     print(json.dumps({k: v for k, v in summary.items() if k != "config"}, indent=2, ensure_ascii=False))
     print(f"outputs: {run_dir}")

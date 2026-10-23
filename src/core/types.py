@@ -56,6 +56,7 @@ class VLMResult:
     elapsed_ms: float
     reason: str = ""
     source: str = ""  # "vlm" | "probe" | "": which judge produced the decision
+    timings: dict = field(default_factory=dict)  # per-judge milliseconds, e.g. {"clip": 18.0, "qwen": 410.0}
 
 
 class EpisodeState(str, Enum):

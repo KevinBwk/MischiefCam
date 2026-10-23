@@ -31,6 +31,7 @@ from .roi import load_rois
 from .sources import CameraSource, VideoFileSource
 from .state import StateConfig
 from .types import ROI, Event
+from .metrics import write_timings
 from .vlm import make_backend, probe_crop
 from .worker import VLMWorker
 
@@ -303,6 +304,7 @@ class Runner(threading.Thread):
             pipe.run(drain_timeout_s=15.0)
         finally:
             sink.close()
+            write_timings(pipe.stats, out_dir / "timings.json", "realtime")  # paced playback: R4 latency
             self.camera = None
         if sum(1 for e in st.events if e["kind"] == "alert") == alerts_before:
             st.add_event({"kind": "quiet", "clip": item.get("caption", ""),

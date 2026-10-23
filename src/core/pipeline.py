@@ -49,7 +49,12 @@ class RunStats:
     dropped: int = 0
     detector_ms: list[float] = field(default_factory=list)
     vlm_ms: list[float] = field(default_factory=list)
+    judge_ms: dict[str, list[float]] = field(default_factory=dict)  # raw ms per judge: clip / qwen / qwen_explain
     max_detector_gap_s: float = 0.0
+
+    def add_timings(self, timings: dict, suffix: str = "") -> None:
+        for name, ms in timings.items():
+            self.judge_ms.setdefault(name + suffix, []).append(round(float(ms), 2))
 
 
 class Pipeline:
@@ -208,6 +213,8 @@ class Pipeline:
                 continue  # late result from an earlier clip on a shared worker
             track_id, roi_id = self._episode_meta[job.episode_id]
             if job.kind == "explain":  # assessment for an alert that already fired: never a verdict
+                if out.result:
+                    self.stats.add_timings(out.result.timings, "_explain")
                 expl = parse_explanation(out.result.raw_text) if out.result else None
                 self._publish("explained", job.episode_id, track_id, roi_id, job.pts_s,
                               expl["assessment"] if expl else None, (expl or {}).get("observation", ""),
@@ -224,6 +231,7 @@ class Pipeline:
                 continue
             res = out.result
             self.stats.vlm_ms.append(res.elapsed_ms)
+            self.stats.add_timings(res.timings)
             self.last_verdict[track_id] = {"decision": res.decision, "pts": job.pts_s, "reason": res.reason,
                                            "ms": round(res.elapsed_ms), "raw": res.raw_text}
             need = self.tracker.cfg.vlm_confirmations if res.source == "vlm" else 1

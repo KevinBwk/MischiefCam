@@ -178,3 +178,23 @@ def test_judge_jobs_run_before_queued_explanations():
     assert w.wait_idle(5)
     assert order == ["judge", "judge", "explain"]
     w.close()
+
+
+def test_either_backend_keeps_per_judge_timings():
+    from core.types import VLMResult
+    from core.vlm import EitherBackend
+
+    class Stub:
+        def __init__(self, decision, timings):
+            self.decision, self.timings = decision, timings
+
+        def infer(self, request):
+            return VLMResult(self.decision, "", 1.0, timings=self.timings)
+
+        def close(self):
+            pass
+
+    both = EitherBackend(Stub("normal", {"clip": 12.0}), Stub("insufficient", {"qwen": 400.0})).infer(_req())
+    assert both.timings == {"clip": 12.0, "qwen": 400.0}
+    probe_only = EitherBackend(Stub("suspect", {"clip": 11.0}), Stub("normal", {"qwen": 1.0})).infer(_req())
+    assert probe_only.timings == {"clip": 11.0}
