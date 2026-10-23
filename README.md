@@ -102,7 +102,9 @@ flowchart LR
 
 ## License
 
-[TBD] Note: Ultralytics YOLOv8 is AGPL-3.0 (see [docs/MODELS.md](docs/MODELS.md#licensing-note)).
+No license is granted yet: this repository is shared for review in the ASUS UGen AI League.
+Third-party models keep their own licenses; note that Ultralytics YOLOv8 is AGPL-3.0
+(see [docs/MODELS.md](docs/MODELS.md#licensing-note)), which matters before any commercial release.
 
 ---
 
