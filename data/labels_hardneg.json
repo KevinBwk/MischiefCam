@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "clips": {
+    "h05.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "rope on the rug",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": true,
+      "updated": "2026-10-22T20:59:05"
+    },
+    "h01.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "towel on the floor",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": true,
+      "updated": "2026-10-22T20:59:11"
+    },
+    "h02.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "torn plush toy on the floor",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": true,
+      "updated": "2026-10-22T20:59:14"
+    },
+    "h03.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "fabric scrap on the floor",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": true,
+      "updated": "2026-10-22T20:59:19"
+    },
+    "h04.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "stuffed toy on the floor (IR)",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": true,
+      "updated": "2026-10-22T20:59:23"
+    },
+    "h06.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "gray toy on the sofa",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": true,
+      "updated": "2026-10-22T20:59:38"
+    },
+    "h07.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "bone on the sofa",
+          "visibility": "partial"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": true,
+      "updated": "2026-10-22T20:59:50"
+    },
+    "h08.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "rope toy over the armrest (IR)",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": true,
+      "updated": "2026-10-22T21:00:01"
+    },
+    "h09.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "red toy on the sofa",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": true,
+      "updated": "2026-10-22T21:00:09"
+    },
+    "h10.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "plush toy on the sofa",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": true,
+      "updated": "2026-10-22T21:00:25"
+    }
+  }
+}

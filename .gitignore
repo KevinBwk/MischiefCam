@@ -16,8 +16,15 @@ models/
 # Camera-specific zones (your home layout) — share an example instead
 config/rois.json
 
-# Data and outputs
-data/
+# Data and outputs: videos stay out; human labels are committed so results can be re-scored
+data/*
+!data/labels_videos.json
+!data/labels_medium.json
+!data/labels_wide.json
+!data/labels_hardneg.json
+!data/labels_pairs.json
+!data/labels_test.json
+!data/video_prompt_map.json
 outputs/
 runs/
 

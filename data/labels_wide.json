@@ -1,0 +1,517 @@
+{
+ "version": 1,
+ "clips": {
+  "w01.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": 1.453,
+     "label": "negative",
+     "behavior": "resting",
+     "target": "",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 1.453,
+     "end_s": 3.377,
+     "label": "negative",
+     "behavior": "walking",
+     "target": "",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 3.377,
+     "end_s": 8.0,
+     "label": "negative",
+     "behavior": "chewing_furniture",
+     "target": "桌子",
+     "visibility": "clear"
+    }
+   ],
+   "simulated": true,
+   "source_note": "chews the table, not the sofa: negative while only the sofa is protected (Stage II: positive for 'table')",
+   "damage_confirmed": "yes",
+   "split": "",
+   "ai_assisted": false,
+   "updated": "2026-10-22T23:52:35"
+  },
+  "w02.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": 3.604,
+     "label": "negative",
+     "behavior": "walking",
+     "target": "",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 3.604,
+     "end_s": 5.8,
+     "label": "positive",
+     "behavior": "chewing_furniture",
+     "target": "",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 5.795,
+     "end_s": 8.0,
+     "label": "negative",
+     "behavior": "walking",
+     "target": "",
+     "visibility": "clear"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "yes",
+   "split": "",
+   "ai_assisted": false,
+   "updated": "2026-10-22T08:08:27"
+  },
+  "w03.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": 1.786,
+     "label": "negative",
+     "behavior": "walking",
+     "target": "",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 1.786,
+     "end_s": 6.325,
+     "label": "positive",
+     "behavior": "chewing_furniture",
+     "target": "抱枕",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 6.325,
+     "end_s": 8.0,
+     "label": "negative",
+     "behavior": "sitting",
+     "target": "抱枕",
+     "visibility": "clear"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "yes",
+   "split": "",
+   "ai_assisted": false,
+   "updated": "2026-10-22T08:09:45"
+  },
+  "w04.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": 3.027,
+     "label": "negative",
+     "behavior": "walking",
+     "target": "",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 3.027,
+     "end_s": 8.0,
+     "label": "positive",
+     "behavior": "chewing_furniture",
+     "target": "",
+     "visibility": "partial"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "yes",
+   "split": "",
+   "ai_assisted": false,
+   "updated": "2026-10-22T08:10:25"
+  },
+  "w05.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": -1.0,
+     "label": "negative",
+     "behavior": "resting",
+     "target": "",
+     "visibility": "clear"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "no",
+   "split": "",
+   "ai_assisted": false,
+   "updated": "2026-10-22T08:10:43"
+  },
+  "w06.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": 3.098,
+     "label": "negative",
+     "behavior": "walking",
+     "target": "",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 3.1,
+     "end_s": 4.716,
+     "label": "negative",
+     "behavior": "sniffing",
+     "target": "",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 4.716,
+     "end_s": 6.261,
+     "label": "negative",
+     "behavior": "walking",
+     "target": "",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 6.261,
+     "end_s": 8.0,
+     "label": "negative",
+     "behavior": "resting",
+     "target": "",
+     "visibility": "clear"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "no",
+   "split": "",
+   "ai_assisted": false,
+   "updated": "2026-10-22T08:11:46"
+  },
+  "w07.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": 2.0,
+     "label": "negative",
+     "behavior": "other",
+     "target": "喝水",
+     "visibility": "partial"
+    },
+    {
+     "start_s": 2.0,
+     "end_s": 4.8,
+     "label": "negative",
+     "behavior": "walking",
+     "target": "",
+     "visibility": "partial"
+    },
+    {
+     "start_s": 4.8,
+     "end_s": 8.0,
+     "label": "negative",
+     "behavior": "resting",
+     "target": "",
+     "visibility": "partial"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "no",
+   "split": "",
+   "ai_assisted": false,
+   "updated": "2026-10-22T08:13:19"
+  },
+  "w08.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": 7.02,
+     "label": "negative",
+     "behavior": "carrying",
+     "target": "",
+     "visibility": "partial"
+    },
+    {
+     "start_s": 7.02,
+     "end_s": 8.0,
+     "label": "negative",
+     "behavior": "chewing_toy",
+     "target": "",
+     "visibility": "partial"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "no",
+   "split": "",
+   "ai_assisted": false,
+   "updated": "2026-10-22T08:13:57"
+  },
+  "w09.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": 1.75,
+     "label": "negative",
+     "behavior": "walking",
+     "target": "",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 1.75,
+     "end_s": -1.0,
+     "label": "positive",
+     "behavior": "chewing_furniture",
+     "target": "armrest",
+     "visibility": "partial"
+    }
+   ],
+   "simulated": true,
+   "source_note": "兩隻狗；另一隻全程在狗窩",
+   "damage_confirmed": "yes",
+   "split": "",
+   "ai_assisted": true,
+   "updated": "2026-10-22T08:16:01"
+  },
+  "w10.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": 4.0,
+     "label": "negative",
+     "behavior": "walking",
+     "target": "",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 4.0,
+     "end_s": 5.75,
+     "label": "positive",
+     "behavior": "chewing_furniture",
+     "target": "seat cushion",
+     "visibility": "partial"
+    },
+    {
+     "start_s": 5.75,
+     "end_s": -1.0,
+     "label": "negative",
+     "behavior": "carrying",
+     "target": "stuffing",
+     "visibility": "clear"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "yes",
+   "split": "",
+   "ai_assisted": true,
+   "updated": "2026-10-22T08:16:13"
+  },
+  "w11.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": 4.5,
+     "label": "negative",
+     "behavior": "walking",
+     "target": "",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 4.5,
+     "end_s": -1.0,
+     "label": "positive",
+     "behavior": "chewing_furniture",
+     "target": "back cushion corner",
+     "visibility": "partial"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "yes",
+   "split": "",
+   "ai_assisted": true,
+   "updated": "2026-10-22T08:16:24"
+  },
+  "w12.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": -1.0,
+     "label": "negative",
+     "behavior": "chewing_toy",
+     "target": "rubber toy",
+     "visibility": "partial"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "no",
+   "split": "",
+   "ai_assisted": true,
+   "updated": "2026-10-22T08:16:34"
+  },
+  "w13.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": -1.0,
+     "label": "negative",
+     "behavior": "walking",
+     "target": "",
+     "visibility": "clear"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "no",
+   "split": "",
+   "ai_assisted": true,
+   "updated": "2026-10-22T08:16:44"
+  },
+  "w14.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": -1.0,
+     "label": "negative",
+     "behavior": "carrying",
+     "target": "tennis ball",
+     "visibility": "clear"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "no",
+   "split": "",
+   "ai_assisted": true,
+   "updated": "2026-10-22T08:16:54"
+  },
+  "w15.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": -1.0,
+     "label": "negative",
+     "behavior": "resting",
+     "target": "",
+     "visibility": "clear"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "no",
+   "split": "",
+   "ai_assisted": true,
+   "updated": "2026-10-22T08:17:00"
+  },
+  "w16.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": -1.0,
+     "label": "negative",
+     "behavior": "person_present",
+     "target": "",
+     "visibility": "clear"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "no",
+   "split": "",
+   "ai_assisted": true,
+   "updated": "2026-10-22T08:17:12"
+  },
+  "w17.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": 1.5,
+     "label": "negative",
+     "behavior": "walking",
+     "target": "",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 1.5,
+     "end_s": 4.013,
+     "label": "negative",
+     "behavior": "sniffing",
+     "target": "",
+     "visibility": "clear"
+    },
+    {
+     "start_s": 4.0,
+     "end_s": -1.0,
+     "label": "negative",
+     "behavior": "resting",
+     "target": "",
+     "visibility": "clear"
+    }
+   ],
+   "simulated": false,
+   "source_note": "",
+   "damage_confirmed": "unknown",
+   "split": "",
+   "ai_assisted": true,
+   "updated": "2026-10-22T08:17:49"
+  },
+  "w18.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": -1.0,
+     "label": "negative",
+     "behavior": "chewing_toy",
+     "target": "bone",
+     "visibility": "clear"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "no",
+   "split": "",
+   "ai_assisted": true,
+   "updated": "2026-10-22T08:18:00"
+  },
+  "w19.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": -1.0,
+     "label": "negative",
+     "behavior": "chewing_toy",
+     "target": "rubber toy",
+     "visibility": "clear"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "no",
+   "split": "",
+   "ai_assisted": true,
+   "updated": "2026-10-22T08:18:06"
+  },
+  "w20.mp4": {
+   "segments": [
+    {
+     "start_s": 0.0,
+     "end_s": -1.0,
+     "label": "negative",
+     "behavior": "sniffing",
+     "target": "",
+     "visibility": "clear"
+    }
+   ],
+   "simulated": true,
+   "source_note": "",
+   "damage_confirmed": "no",
+   "split": "",
+   "ai_assisted": true,
+   "updated": "2026-10-22T08:18:17"
+  }
+ }
+}

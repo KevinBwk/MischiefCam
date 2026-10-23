@@ -1,0 +1,423 @@
+{
+  "note": "v1-v25 were generated from prompts V001-V025 in order (verified visually 2026-10-18). v01-v05 are byte-identical copies of the first 5 clips in data/raw (no prompt id). Kept out of the labeling tool on purpose so labeling stays blind. v26–v60 map to the curated V026–V060. Medium (data/Medium-Videos) and wide (data/Wide-Videos) clips use their own ids; file names may be upper or lower case (w01.mp4 = W01).",
+  "videos": {
+    "v1.mp4": {
+      "prompt_id": "V001"
+    },
+    "v2.mp4": {
+      "prompt_id": "V002"
+    },
+    "v3.mp4": {
+      "prompt_id": "V003"
+    },
+    "v4.mp4": {
+      "prompt_id": "V004"
+    },
+    "v5.mp4": {
+      "prompt_id": "V005"
+    },
+    "v6.mp4": {
+      "prompt_id": "V006"
+    },
+    "v7.mp4": {
+      "prompt_id": "V007"
+    },
+    "v8.mp4": {
+      "prompt_id": "V008"
+    },
+    "v9.mp4": {
+      "prompt_id": "V009"
+    },
+    "v10.mp4": {
+      "prompt_id": "V010"
+    },
+    "v11.mp4": {
+      "prompt_id": "V011"
+    },
+    "v12.mp4": {
+      "prompt_id": "V012"
+    },
+    "v13.mp4": {
+      "prompt_id": "V013"
+    },
+    "v14.mp4": {
+      "prompt_id": "V014"
+    },
+    "v15.mp4": {
+      "prompt_id": "V015"
+    },
+    "v16.mp4": {
+      "prompt_id": "V016"
+    },
+    "v17.mp4": {
+      "prompt_id": "V017"
+    },
+    "v18.mp4": {
+      "prompt_id": "V018"
+    },
+    "v19.mp4": {
+      "prompt_id": "V019"
+    },
+    "v20.mp4": {
+      "prompt_id": "V020"
+    },
+    "v21.mp4": {
+      "prompt_id": "V021"
+    },
+    "v22.mp4": {
+      "prompt_id": "V022"
+    },
+    "v23.mp4": {
+      "prompt_id": "V023"
+    },
+    "v24.mp4": {
+      "prompt_id": "V024"
+    },
+    "v25.mp4": {
+      "prompt_id": "V025"
+    },
+    "v01.mp4": {
+      "prompt_id": null,
+      "duplicate_of": "data/raw/Dog_chewing_living_room_sofa_20261018085223.mp4"
+    },
+    "v02.mp4": {
+      "prompt_id": null,
+      "duplicate_of": "data/raw/Dog_chewing_living_room_sofa_20261018084934.mp4"
+    },
+    "v03.mp4": {
+      "prompt_id": null,
+      "duplicate_of": "data/raw/Dog_chewing_sofa_armrest_20261018090229.mp4"
+    },
+    "v04.mp4": {
+      "prompt_id": null,
+      "duplicate_of": "data/raw/Golden_retriever_chewing_sofa_20261018085358.mp4"
+    },
+    "v05.mp4": {
+      "prompt_id": null,
+      "duplicate_of": "data/raw/Golden_retriever_sleeping_on_sofa_20261018090439.mp4"
+    },
+    "v26.mp4": {
+      "prompt_id": "V026"
+    },
+    "v27.mp4": {
+      "prompt_id": "V027"
+    },
+    "v28.mp4": {
+      "prompt_id": "V028"
+    },
+    "v29.mp4": {
+      "prompt_id": "V029"
+    },
+    "v30.mp4": {
+      "prompt_id": "V030"
+    },
+    "v31.mp4": {
+      "prompt_id": "V031"
+    },
+    "v32.mp4": {
+      "prompt_id": "V032"
+    },
+    "v33.mp4": {
+      "prompt_id": "V033"
+    },
+    "v34.mp4": {
+      "prompt_id": "V034"
+    },
+    "v35.mp4": {
+      "prompt_id": "V035"
+    },
+    "v36.mp4": {
+      "prompt_id": "V036"
+    },
+    "v37.mp4": {
+      "prompt_id": "V037"
+    },
+    "v38.mp4": {
+      "prompt_id": "V038"
+    },
+    "v39.mp4": {
+      "prompt_id": "V039"
+    },
+    "v40.mp4": {
+      "prompt_id": "V040"
+    },
+    "v41.mp4": {
+      "prompt_id": "V041"
+    },
+    "v42.mp4": {
+      "prompt_id": "V042"
+    },
+    "v43.mp4": {
+      "prompt_id": "V043"
+    },
+    "v44.mp4": {
+      "prompt_id": "V044"
+    },
+    "v45.mp4": {
+      "prompt_id": "V045"
+    },
+    "v46.mp4": {
+      "prompt_id": "V046"
+    },
+    "v47.mp4": {
+      "prompt_id": "V047"
+    },
+    "v48.mp4": {
+      "prompt_id": "V048"
+    },
+    "v49.mp4": {
+      "prompt_id": "V049"
+    },
+    "v50.mp4": {
+      "prompt_id": "V050"
+    },
+    "v51.mp4": {
+      "prompt_id": "V051"
+    },
+    "v52.mp4": {
+      "prompt_id": "V052"
+    },
+    "v53.mp4": {
+      "prompt_id": "V053"
+    },
+    "v54.mp4": {
+      "prompt_id": "V054"
+    },
+    "v55.mp4": {
+      "prompt_id": "V055"
+    },
+    "v56.mp4": {
+      "prompt_id": "V056"
+    },
+    "v57.mp4": {
+      "prompt_id": "V057"
+    },
+    "v58.mp4": {
+      "prompt_id": "V058"
+    },
+    "v59.mp4": {
+      "prompt_id": "V059"
+    },
+    "v60.mp4": {
+      "prompt_id": "V060"
+    }
+  },
+  "medium": {
+    "M01.mp4": {
+      "prompt_id": "M01"
+    },
+    "M02.mp4": {
+      "prompt_id": "M02"
+    },
+    "M03.mp4": {
+      "prompt_id": "M03"
+    },
+    "M04.mp4": {
+      "prompt_id": "M04"
+    },
+    "M05.mp4": {
+      "prompt_id": "M05"
+    },
+    "M06.mp4": {
+      "prompt_id": "M06"
+    },
+    "M07.mp4": {
+      "prompt_id": "M07"
+    },
+    "M08.mp4": {
+      "prompt_id": "M08"
+    },
+    "M09.mp4": {
+      "prompt_id": "M09"
+    },
+    "M10.mp4": {
+      "prompt_id": "M10"
+    },
+    "M11.mp4": {
+      "prompt_id": "M11"
+    },
+    "M12.mp4": {
+      "prompt_id": "M12"
+    },
+    "M13.mp4": {
+      "prompt_id": "M13"
+    },
+    "M14.mp4": {
+      "prompt_id": "M14"
+    },
+    "M15.mp4": {
+      "prompt_id": "M15"
+    },
+    "M16.mp4": {
+      "prompt_id": "M16"
+    },
+    "M17.mp4": {
+      "prompt_id": "M17"
+    },
+    "M18.mp4": {
+      "prompt_id": "M18"
+    },
+    "M19.mp4": {
+      "prompt_id": "M19"
+    },
+    "M20.mp4": {
+      "prompt_id": "M20"
+    }
+  },
+  "wide": {
+    "W01.mp4": {
+      "prompt_id": "W01"
+    },
+    "W02.mp4": {
+      "prompt_id": "W02"
+    },
+    "W03.mp4": {
+      "prompt_id": "W03"
+    },
+    "W04.mp4": {
+      "prompt_id": "W04"
+    },
+    "W05.mp4": {
+      "prompt_id": "W05"
+    },
+    "W06.mp4": {
+      "prompt_id": "W06"
+    },
+    "W07.mp4": {
+      "prompt_id": "W07"
+    },
+    "W08.mp4": {
+      "prompt_id": "W08"
+    },
+    "W09.mp4": {
+      "prompt_id": "W09"
+    },
+    "W10.mp4": {
+      "prompt_id": "W10"
+    },
+    "W11.mp4": {
+      "prompt_id": "W11"
+    },
+    "W12.mp4": {
+      "prompt_id": "W12"
+    },
+    "W13.mp4": {
+      "prompt_id": "W13"
+    },
+    "W14.mp4": {
+      "prompt_id": "W14"
+    },
+    "W15.mp4": {
+      "prompt_id": "W15"
+    },
+    "W16.mp4": {
+      "prompt_id": "W16"
+    },
+    "W17.mp4": {
+      "prompt_id": "W17"
+    },
+    "W18.mp4": {
+      "prompt_id": "W18"
+    },
+    "W19.mp4": {
+      "prompt_id": "W19"
+    },
+    "W20.mp4": {
+      "prompt_id": "W20"
+    }
+  },
+  "hard_negative": {
+    "H01.mp4": {
+      "prompt_id": "H01"
+    },
+    "H02.mp4": {
+      "prompt_id": "H02"
+    },
+    "H03.mp4": {
+      "prompt_id": "H03"
+    },
+    "H04.mp4": {
+      "prompt_id": "H04"
+    },
+    "H05.mp4": {
+      "prompt_id": "H05"
+    },
+    "H06.mp4": {
+      "prompt_id": "H06"
+    },
+    "H07.mp4": {
+      "prompt_id": "H07"
+    },
+    "H08.mp4": {
+      "prompt_id": "H08"
+    },
+    "H09.mp4": {
+      "prompt_id": "H09"
+    },
+    "H10.mp4": {
+      "prompt_id": "H10"
+    }
+  },
+  "pairs": {
+    "P01a.mp4": {
+      "prompt_id": "P01a"
+    },
+    "P01b.mp4": {
+      "prompt_id": "P01b"
+    },
+    "P02a.mp4": {
+      "prompt_id": "P02a"
+    },
+    "P02b.mp4": {
+      "prompt_id": "P02b"
+    },
+    "P03a.mp4": {
+      "prompt_id": "P03a"
+    },
+    "P03b.mp4": {
+      "prompt_id": "P03b"
+    },
+    "P04a.mp4": {
+      "prompt_id": "P04a"
+    },
+    "P04b.mp4": {
+      "prompt_id": "P04b"
+    },
+    "P05a.mp4": {
+      "prompt_id": "P05a"
+    },
+    "P05b.mp4": {
+      "prompt_id": "P05b"
+    },
+    "P06a.mp4": {
+      "prompt_id": "P06a"
+    },
+    "P06b.mp4": {
+      "prompt_id": "P06b"
+    },
+    "P07a.mp4": {
+      "prompt_id": "P07a"
+    },
+    "P07b.mp4": {
+      "prompt_id": "P07b"
+    },
+    "P08a.mp4": {
+      "prompt_id": "P08a"
+    },
+    "P08b.mp4": {
+      "prompt_id": "P08b"
+    },
+    "P09a.mp4": {
+      "prompt_id": "P09a"
+    },
+    "P09b.mp4": {
+      "prompt_id": "P09b"
+    },
+    "P10a.mp4": {
+      "prompt_id": "P10a"
+    },
+    "P10b.mp4": {
+      "prompt_id": "P10b"
+    }
+  }
+}
