@@ -1,32 +1,114 @@
 # MischiefCam
 
-> On-device AI that spots pet mischief before it spreads.
-> Mascot / reminder: **Michelle** — she is the voice of every notification.
+> On-device AI that tells you when your dog starts chewing the sofa — and stays quiet when it doesn't.
+> Notifications come from **Michelle**, the app's friendly mascot.
 
-*Product name is provisional.* All user-facing names live in [`config/branding.toml`](config/branding.toml);
-the Python package is intentionally called `core`. To rename across docs:
-`uv run python scripts/rename_product.py "MischiefCam" "NewName" --dry-run`.
+Built for the **ASUS UGen AI League** (Battlefield Lightning, ASUS UGen300 / Hailo-10H).
+Stage I (this repo) runs on a Mac; Stage II ports the same pipeline to the UGen300
+([plan](docs/STAGE2_PORT.md)). *Product name is provisional; see [`config/branding.toml`](config/branding.toml).*
 
-Built for the ASUS UGen AI League (Battlefield Lightning — ASUS UGen300 / Hailo-10H).
-Stage I runs on a MacBook (Apple Silicon); Stage II ports the same pipeline to UGen300.
+**Demo video:** [TBD: YouTube link] · **Evaluation protocol:** [eval/README.md](eval/README.md) ·
+**Models:** [docs/MODELS.md](docs/MODELS.md)
 
-## What it does (Stage I scope)
+## Why
 
-Single camera, single dog, owner-defined protected zones. When a dog stays in a *forbidden* zone,
-a vision-language model looks at an interaction crop and answers `suspect / normal / insufficient`.
-Only `suspect` produces an alert; `insufficient`, parse errors and timeouts are logged, never shown as "normal".
-Everything runs locally; no frame leaves the machine.
+Pet cameras already send "dog activity" or generic behaviour alerts, and smart cameras can
+describe scenes in the cloud for a monthly fee. What owners actually want to know is narrower:
+*is the dog damaging the thing I care about, right now?* MischiefCam watches a zone the owner
+protects (Stage I: the sofa), decides whether the dog is **chewing it** rather than resting,
+sniffing or chewing its own toy, and only then notifies, with a snapshot and a short visual
+assessment. Inference runs entirely on the local device (no cloud inference, no subscription);
+only the notification itself goes out.
 
+## Results
+
+All numbers come from **AI-generated video** (see [Data](#data)). Development numbers are
+optimistic because every setting was chosen on those clips; the held-out test set is the honest one.
+
+| | Caught | False alerts |
+|---|---|---|
+| **Held-out test set** (frozen model, run once) | [TBD] | [TBD] |
+| Zone-only baseline on the same set (alert whenever a dog stays in the zone) | [TBD] | [TBD] |
+| Development set, 111 clips (mean of 20 scene-grouped CV splits × 3 VLM runs) | 29.9 / 39 (77%) | 5.7 / 72 (8%) |
+| Contrast pairs, scored blind before training (sofa vs look-alike, same scene) | 8 / 10 | 1 / 10 |
+
+Latency on the Stage I prototype: MacBook Pro (Mac16,8), Apple M4 Pro, 24 GB; `mcam-demo`
+real-time playback of the 20 contrast-pair clips at 10 FPS, warm-up excluded
+([raw report](eval/results/latency_mac_realtime_either.json)):
+
+| Stage | Samples | P50 | P95 |
+|---|---|---|---|
+| Detector (YOLOv8m + ByteTrack, per frame) | 1180 | 28 ms | 57 ms |
+| Classifier (CLIP ViT-B/16 + linear head, per review) | 47 | 20 ms | 22 ms |
+| VLM verdict (Qwen2-VL-2B, 4-bit MLX) | 38 | 421 ms | 435 ms |
+| VLM visual assessment (after a classifier alert) | 8 | 626 ms | 683 ms |
+| Chewing starts → first alert (labelled start vs alert, media time, `batch_run`) | 9 | 2.7 s | 5.2 s |
+
+The alert delay includes the deliberate 2-second dwell before the first review. Running the same
+clips with the VLM as the only judge made the detector *slower* (P50 43 ms, P95 77 ms;
+[report](eval/results/latency_mac_realtime_vlm_only.json)): the VLM shares the GPU with YOLO, so
+letting the cheap classifier decide first also keeps detection smooth. (Two sequential runs, not
+interleaved; treat the difference as indicative.)
+
+Hailo-10H figures are vendor numbers until measured on the device: see [STAGE2_PORT.md](docs/STAGE2_PORT.md).
+
+## How it works
+
+```mermaid
+flowchart LR
+    CAM["Camera or video<br/>(host)"] --> DET["YOLOv8m + ByteTrack<br/>dog, couch<br/>(NPU in Stage II)"]
+    DET --> ZONE["Protected-zone overlap<br/>+ episode state machine<br/>dwell 2 s, re-look, cooldown<br/>(host CPU)"]
+    ZONE -->|review| CROP["Crops on host CPU<br/>contact crop: dog ∩ couch<br/>animal crop: whole dog"]
+    CROP --> CLF["CLIP ViT-B/16 + linear head<br/>~17 ms on Mac<br/>(NPU in Stage II)"]
+    CLF -->|suspect| ALERT["Alert + snapshot<br/>Michelle notification"]
+    CLF -->|normal| VLM["Qwen2-VL-2B verdict<br/>(NPU in Stage II)"]
+    VLM -->|suspect| ALERT
+    ALERT -->|classifier alerts| EXPL["Qwen2-VL visual assessment<br/>updates the same card"]
 ```
-video file ─► YOLO (dog) + ByteTrack ─► zone overlap ─► episode state machine
-                                                        │ (dwell, re-observe, cooldown)
-                                                        ▼
-                                        crop 336×336 ─► VLM worker (bounded queue)
-                                                        ▼
-                                        events.jsonl + Michelle notification
-```
 
-## Setup (macOS, Apple Silicon)
+- **Two judges, cheap one first.** A linear classifier on frozen CLIP embeddings decides most
+  alerts in milliseconds; the VLM is asked only when the classifier says "normal", and catches
+  some extra cases. Either one saying "suspect" raises the alert.
+- **Contact crop.** The classifier sees a zoom on where the dog's box meets the couch box, so the
+  mouth and the cushion fill the 224 px input instead of a few patches (development, 91 clips:
+  17.4 → 21.6 positives caught while false alerts fell from 4.5 to 3.0).
+- **Honest uncertainty.** "Can't tell" is never turned into "normal" or "yes": the card says
+  *Limited view of the mouth — check the snapshot* unless the VLM reports visible evidence.
+- **Built to port.** Detector, embedder, VLM and frame source are protocols
+  (`src/core/detector.py`, `probe.py`, `vlm.py`, `sources.py`); Stage II adds Hailo backends.
+
+## Data
+
+- **Synthetic clips** generated with [TBD: tool name] from the prompts in `prompts/` (close,
+  medium and wide CCTV-style views, hard negatives, contrast pairs). Every demo clip is marked
+  "synthetic clip — pre-recorded video, live inference".
+- **Labels** are human, time-segmented, mostly blind (`data/labels_*.json`); the rule is in
+  [eval/README.md](eval/README.md).
+- **Held-out test set** prompts deliberately use breeds, sofas, rooms, camera placements and
+  wording that never appear in the training prompts, to test generalisation beyond one generator style.
+- **Limitations:** no real-world footage yet; one generator; 8-second clips. False alerts per hour on
+  real daily footage are part of the Stage II validation plan.
+
+## Status
+
+| Item | Status |
+|---|---|
+| Video / camera source, YOLOv8m + ByteTrack, protected zones, episode state machine | implemented, unit-tested |
+| CLIP classifier (contact crop) + Qwen2-VL-2B, "either" judge | implemented, evaluated on 111 development clips |
+| Alert card with asynchronous VLM visual assessment, demo view | implemented, tested in the demo |
+| Latency instrumentation (raw per-stage timings, P50 / P95) | implemented |
+| Held-out test set, zone-only baseline | [TBD: after the frozen run] |
+| Hailo-10H backends on UGen300 | planned (Stage II, [plan](docs/STAGE2_PORT.md)) |
+
+## License
+
+[TBD] Note: Ultralytics YOLOv8 is AGPL-3.0 (see [docs/MODELS.md](docs/MODELS.md#licensing-note)).
+
+---
+
+## Developer guide
+
+### Setup (macOS, Apple Silicon)
 
 ```bash
 brew install ffmpeg
@@ -39,89 +121,64 @@ uv run python scripts/smoke_models.py
 `scripts/env.sh` keeps model caches inside the project (`.hf_cache/`, `.yolo_config/`) and disables telemetry.
 After models are downloaded, `source scripts/env.sh --offline` makes any Hugging Face network access an error.
 
-## Draw protected zones
+### Draw protected zones
 
 ```bash
 uv run mcam-roi --video data/raw/your_clip.mp4 --at 2
 ```
 
 Opens a local page (http://127.0.0.1:8765, localhost only) showing a snapshot of the clip.
-Click **New zone**, click around the sofa / shoe rack / cable area, click the first point to close,
-name it, choose **Forbidden** (alert) or **Allowed** (ignore), and **Save**. Corners can be dragged;
-the slider picks a different snapshot time. Zones are saved to `config/rois.json` (git-ignored, it is your home layout)
-in normalized coordinates, which the pipeline reads by default.
+Click **New zone**, click around the sofa, click the first point to close, name it, choose
+**Forbidden** (alert) or **Allowed** (ignore), and **Save**. Zones are saved to `config/rois.json`
+(git-ignored: it is your home layout) in normalized coordinates.
 
-## Generate, label and train
+### Generate, label, train, evaluate
 
 | Step | Command | What it does |
 |---|---|---|
-| Prompts | `prompts/training_video_prompts.*` (close, 60), `prompts/medium_prompts.*` (medium, 20), `prompts/wide_trial_prompts.*` (wide, 20) | Curated CCTV-style prompts, about 1 positive : 2 negatives per view. `scripts/gen_video_prompts.py` regenerates the original 120-prompt close-up pool (overwrites the curated file) |
-| Label | `uv run mcam-label` | Local page (blind: no prompt hints for id-only file names): mark time segments in `data/Videos` as positive / negative / uncertain → `data/labels_videos.json` |
-| Check | `uv run python scripts/label_report.py` | After labeling: lists clips whose label differs from what the prompt asked for |
-| AI-assisted | `uv run mcam-label --suggest data/labels_ai.json` | Shows AI pre-labels as suggestions (press G to apply, then review and save; saved with `ai_assisted: true`). Keep test sets blind by omitting `--suggest` |
-| Agreement | `uv run python scripts/compare_labels.py data/labels_videos.json data/labels_ai.json` | Clip- and time-level agreement between two label files, with every disagreement listed |
-| Train | `uv run mcam-train` | CLIP embeddings of animal crops → logistic-regression probe, cross-validated by clip → `models/classifier.json` |
-| Use | `uv run mcam --video clip.mp4 --vlm probe` | The trained classifier replaces the VLM as the judge |
+| Prompts | `prompts/*` | CCTV-style prompts per view, hard negatives, contrast pairs, held-out test set |
+| Label | `uv run mcam-label --folder data/Videos --labels data/labels_videos.json` | Local page: mark time segments positive / negative / uncertain. Blind unless `--suggest` is given |
+| Train | `uv run mcam-train --set FOLDER:LABELS ...` | CLIP embeddings of contact crops → logistic regression, scene-grouped CV, 5% frame false-alert budget → `models/classifier.json` |
+| Evaluate | `scripts/batch_run.py`, `scripts/eval_combined.py`, `scripts/latency_report.py` | See [eval/README.md](eval/README.md) |
 
-## Demo view (for the video)
+### Demo view
 
 ```bash
-uv run mcam-demo --playlist demo/playlist.json      # scenes with captions, real-time playback
-uv run mcam-demo --camera 0                         # live camera: device index, or rtsp/http URL
+uv run mcam-demo --video data/Videos/v02.mp4 --video data/Wide-Videos/w09.mp4
+uv run mcam-demo --camera 0          # live camera: device index, or rtsp/http URL
 ```
 
-Local page (127.0.0.1:8768) with the camera view, zone / dog / state overlay, the judge's reason,
-and Michelle's notification cards with snapshots. It opens paused: start the screen recording, then
-press Start or Space. Recorded clips are labelled "synthetic clip — pre-recorded video, live inference".
-Default judge: classifier OR VLM (`--vlm either`). List cameras: `ffmpeg -f avfoundation -list_devices true -i ""`.
+Local page (127.0.0.1:8768): camera view with zone / dog / state overlay and Michelle's
+notification cards with snapshots. It opens paused: start the screen recording, then press
+Start or Space. Default judge: classifier OR VLM (`--vlm either`).
 
-## Run
+### Run on one clip
 
 ```bash
 uv run mcam --video data/your_clip.mp4 --annotate
 ```
 
-Dry run without a dog (exercises every stage with people instead; uses the example zones):
+Outputs go to `outputs/run_*/`: `events.jsonl`, `summary.json`, `timings.json` (raw per-stage
+milliseconds), `crops/`, and `annotated.mp4` with `--annotate`.
 
-```bash
-uv run python scripts/make_dryrun_video.py --out data/dryrun.mp4
-uv run mcam --video data/dryrun.mp4 --target-class person --rois config/rois.example.json --annotate
-```
-
-Outputs go to `outputs/run_*/`: `events.jsonl`, `summary.json` (counts, detector/VLM latency P50/P95,
-max detector gap), `crops/`, and `annotated.mp4` with `--annotate`.
-
-## Configuration
+### Configuration
 
 | File | Purpose |
 |---|---|
-| `config/default.toml` | detector, zones, state-machine timings, VLM backend, outputs |
+| `config/default.toml` | detector, zones, state-machine timings, judge backend, crops, outputs |
 | `config/rois.example.json` | protected zones as normalized polygons, each `forbidden` or `allowed` |
 | `config/branding.toml` | product name, mascot name, notification copy |
 
-## Implemented / measured / planned
-
-| Item | Status |
-|---|---|
-| Local video source, YOLO dog detection + tracking (MPS) | implemented |
-| Zone overlap (expanded box ∩ polygon), episode state machine keyed by (track, zone) | implemented, unit-tested |
-| Qwen2-VL-2B (MLX, 4-bit) verdicts with strict JSON parsing | implemented |
-| Background VLM worker, bounded queue, stale/full drops reported | implemented, unit-tested |
-| Event log + mascot notifications | implemented |
-| Latency / detector-gap numbers on real dog footage | **to be measured** |
-| ROI-only vs ROI+VLM evaluation on held-out clips | planned |
-| Zone editor web page (draw / drag / name / policy / save, localhost only) | implemented, tested |
-| Labeling tool, prompt generator, CLIP linear-probe training with clip-grouped CV | implemented, unit-tested (real training needs labeled clips) |
-| Live camera source (device index or rtsp/http URL), demo view | implemented (camera not yet tested on hardware) |
-| Tap-to-select zones (FastSAM) | planned |
-| Hailo backends (`hailo_platform.genai.VLM`, Hailo YOLO HEF) on UGen300 | planned (Stage II) |
-
-## Repository layout
+### Repository layout
 
 ```
 config/    runtime, zones, branding
-scripts/   env setup, smoke tests, dry-run video, product rename
-src/core/  pipeline (types, sources, detector, roi, state, vlm, worker, crop, events, pipeline, main)
+data/      human labels (videos are not committed)
+docs/      models, Stage II porting plan
+eval/      evaluation protocol and results
+models/    released classifier head (classifier.json)
+prompts/   video-generation prompts
+scripts/   evaluation, experiments, env setup
+src/core/  pipeline (sources, detector, roi, state, crop, probe, vlm, worker, events, demo, ...)
 tests/     unit tests (no models needed)
-notes/     private planning notes (git-ignored)
 ```

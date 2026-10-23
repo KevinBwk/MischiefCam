@@ -60,4 +60,9 @@ uv run python scripts/latency_report.py outputs/eval_pairs_either
 uv run python scripts/eval_combined.py "" _r2 _r3 --crop contact --fpr 0.05
 ```
 
-Results of the held-out test run go in `eval/results/` once it has been run.
+## Results files
+
+- `results/latency_mac_realtime_either.json`, `results/latency_mac_realtime_vlm_only.json`:
+  per-stage P50 / P95 from `scripts/latency_report.py` (2026-10-24, MacBook Pro M4 Pro 24 GB,
+  `mcam-demo` real-time playback of the 20 contrast-pair clips, judge "either" vs VLM only).
+- Held-out test results go here once the frozen run is done.

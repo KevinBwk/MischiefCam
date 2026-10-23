@@ -1,0 +1,31 @@
+{
+  "machine": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "machine": "arm64",
+    "model": "Mac16,8",
+    "chip": "Apple M4 Pro",
+    "ram_gb": 24
+  },
+  "modes": [
+    "realtime"
+  ],
+  "folders": [
+    "outputs/demo_20261024_101845"
+  ],
+  "stages": {
+    "detector": {
+      "n": 1180,
+      "p50": 43.2,
+      "p95": 77.3,
+      "unit": "ms",
+      "warmup_dropped": 100
+    },
+    "qwen": {
+      "n": 54,
+      "p50": 391.8,
+      "p95": 406.1,
+      "unit": "ms",
+      "warmup_dropped": 1
+    }
+  }
+}
