@@ -28,7 +28,8 @@ def main(argv: list[str] | None = None) -> int:
                     help="must match [vlm].crop at run time (the pipeline gives the classifier the same crop)")
     ap.add_argument("--fps", type=float, default=2.0, help="frames sampled per second inside labeled segments")
     ap.add_argument("--folds", type=int, default=5)
-    ap.add_argument("--max-fp-rate", type=float, default=0.02, help="frame-level FP rate allowed when picking the threshold")
+    ap.add_argument("--max-fp-rate", type=float, default=0.05,
+                    help="frame-level FP rate allowed when picking the threshold (0.05 chosen 2026-10-23, see notes)")
     ap.add_argument("--k", type=int, default=2)
     ap.add_argument("--m", type=int, default=4)
     args = ap.parse_args(argv)

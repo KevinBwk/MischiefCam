@@ -2,8 +2,8 @@
 
     uv run python scripts/eval_probe.py data/Videos:data/labels_videos.json data/Medium-Videos:data/labels_ai_medium.json
 
-Each argument is FOLDER:LABELS. Folds are grouped by clip (frames of one clip never sit in both
-train and test). Results are reported overall and per folder. This only evaluates; it does not
+Each argument is FOLDER:LABELS. Folds are grouped by scene (a clip, or both clips of a contrast pair,
+never sit in both train and test). Results are reported overall and per folder. This only evaluates; it does not
 overwrite models/classifier.json.
 """
 

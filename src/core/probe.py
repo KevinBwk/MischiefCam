@@ -1,8 +1,9 @@
 """Linear probe on frozen image embeddings ("is the dog chewing a forbidden object?").
 
-Training (mcam-train): labeled clips -> animal crops (same crop as the VLM gets) -> frozen CLIP
-embeddings -> logistic regression. Evaluation is grouped by clip (frames of one clip never sit in
-both train and test). The result is a small JSON file the pipeline can load as a judge backend.
+Training (mcam-train): labeled clips -> crops (--crop, default "contact"; recorded in the JSON so the
+pipeline feeds the same crop) -> frozen CLIP embeddings -> logistic regression. Evaluation is grouped by
+scene: frames of one clip, or both clips of a contrast pair, never sit in both train and test.
+The result is a small JSON file the pipeline can load as a judge backend.
 
 Why this design: little data is needed, it trains in seconds on a Mac, and on UGen300 the image
 encoder can be a Hailo model-zoo CLIP HEF while this classifier (a few KB) runs on the host CPU.
@@ -342,7 +343,7 @@ def train_and_evaluate(clips: list[ClipFrames], folds: int = 5, max_fp_rate: flo
         fpos = all_p[all_y == 1] >= thr
         fneg = all_p[all_y == 0] >= thr
         report["cross_validation"] = {
-            "method": f"{len(fold_sets)}-fold, grouped by clip",
+            "method": f"{len(fold_sets)}-fold, grouped by scene (clip, or contrast pair)",
             "threshold": round(thr, 4), "threshold_rule": f"frame FP rate <= {max_fp_rate}",
             "episode_rule": f"alert if >= {k} of {m} consecutive frames >= threshold",
             "frame_level": {"recall": round(float(fpos.mean()), 3) if len(fpos) else None,
