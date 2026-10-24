@@ -30,6 +30,7 @@ class PipelineConfig:
     crop_mode: str = "animal"  # "animal" | "union" | "contact" (zoom on where the dog meets the zone/couch)
     probe_crop_mode: str | None = None  # classifier's crop when it differs from crop_mode (from classifier.json)
     context_classes: tuple[str, ...] = ()  # detector classes used only as context (e.g. couch), never tracked as pets
+    auto_zone_hold_s: float = 3.0  # keep an auto zone's last boxes this long when the object is not detected
     max_new_tokens: int = 48
     explain_max_new_tokens: int = 96  # the visual-assessment JSON is longer than a verdict
     frames: int = 1            # frames per judgement (multi-frame when > 1)
@@ -84,6 +85,13 @@ class Pipeline:
         self.last_verdict: dict[int, dict] = {}  # track_id -> latest judgement shown on screen
         self._last_det: dict[int, Detection] = {}
         self._context: list[Detection] = []  # latest context detections (e.g. couches)
+        # auto zones (ROI.auto = a detector class): current boxes and when they were last seen
+        self.auto_zones: dict[str, list[tuple[float, float, float, float]]] = {}
+        self._auto_seen: dict[str, float] = {}
+        missing = {r.auto for r in self.rois.values() if r.auto} - set(cfg.context_classes)
+        if missing:
+            raise ValueError(f"auto zones need these detector context classes: {sorted(missing)} "
+                             "(add them to detector.context_classes)")
         self._episode_meta: dict[str, tuple[int, str]] = {}  # episode_id -> (track_id, roi_id)
         self._history: dict[int, deque] = {}  # track_id -> recent (pts, crop) while the dog is in a zone
 
@@ -111,13 +119,14 @@ class Pipeline:
                 self.stats.frames += 1
                 self.stats.detections += len(dets)
 
+                self._update_auto_zones(frame.pts_s)
                 present: set[tuple[int, str]] = set()
                 for det in dets:
                     tid = det.track_id if det.track_id is not None else -1
                     self._last_det[tid] = det
                     box = expand_box(det.bbox, self.cfg.bbox_expand, width, height)
                     for roi in self.rois.values():
-                        if box_overlap_fraction(box, roi, width, height) >= self.cfg.min_overlap:
+                        if self._overlap(box, roi, width, height) >= self.cfg.min_overlap:
                             present.add((tid, roi.id))
 
                 if self.cfg.frames > 1:
@@ -163,6 +172,8 @@ class Pipeline:
     def _crop(self, image: np.ndarray, det: Detection, roi: ROI, mode: str):
         """A judge's input. "contact" zooms on the dog's overlap with the couch it touches most, else the zone."""
         zone_box = None
+        if roi.auto and mode == "union":
+            mode = "contact"  # an auto zone has no polygon; its boxes are what contact already aims at
         if mode == "contact":
             best = max(self._context, key=lambda c: _inter(det.bbox, c.bbox), default=None)  # sampler's rule
             if best is not None and _inter(det.bbox, best.bbox) > 0:
@@ -259,6 +270,23 @@ class Pipeline:
                          max_new_tokens=self.cfg.explain_max_new_tokens)
         self.worker.submit(episode_id, pts, req, kind="explain", owner=self)
 
+    def _update_auto_zones(self, pts: float) -> None:
+        for roi in self.rois.values():
+            if not roi.auto:
+                continue
+            boxes = [d.bbox for d in self._context if d.class_name == roi.auto]
+            if boxes:
+                self.auto_zones[roi.id], self._auto_seen[roi.id] = boxes, pts
+            elif pts - self._auto_seen.get(roi.id, -1e9) > self.cfg.auto_zone_hold_s:
+                self.auto_zones[roi.id] = []  # e.g. a dog lying on the sofa hides it briefly: hold, then drop
+
+    def _overlap(self, box, roi: ROI, width: float, height: float) -> float:
+        """Fraction of the (expanded) dog box inside the zone: a drawn polygon or the auto zone's boxes."""
+        if not roi.auto:
+            return box_overlap_fraction(box, roi, width, height)
+        area = max(1e-6, (box[2] - box[0]) * (box[3] - box[1]))
+        return max((_inter(box, b) / area for b in self.auto_zones.get(roi.id, [])), default=0.0)
+
     def frame_info(self, present: set) -> dict:
         """Per-dog state for live displays: {track_id: {"zones": [...], "state": str, "verdict": {...}}}."""
         dogs: dict[int, dict] = {}
@@ -266,7 +294,8 @@ class Pipeline:
             d = dogs.setdefault(tid, {"zones": [], "state": "", "verdict": self.last_verdict.get(tid)})
             d["zones"].append(self.rois[roi_id].name if roi_id in self.rois else roi_id)
             d["state"] = ep.state.value
-        return {"dogs": dogs, "in_zone": sorted({tid for tid, _ in present})}
+        return {"dogs": dogs, "in_zone": sorted({tid for tid, _ in present}),
+                "auto_zones": {rid: list(boxes) for rid, boxes in self.auto_zones.items()}}
 
     def _publish(self, kind, episode_id, track_id, roi_id, pts, decision=None, reason="", extra=None) -> None:
         roi = self.rois.get(roi_id)
@@ -280,6 +309,13 @@ class Pipeline:
         h, w = image.shape[:2]
         canvas = image.copy()
         for roi in self.rois.values():
+            if roi.auto:
+                for b in self.auto_zones.get(roi.id, []):
+                    x1, y1, x2, y2 = map(int, b)
+                    cv2.rectangle(canvas, (x1, y1), (x2, y2), (0, 0, 255), 2)
+                    cv2.putText(canvas, f"{roi.name} (auto)", (x1, max(20, y1 - 6)), cv2.FONT_HERSHEY_SIMPLEX, 0.8,
+                                (0, 0, 255), 2)
+                continue
             pts_px = np.array([[int(x * w), int(y * h)] for x, y in roi.polygon], dtype=np.int32)
             cv2.polylines(canvas, [pts_px], True, (0, 0, 255), 2)
             cv2.putText(canvas, roi.name, tuple(pts_px[0]), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)

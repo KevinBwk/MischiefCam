@@ -51,3 +51,14 @@ def test_example_rois_load():
 
     rois = load_rois(resolve("config/rois.example.json"))
     assert {r.policy for r in rois} == {"forbidden", "allowed"}
+
+
+def test_load_auto_zone(tmp_path):
+    import json
+
+    from core.roi import load_rois
+
+    f = tmp_path / "r.json"
+    f.write_text(json.dumps({"rois": [{"id": "sofa", "name": "sofa", "policy": "forbidden", "auto": "couch"}]}))
+    (roi,) = load_rois(f)
+    assert roi.auto == "couch" and roi.polygon == ()

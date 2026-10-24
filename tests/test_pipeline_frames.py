@@ -119,3 +119,34 @@ def test_late_outcome_from_another_run_is_ignored():
                                   VLMResult("suspect", "", 1.0)))
     p._drain_outcomes()  # would KeyError on the unknown episode if not filtered
     assert p.stats.alerts == 0
+
+
+def test_auto_zone_follows_detected_couch_and_holds_briefly():
+    import pytest
+
+    from core.types import ROI, Detection
+
+    sofa = ROI("sofa", "sofa", "forbidden", (), auto="couch")
+    p = Pipeline.__new__(Pipeline)
+    p.cfg = PipelineConfig(context_classes=("couch",), auto_zone_hold_s=3.0)
+    p.rois = {"sofa": sofa}
+    p.auto_zones, p._auto_seen = {}, {}
+    p._context = [Detection((100, 100, 300, 200), 0.9, "couch")]
+    p._update_auto_zones(1.0)
+    assert p._overlap((250, 150, 350, 250), sofa, 640, 360) == pytest.approx(0.25)  # 50x50 of a 100x100 box
+    assert p._overlap((400, 250, 500, 350), sofa, 640, 360) == 0.0                   # beside, not touching
+    p._context = []                                   # dog lies on the sofa and hides it
+    p._update_auto_zones(3.5)
+    assert p.auto_zones["sofa"]                       # held
+    p._update_auto_zones(5.0)
+    assert p.auto_zones["sofa"] == []                 # gone for > 3 s: no zone
+
+
+def test_auto_zone_requires_its_class_in_context_classes():
+    import pytest
+
+    from core.types import ROI
+
+    with pytest.raises(ValueError, match="context classes"):
+        Pipeline(None, None, [ROI("sofa", "sofa", "forbidden", (), auto="couch")], None, None, None,
+                 PipelineConfig(context_classes=()))

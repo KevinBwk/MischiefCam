@@ -57,7 +57,7 @@ Hailo-10H figures are vendor numbers until measured on the device: see [STAGE2_P
 ```mermaid
 flowchart LR
     CAM["Camera or video<br/>(host)"] --> DET["YOLOv8m + ByteTrack<br/>dog, couch<br/>(NPU in Stage II)"]
-    DET --> ZONE["Protected-zone overlap<br/>+ episode state machine<br/>dwell 2 s, re-look, cooldown<br/>(host CPU)"]
+    DET --> ZONE["Protected zone: drawn once,<br/>or auto = detected couch<br/>+ episode state machine<br/>dwell 2 s, re-look, cooldown<br/>(host CPU)"]
     ZONE -->|review| CROP["Crops on host CPU<br/>contact crop: dog ∩ couch<br/>animal crop: whole dog"]
     CROP --> CLF["CLIP ViT-B/16 + linear head<br/>~17 ms on Mac<br/>(NPU in Stage II)"]
     CLF -->|suspect| ALERT["Alert + snapshot<br/>Michelle notification"]
@@ -93,7 +93,7 @@ flowchart LR
 
 | Item | Status |
 |---|---|
-| Video / camera source, YOLOv8m + ByteTrack, protected zones, episode state machine | implemented, unit-tested |
+| Video / camera source, YOLOv8m + ByteTrack, protected zones (drawn, or auto = detected couch), episode state machine | implemented, unit-tested |
 | CLIP classifier (contact crop) + Qwen2-VL-2B, "either" judge | implemented, evaluated on 111 development clips |
 | Alert card with asynchronous VLM visual assessment, demo view | implemented, tested in the demo |
 | Latency instrumentation (raw per-stage timings, P50 / P95) | implemented |
@@ -172,6 +172,7 @@ milliseconds), `crops/`, and `annotated.mp4` with `--annotate`.
 |---|---|
 | `config/default.toml` | detector, zones, state-machine timings, judge backend, crops, outputs |
 | `config/rois.example.json` | protected zones as normalized polygons, each `forbidden` or `allowed` |
+| `config/rois.auto.json` | auto zone: every detected couch is the protected zone (evaluation, demo clips) |
 | `config/branding.toml` | product name, mascot name, notification copy |
 
 ### Repository layout

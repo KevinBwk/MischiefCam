@@ -39,6 +39,7 @@ class ROI:
     name: str
     policy: Policy
     polygon: tuple[tuple[float, float], ...]  # normalized [0, 1] coordinates
+    auto: str = ""  # detector class whose boxes ARE the zone (e.g. "couch"); polygon unused when set
 
 
 @dataclass(frozen=True)

@@ -19,6 +19,17 @@ table) is negative in Stage I, where only the sofa is protected.
 | Contrast pairs | `data/Pairs-Videos` | `labels_pairs.json` | 20 (10 / 10) | development (scored blind first, see below) |
 | **Held-out test** | `data/Test-Videos` | `labels_test.json` | 50 of T01–T60 + D01–D05 | **evaluated once**, never trained or tuned on |
 
+## Protected zone in evaluation
+
+Clips come from many different rooms, so instead of drawing a zone per clip, evaluation uses the
+**auto zone** (`config/rois.auto.json`): the protected zone is every couch the detector finds in the
+frame, held for 3 s when the dog briefly hides it. A dog counts as "in the zone" when at least 10%
+of its box (grown by 15%) overlaps a couch box; only then is it judged. Measured on the
+development set: a couch was detected in 100% of positive and 99% of negative frames with a dog,
+and every positive frame (214 / 214) passed the zone test, so the zone never hid a chewing dog
+there. Whether each couch box is placed correctly was not checked frame by frame. A fixed home
+camera uses a zone drawn once with `mcam-roi` instead.
+
 ## Two kinds of numbers
 
 - **Development set (111 clips)**: every setting (crop, encoder, threshold, prompt) was chosen on
@@ -55,10 +66,10 @@ other 91 clips, full pipeline): 8 / 10 caught, 1 / 10 false alerts.
 source scripts/env.sh --offline
 # full pipeline over one folder, with totals and chewing-to-alert delay
 uv run python scripts/batch_run.py data/Pairs-Videos --labels data/labels_pairs.json \
-    --rois config/rois.full_frame.json --name eval_pairs_either --vlm either
-# zone-only baseline (every review says "suspect")
+    --rois config/rois.auto.json --name eval_pairs_either --vlm either
+# zone-only baseline: alert whenever a dog stays 2 s in the protected zone (every review says "suspect")
 uv run python scripts/batch_run.py data/Pairs-Videos --labels data/labels_pairs.json \
-    --rois config/rois.full_frame.json --name eval_pairs_zone_only --vlm fake
+    --rois config/rois.auto.json --name eval_pairs_zone_only --vlm fake
 # latency P50 / P95 per stage (warm-up excluded), pooled over runs
 uv run python scripts/latency_report.py outputs/eval_pairs_either
 # development cross-validation (needs VLM batch runs named eval_<set><suffix>)

@@ -36,10 +36,11 @@ from .vlm import make_backend, probe_crop
 from .worker import VLMWorker
 
 STATIC = Path(__file__).resolve().parent / "static" / "demo.html"
-FULL_FRAME = ROI("sofa", "sofa", "forbidden", ((0, 0), (1, 0), (1, 1), (0, 1)))
+AUTO_SOFA = ROI("sofa", "sofa", "forbidden", (), auto="couch")  # zone = detected couch boxes (config/rois.auto.json)
 
 # BGR colours for the overlay
-C_ZONE, C_DOG, C_WATCH, C_JUDGE, C_ALERT, C_TEXT = (60, 60, 230), (90, 200, 90), (40, 190, 250), (240, 160, 60), (40, 40, 235), (255, 255, 255)
+# BGR. The zone is violet so it never reads as the red "chewing -> alert" state.
+C_ZONE, C_DOG, C_WATCH, C_JUDGE, C_ALERT, C_TEXT = (230, 110, 170), (90, 200, 90), (40, 190, 250), (240, 160, 60), (40, 40, 235), (255, 255, 255)
 STATE_COLOR = {"candidate": C_WATCH, "observing": C_WATCH, "reviewing": C_JUDGE, "cooldown": C_ALERT}
 
 
@@ -64,8 +65,8 @@ def item_rois(item: dict) -> list[ROI]:
     if item.get("rois"):
         return load_rois(resolve(item["rois"]))
     if "camera" in item and resolve("config/rois.json").exists():
-        return load_rois(resolve("config/rois.json"))
-    return [FULL_FRAME]
+        return load_rois(resolve("config/rois.json"))  # a fixed home camera: the zone the owner drew
+    return [AUTO_SOFA]
 
 
 class PacedSource:
@@ -133,16 +134,22 @@ def draw_overlay(image: np.ndarray, rois: list[ROI], dets, info: dict, pts: floa
     h, w = image.shape[:2]
     out = image.copy()
     layer = out.copy()
+    auto = info.get("auto_zones", {})
+    shapes = []  # (polygon px, label) for drawn zones and for each detected box of an auto zone
     for roi in rois:
-        poly = np.array([[int(x * w), int(y * h)] for x, y in roi.polygon], dtype=np.int32)
+        if roi.auto:
+            for x1, y1, x2, y2 in auto.get(roi.id, []):
+                poly = np.array([[x1, y1], [x2, y1], [x2, y2], [x1, y2]], dtype=np.int32)
+                shapes.append((poly, f"{roi.name} (protected, auto)"))
+        else:
+            poly = np.array([[int(x * w), int(y * h)] for x, y in roi.polygon], dtype=np.int32)
+            shapes.append((poly, f"{roi.name} (protected)"))
+    for poly, _ in shapes:
         cv2.fillPoly(layer, [poly], C_ZONE)
-    out = cv2.addWeighted(layer, 0.12 if rois != [FULL_FRAME] else 0.0, out, 0.88 if rois != [FULL_FRAME] else 1.0, 0)
-    for roi in rois:
-        if roi is FULL_FRAME:
-            continue
-        poly = np.array([[int(x * w), int(y * h)] for x, y in roi.polygon], dtype=np.int32)
+    out = cv2.addWeighted(layer, 0.12, out, 0.88, 0)
+    for poly, label in shapes:
         cv2.polylines(out, [poly], True, C_ZONE, 2, cv2.LINE_AA)
-        _label(out, f"{roi.name} (protected)", tuple(poly[0]), C_ZONE)
+        _label(out, label, (int(poly[0][0]), max(24, int(poly[0][1]))), C_ZONE)
     dogs = info.get("dogs", {})
     s = max(1.0, w / 1280)
     for det in dets:

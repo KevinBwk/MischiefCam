@@ -24,6 +24,10 @@ def load_rois(path: Path | str) -> list[ROI]:
         policy = item.get("policy", "forbidden")
         if policy not in ("forbidden", "allowed"):
             raise ValueError(f"ROI {item['id']}: unknown policy {policy!r}")
+        if item.get("auto"):  # zone = whatever the detector finds of that class, every frame
+            rois.append(ROI(id=item["id"], name=item.get("name", item["id"]), policy=policy, polygon=(),
+                            auto=str(item["auto"])))
+            continue
         polygon = tuple((float(x), float(y)) for x, y in item["polygon"])
         if len(polygon) < 3:
             raise ValueError(f"ROI {item['id']}: polygon needs at least 3 points")

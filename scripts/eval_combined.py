@@ -3,6 +3,12 @@
 Needs the VLM batch summaries in outputs/eval_<view><suffix> and cached embeddings (scripts/exp_embed.py or eval_probe.py).
 
     uv run python scripts/eval_combined.py _ct _ct2 _ct3 --crop contact --fpr 0.04   # VLM numbers = mean of the runs
+    uv run python scripts/eval_combined.py _az _az2 _az3 --crop contact --fpr 0.05 --zone couch
+
+--zone couch applies the auto protected zone to the classifier as the pipeline does: a sampled frame
+can only count toward an alert if the dog's expanded box overlaps a detected couch by >= 10% (the
+threshold is still picked on all frames, as mcam-train does). The VLM batches must have been run
+with --rois config/rois.auto.json for the same setting.
 """
 import argparse, json, random, numpy as np, collections
 from core import labels as L
@@ -16,6 +22,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("suffixes", nargs="*", default=[""], help='VLM batch suffixes, e.g. "_ct _ct2 _ct3" (results averaged)')
 ap.add_argument("--crop", default="animal", help="classifier crop the embeddings were cached with")
 ap.add_argument("--fpr", type=float, default=0.02, help="classifier frame FP budget for the threshold")
+ap.add_argument("--zone", choices=["couch"], help="apply the auto protected zone (detected couch) to the classifier")
 args = ap.parse_args()
 SETS = [("close", "data/Videos", "data/labels_videos.json", "eval_close"),
         ("medium", "data/Medium-Videos", "data/labels_medium.json", "eval_medium"),
@@ -34,6 +41,35 @@ for v, folder, lab, batch in SETS:
     for c in build_dataset(resolve(folder), d, CacheOnly(), lambda p, f: 1 / 0, 2.0, resolve("outputs/cache/embeddings"),
                            crop=f"{args.crop}-{SAMPLER_VERSION}", log=lambda *_: None):
         c.clip = f"{folder}/{c.clip}"; clips.append(c); view[c.clip] = v
+gate = {}  # (clip, t) -> dog in the couch zone
+if args.zone:
+    import cv2
+    from core.probe import _area, _inter, pick_dog_and_couch
+    cache = resolve("outputs/cache/zone_gate_couch.json")
+    known = json.loads(cache.read_text()) if cache.exists() else {}
+    det = None
+    for c in clips:
+        need = [t for t in c.times if f"{c.clip}|{t:.3f}" not in known]
+        if need:
+            if det is None:
+                from core.detector import UltralyticsDetector
+                det = UltralyticsDetector(str(resolve("models/yolov8m.pt")), "mps", ["dog", "couch"])
+            cap = cv2.VideoCapture(str(resolve(c.clip)))
+            for t in need:
+                cap.set(cv2.CAP_PROP_POS_MSEC, float(t) * 1000); ok, fr = cap.read()
+                passed = False
+                if ok:
+                    dets = det.detect_once(fr)
+                    dog, _ = pick_dog_and_couch(dets)
+                    if dog is not None:
+                        dx, dy = (dog[2] - dog[0]) * 0.15, (dog[3] - dog[1]) * 0.15
+                        g = (dog[0] - dx, dog[1] - dy, dog[2] + dx, dog[3] + dy)
+                        passed = max((_inter(g, d.bbox) for d in dets if d.class_name == "couch"), default=0) / max(_area(g), 1e-6) >= 0.10
+                known[f"{c.clip}|{t:.3f}"] = passed
+            cap.release()
+    cache.parent.mkdir(parents=True, exist_ok=True); cache.write_text(json.dumps(known))
+    gate = {c.clip: np.array([known[f"{c.clip}|{t:.3f}"] for t in c.times]) for c in clips}
+    n = sum(len(g) for g in gate.values()); print(f"zone gate: {sum(int(g.sum()) for g in gate.values())}/{n} sampled frames in the couch zone")
 vlm = vlm_runs[0]
 assert all(set(truth) <= set(vr) for vr in vlm_runs), [set(truth) - set(vr) for vr in vlm_runs]
 
@@ -47,6 +83,8 @@ def probe_alerts(seed):
             if c.clip in fs: oof[c.clip] = p.proba(c.X)
     P = np.concatenate([oof[c.clip] for c in clips]); Y = np.concatenate([c.frame_labels for c in clips])
     thr = pick_threshold(P, Y, args.fpr)
+    if gate:  # frames outside the protected zone are never judged
+        oof = {k: np.where(gate[k], v, 0.0) for k, v in oof.items()}
     return {c.clip: clip_alert(oof[c.clip], thr) for c in clips}
 
 runs = [probe_alerts(s) for s in range(20)]
@@ -54,7 +92,7 @@ def score(alerts, keys):
     tp = sum(truth[k] == "positive" and alerts.get(k, False) for k in keys)
     fp = sum(truth[k] == "negative" and alerts.get(k, False) for k in keys)
     return tp, fp
-print(f"classifier crop={args.crop} fpr={args.fpr}; VLM runs: {args.suffixes} (mean)")
+print(f"classifier crop={args.crop} fpr={args.fpr} zone={args.zone or 'whole frame'}; VLM runs: {args.suffixes} (mean)")
 print(f"{'view':7s} {'pos/neg':8s} | {'VLM':>15s} | {'classifier (mean of 20)':>24s} | {'VLM OR classifier':>20s}")
 for v in ("close", "medium", "wide", "hardneg", "pairs", "all"):
     keys = [k for k in truth if v == "all" or view.get(k) == v or (k not in view and k.split('/')[1] == {'close':'Videos','medium':'Medium-Videos','wide':'Wide-Videos','hardneg':'HardNeg-Videos','pairs':'Pairs-Videos'}.get(v))]
