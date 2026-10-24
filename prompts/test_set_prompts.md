@@ -1,77 +1,79 @@
-# MischiefCam · 保留測試集 prompt（T01–T60）
+# MischiefCam · 保留測試集 prompt（T01–T60，實際生成 50 支）
 
 **這批只用來做最後一次評估，不拿來訓練、選門檻、選裁切或改 prompt。** 所有設定定案後才跑一次，跑出來的分數才是提案要寫的效能。跑完如果又改設定，這批就不算乾淨了，要另外再做一批。
 
 - 影片存成 `T01.mp4` … `T60.mp4`，放在 `data/Test-Videos/`（只用編號）。
+- **2026-10-24 縮減成 50 支**：下表標「不生成」的 10 支跳過。挑法是在每個「視角 × 類型」格子裡省略跟已生成影片最像的情境，所以正負例、困難負例和視角的比例都跟原本 60 支相同。
+- 另外還有 5 支破沙發負例，在 `test_damaged_sofa_prompts.md`（D01–D05），一樣放 `data/Test-Videos/`。
 - **自己盲標**：標註工具不要加 `--suggest`；照畫面實際發生的標，不要參考 prompt 原本想要的結果。
 - 狗品種、沙發、房間都是訓練 prompt 沒出現過的；鏡頭位置與句型也刻意不同，用來測「換了風格還抓不抓得到」。
 - 正例、負例已經打散後才編號，編號看不出答案；預期結果只寫在 `test_set_prompts.json`，標完之前不要看。
-- 組成：共 60 支，近景 23、中景 21、廣角 16。
+- 組成：共 50 支，近景 19、中景 18、廣角 13。
 - 如果有真實影片（自家或隊友的狗），另外存成 `R01.mp4`…，放在同一個資料夾，一起盲標。
   真實影片最能回答評審會問的「合成資料訓練的模型，真實世界有沒有用」。
 
-| ID | 視角 |
-|---|---|
-| T01 | medium |
-| T02 | wide |
-| T03 | medium |
-| T04 | medium |
-| T05 | wide |
-| T06 | close |
-| T07 | medium |
-| T08 | close |
-| T09 | close |
-| T10 | close |
-| T11 | close |
-| T12 | close |
-| T13 | close |
-| T14 | wide |
-| T15 | wide |
-| T16 | medium |
-| T17 | medium |
-| T18 | medium |
-| T19 | close |
-| T20 | wide |
-| T21 | wide |
-| T22 | medium |
-| T23 | wide |
-| T24 | close |
-| T25 | wide |
-| T26 | close |
-| T27 | medium |
-| T28 | close |
-| T29 | medium |
-| T30 | medium |
-| T31 | close |
-| T32 | medium |
-| T33 | medium |
-| T34 | medium |
-| T35 | close |
-| T36 | wide |
-| T37 | close |
-| T38 | medium |
-| T39 | close |
-| T40 | close |
-| T41 | close |
-| T42 | wide |
-| T43 | close |
-| T44 | medium |
-| T45 | wide |
-| T46 | close |
-| T47 | wide |
-| T48 | medium |
-| T49 | close |
-| T50 | wide |
-| T51 | medium |
-| T52 | medium |
-| T53 | wide |
-| T54 | close |
-| T55 | medium |
-| T56 | close |
-| T57 | wide |
-| T58 | close |
-| T59 | wide |
-| T60 | medium |
+| ID | 視角 | 狀態 |
+|---|---|---|
+| T01 | medium | 生成 |
+| T02 | wide | 生成 |
+| T03 | medium | 生成 |
+| T04 | medium | 生成 |
+| T05 | wide | 生成 |
+| T06 | close | 生成 |
+| T07 | medium | 生成 |
+| T08 | close | 生成 |
+| T09 | close | 生成 |
+| T10 | close | 生成 |
+| T11 | close | 生成 |
+| T12 | close | 生成 |
+| T13 | close | 生成 |
+| T14 | wide | 生成 |
+| T15 | wide | 生成 |
+| T16 | medium | 生成 |
+| T17 | medium | 生成 |
+| T18 | medium | 生成 |
+| T19 | close | 生成 |
+| T20 | wide | 生成 |
+| T21 | wide | 生成 |
+| T22 | medium | 生成 |
+| T23 | wide | 生成 |
+| T24 | close | 生成 |
+| T25 | wide | 生成 |
+| T26 | close | 生成 |
+| T27 | medium | 生成 |
+| T28 | close | 生成 |
+| T29 | medium | 生成 |
+| T30 | medium | 生成 |
+| T31 | close | **不生成** |
+| T32 | medium | 生成 |
+| T33 | medium | **不生成** |
+| T34 | medium | **不生成** |
+| T35 | close | 生成 |
+| T36 | wide | **不生成** |
+| T37 | close | **不生成** |
+| T38 | medium | 生成 |
+| T39 | close | 生成 |
+| T40 | close | 生成 |
+| T41 | close | 生成 |
+| T42 | wide | **不生成** |
+| T43 | close | **不生成** |
+| T44 | medium | 生成 |
+| T45 | wide | 生成 |
+| T46 | close | 生成 |
+| T47 | wide | 生成 |
+| T48 | medium | **不生成** |
+| T49 | close | **不生成** |
+| T50 | wide | 生成 |
+| T51 | medium | 生成 |
+| T52 | medium | 生成 |
+| T53 | wide | **不生成** |
+| T54 | close | 生成 |
+| T55 | medium | 生成 |
+| T56 | close | 生成 |
+| T57 | wide | 生成 |
+| T58 | close | 生成 |
+| T59 | wide | 生成 |
+| T60 | medium | 生成 |
 
 ## T01 · medium
 
@@ -253,7 +255,7 @@ Home security footage, strong backlight from a window behind the sofa. Recorded 
 Static medium shot from a wall-mounted camera at shoulder height, framing the sofa and the rug in front of it in an industrial loft with concrete walls, dim blue dusk light from the window. In the frame is a white leather modular sofa. During the clip a black Newfoundland puppy chews a sneaker on the floor right next to the sofa. Its mouth never bites, chews or pulls the sofa, and the sofa stays completely intact: no tears, no loose threads, no stuffing from the sofa. Nothing else moves the camera: no pan, no zoom, no cuts. Looks like real footage from a home camera, with no people and no captions or overlays.
 ```
 
-## T31 · close
+## T31 · close（不生成）
 
 ```text
 A real-looking clip from a pet-monitoring camera (a pet camera placed low on the floor about one meter from the sofa). Setting: cluttered student apartment, late-morning sunlight with hard shadows and glare on the floor, with a denim-blue fabric sofa. What happens: a Dalmatian gnaws an antler chew on the armrest, the armrest itself untouched. Its mouth never bites, chews or pulls the sofa, and the sofa stays completely intact: no tears, no loose threads, no stuffing from the sofa. Single uninterrupted shot, fixed framing, no zoom, natural dog behaviour, no humans, no text, not stylised or cinematic.
@@ -265,13 +267,13 @@ A real-looking clip from a pet-monitoring camera (a pet camera placed low on the
 Black-and-white infrared night vision. A Japanese-style room with tatami mats seen through a camera on a windowsill looking across at the sofa from the side. A sage green slipcovered sofa is in view, and a white Samoyed grooms another dog lying next to it on the sofa, licking its fur. Its mouth never bites, chews or pulls the sofa, and the sofa stays completely intact: no tears, no loose threads, no stuffing from the sofa. The footage is one fixed, continuous shot with ordinary home-camera image quality: no camera movement, no zoom, no people, no subtitles, no animation look.
 ```
 
-## T33 · medium
+## T33 · medium（不生成）
 
 ```text
 Home security footage, mixed warm lamp light and cool TV glow. Recorded by a camera on the TV stand across the room, showing the whole sofa and some floor around it. The room is a high-rise apartment with a city view with a low Japanese-style floor sofa in oatmeal fabric. A Boston terrier walks past the sofa, drinks from a water bowl nearby and leaves. Its mouth never bites, chews or pulls the sofa, and the sofa stays completely intact: no tears, no loose threads, no stuffing from the sofa. The view is locked off for the whole clip: one continuous take, no camera motion, no zoom. Realistic animal motion, realistic lighting, no people, no on-screen text.
 ```
 
-## T34 · medium
+## T34 · medium（不生成）
 
 ```text
 Static medium shot from a camera on the TV stand across the room, showing the whole sofa and some floor around it in a coastal beach house living room, flat overcast daylight. In the frame is a tan suede sofa. During the clip a brindle Cane Corso bites the sofa skirt and backs away, stretching the fabric. At the start of the clip the sofa looks undamaged. Nothing else moves the camera: no pan, no zoom, no cuts. Looks like real footage from a home camera, with no people and no captions or overlays.
@@ -283,13 +285,13 @@ Static medium shot from a camera on the TV stand across the room, showing the wh
 A real-looking clip from a pet-monitoring camera (a tabletop pet camera on the coffee table facing the sofa). Setting: playroom with a colorful foam floor mat, strong backlight from a window behind the sofa, with a burgundy velvet sofa. What happens: an orange Pomeranian after sniffing the armrest for a few seconds, starts biting it and pulls the fabric loose. At the start of the clip the sofa looks undamaged. Single uninterrupted shot, fixed framing, no zoom, natural dog behaviour, no humans, no text, not stylised or cinematic.
 ```
 
-## T36 · wide
+## T36 · wide（不生成）
 
 ```text
 Dim blue dusk light from the window. A farmhouse living room with exposed beams seen through a wide-angle camera above the doorway showing the entire room, the sofa in the far half. A terracotta linen sofa is in view, and a Belgian Malinois plays fetch alone with a bouncing ball across the floor. Its mouth never bites, chews or pulls the sofa, and the sofa stays completely intact: no tears, no loose threads, no stuffing from the sofa. The footage is one fixed, continuous shot with ordinary home-camera image quality: no camera movement, no zoom, no people, no subtitles, no animation look.
 ```
 
-## T37 · close
+## T37 · close（不生成）
 
 ```text
 Home security footage, late-morning sunlight with hard shadows and glare on the floor. Recorded by a tabletop pet camera on the coffee table facing the sofa. The room is an open-plan kitchen and living area with a blue-and-white striped canvas sofa. An Airedale terrier lies on the seat and slowly chews the edge of the cushion it is lying on. At the start of the clip the sofa looks undamaged. The view is locked off for the whole clip: one continuous take, no camera motion, no zoom. Realistic animal motion, realistic lighting, no people, no on-screen text.
@@ -319,13 +321,13 @@ Flat overcast daylight. An industrial loft with concrete walls seen through a ta
 Home security footage, strong backlight from a window behind the sofa. Recorded by a tabletop pet camera on the coffee table facing the sofa. The room is a cluttered student apartment with a rattan-frame sofa with cream cushions. A fawn whippet chews its own front paw while lying on the sofa. Its mouth never bites, chews or pulls the sofa, and the sofa stays completely intact: no tears, no loose threads, no stuffing from the sofa. The view is locked off for the whole clip: one continuous take, no camera motion, no zoom. Realistic animal motion, realistic lighting, no people, no on-screen text.
 ```
 
-## T42 · wide
+## T42 · wide（不生成）
 
 ```text
 Static wide shot from a fisheye camera in the room's corner near the ceiling, the dog small in the frame in a Japanese-style room with tatami mats, dim blue dusk light from the window. In the frame is a white leather modular sofa. During the clip a white-and-brown English bulldog chews the corner of the seat cushion while the rest of the room stays still. At the start of the clip the sofa looks undamaged. Nothing else moves the camera: no pan, no zoom, no cuts. Looks like real footage from a home camera, with no people and no captions or overlays.
 ```
 
-## T43 · close
+## T43 · close（不生成）
 
 ```text
 A real-looking clip from a pet-monitoring camera (a pet camera placed low on the floor about one meter from the sofa). Setting: high-rise apartment with a city view, late-morning sunlight with hard shadows and glare on the floor, with a denim-blue fabric sofa. What happens: a Saint Bernard puppy sneezes and shakes its head while sitting on the seat cushion. Its mouth never bites, chews or pulls the sofa, and the sofa stays completely intact: no tears, no loose threads, no stuffing from the sofa. Single uninterrupted shot, fixed framing, no zoom, natural dog behaviour, no humans, no text, not stylised or cinematic.
@@ -355,13 +357,13 @@ Static close-up shot from a tabletop pet camera on the coffee table facing the s
 A real-looking clip from a pet-monitoring camera (a wide-angle camera above the doorway showing the entire room, the sofa in the far half). Setting: open-plan kitchen and living area, strong backlight from a window behind the sofa, with a burgundy velvet sofa. What happens: a tan short-haired chihuahua sleeps on the sofa the whole time. Its mouth never bites, chews or pulls the sofa, and the sofa stays completely intact: no tears, no loose threads, no stuffing from the sofa. Single uninterrupted shot, fixed framing, no zoom, natural dog behaviour, no humans, no text, not stylised or cinematic.
 ```
 
-## T48 · medium
+## T48 · medium（不生成）
 
 ```text
 Dim blue dusk light from the window. A sunroom full of plants seen through a wall-mounted camera at shoulder height, framing the sofa and the rug in front of it. A terracotta linen sofa is in view, and a rust-colored Vizsla tears apart a cardboard box beside the sofa, scraps on the floor. Its mouth never bites, chews or pulls the sofa, and the sofa stays completely intact: no tears, no loose threads, no stuffing from the sofa. The footage is one fixed, continuous shot with ordinary home-camera image quality: no camera movement, no zoom, no people, no subtitles, no animation look.
 ```
 
-## T49 · close
+## T49 · close（不生成）
 
 ```text
 Home security footage, late-morning sunlight with hard shadows and glare on the floor. Recorded by a tabletop pet camera on the coffee table facing the sofa. The room is a basement den with wood-paneled walls with a blue-and-white striped canvas sofa. A black-and-rust Doberman bites the corner of the armrest and pulls at the fabric, head shaking side to side. At the start of the clip the sofa looks undamaged. The view is locked off for the whole clip: one continuous take, no camera motion, no zoom. Realistic animal motion, realistic lighting, no people, no on-screen text.
@@ -385,7 +387,7 @@ A real-looking clip from a pet-monitoring camera (a camera on the TV stand acros
 Flat overcast daylight. A Japanese-style room with tatami mats seen through a camera on the TV stand across the room, showing the whole sofa and some floor around it. A floral-patterned fabric sofa is in view, and a red-and-white Akita digs at the seat with its paws and then bites and tears the cushion fabric. At the start of the clip the sofa looks undamaged. The footage is one fixed, continuous shot with ordinary home-camera image quality: no camera movement, no zoom, no people, no subtitles, no animation look.
 ```
 
-## T53 · wide
+## T53 · wide（不生成）
 
 ```text
 Home security footage, strong backlight from a window behind the sofa. Recorded by a wide-angle camera above the doorway showing the entire room, the sofa in the far half. The room is a high-rise apartment with a city view with a rattan-frame sofa with cream cushions. A harlequin Great Dane chews a towel on the floor beside the sofa at night. Its mouth never bites, chews or pulls the sofa, and the sofa stays completely intact: no tears, no loose threads, no stuffing from the sofa. The view is locked off for the whole clip: one continuous take, no camera motion, no zoom. Realistic animal motion, realistic lighting, no people, no on-screen text.

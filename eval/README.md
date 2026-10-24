@@ -17,7 +17,7 @@ table) is negative in Stage I, where only the sofa is protected.
 | Wide | `data/Wide-Videos` | `labels_wide.json` | 20 (6 / 14) | development |
 | Hard negatives | `data/HardNeg-Videos` | `labels_hardneg.json` | 10 (0 / 10) | development |
 | Contrast pairs | `data/Pairs-Videos` | `labels_pairs.json` | 20 (10 / 10) | development (scored blind first, see below) |
-| **Held-out test** | `data/Test-Videos` | `labels_test.json` | T01–T60 (+ extra negatives) | **evaluated once**, never trained or tuned on |
+| **Held-out test** | `data/Test-Videos` | `labels_test.json` | 50 of T01–T60 + D01–D05 | **evaluated once**, never trained or tuned on |
 
 ## Two kinds of numbers
 
@@ -30,6 +30,11 @@ table) is negative in Stage I, where only the sofa is protected.
   `models/classifier.json` are frozen first, then the set is labelled blind and run once with
   `batch_run.py --vlm either`. `build_dataset` refuses `data/Test-Videos`, so it cannot leak into
   training. These are the numbers to quote.
+  - 50 of the 60 prompts are used (trimmed 2026-10-24 for generation time, keeping the 60's mix:
+    20 positive, 20 hard negative, 10 ordinary negative; 19 close, 18 medium, 13 wide).
+  - D01–D05 (`prompts/test_damaged_sofa_prompts.md`): the sofa is already torn and the dog does not
+    chew it. Positive training clips almost always show damage appearing, so these check that the
+    model alerts on chewing, not on visible damage.
 
 ## Development results (2026-10-23)
 

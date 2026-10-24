@@ -1,6 +1,7 @@
 """Generate the held-out TEST set prompts (T01-T60): evaluated once, never trained or tuned on.
 
-    uv run python scripts/gen_test_prompts.py     # writes prompts/test_set_prompts.{md,json}
+    uv run python scripts/gen_test_prompts.py
+    # writes prompts/test_set_prompts.{md,json} and prompts/test_damaged_sofa_prompts.{md,json}
 
 The set is deliberately shifted from every training prompt so it measures generalisation, not
 memorised generator style: dog breeds, sofas and rooms that never appear in the training prompts,
@@ -129,6 +130,34 @@ NEGATIVE = [  # ordinary behaviour around the sofa
     ("close", "sneezes and shakes its head while sitting on the seat cushion", "normal"),
 ]
 
+# Trimmed to 50 on 2026-10-24 (not enough generation time for 60). T01-T29 were already generated;
+# from T30-T60 one or two scenes were dropped per (view x positive / hard / normal) cell so the 50 keep
+# the 60's proportions (20 positive, 20 hard, 10 normal; 19 close, 18 medium, 13 wide), dropping the
+# scene most similar to one already generated.
+DROPPED = {"T31", "T33", "T34", "T36", "T37", "T42", "T43", "T48", "T49", "T53"}
+
+# Extra negatives D01-D05: the sofa is ALREADY damaged and the dog does not chew it. Almost every
+# positive clip shows damage appearing, so a model could learn "torn fabric / stuffing = alert"
+# instead of the chewing itself; these clips test for that shortcut.
+DAMAGED = [
+    ("close", "lies asleep on the seat cushion right next to the existing tear, breathing slowly"),
+    ("close", "sits beside the frayed armrest and briefly sniffs the loose threads, then looks away; "
+              "its mouth never touches the fabric"),
+    ("medium", "walks past the sofa, sniffs the stuffing lying on the floor for a moment and leaves"),
+    ("medium", "lies on the rug in front of the sofa with its head on its paws, not chewing anything"),
+    ("wide", "jumps onto the sofa, turns around twice and lies down next to the ripped backrest"),
+]
+DAMAGE = {
+    "close": "Before the clip starts the sofa is already damaged: one seat cushion has a large old tear "
+             "with white stuffing poking out, and the front of the armrest is frayed with loose threads.",
+    "medium": "Before the clip starts the sofa is already damaged: the skirt along the bottom is ripped and "
+              "hanging, and a few tufts of old stuffing lie on the floor in front of it.",
+    "wide": "Before the clip starts the sofa is already damaged: the backrest has a long old rip with "
+            "white stuffing bulging out, large enough to see from across the room.",
+}
+DAMAGED_GUARD = ("The damage is already there at the start and does not change during the clip: the dog's "
+                 "mouth never bites, chews or pulls the sofa and no new tears or stuffing appear. ")
+
 NO_BITE = ("Its mouth never bites, chews or pulls the sofa, and the sofa stays completely intact: no tears, "
            "no loose threads, no stuffing from the sofa.")
 TEMPLATES = [
@@ -166,19 +195,23 @@ def main() -> int:
         text = TEMPLATES[i % len(TEMPLATES)].format(**attrs, action=s["action"], guard=guard,
                                                     view_word=VIEW_WORD[s["view"]], light_cap=light[0].upper() + light[1:])
         text = re.sub(r"\b([Aa]) (?=[aeiouAEIOU])", r"\1n ", text)  # "a emerald" -> "an emerald"
-        prompts.append(dict(id=f"T{i + 1:02d}", view=s["view"], intended=s["label"], group=s["group"],
+        pid = f"T{i + 1:02d}"
+        prompts.append(dict(id=pid, view=s["view"], intended=s["label"], group=s["group"],
+                            status="dropped" if pid in DROPPED else "use",
                             template=i % len(TEMPLATES), **attrs, action=s["action"], prompt=text))
 
-    counts = {"total": len(prompts), **{v: sum(p["view"] == v for p in prompts) for v in VIEW_WORD},
-              "intended_positive": sum(p["intended"] == "positive" for p in prompts),
-              "intended_negative": sum(p["intended"] == "negative" for p in prompts),
-              "hard_negative": sum(p["group"] == "hard" for p in prompts)}
+    used = [p for p in prompts if p["status"] == "use"]
+    counts = {"total": len(used), "dropped": len(prompts) - len(used),
+              **{v: sum(p["view"] == v for p in used) for v in VIEW_WORD},
+              "intended_positive": sum(p["intended"] == "positive" for p in used),
+              "intended_negative": sum(p["intended"] == "negative" for p in used),
+              "hard_negative": sum(p["group"] == "hard" for p in used)}
     data = {
         "version": 1,
         "purpose": "Held-out test set. Evaluated once after all settings are frozen; never used for training, "
                    "threshold picking, prompt or crop choices. Distribution-shifted from the training prompts.",
         "how_to_use": [
-            "Save clips as T01.mp4 … T60.mp4 in data/Test-Videos (id only).",
+            "Save clips as T01.mp4 … T60.mp4 in data/Test-Videos (id only); skip the ten with status 'dropped'.",
             "Label blind in the label tool WITHOUT --suggest, and label what is visible, not the intended label.",
             "Never pass data/Test-Videos to mcam-train, eval_probe.py or experiment scripts (build_dataset refuses it).",
             "Run the final evaluation once; if settings change afterwards, the set is no longer clean.",
@@ -190,18 +223,69 @@ def main() -> int:
                                                         encoding="utf-8")
 
     md = [
-        "# MischiefCam · 保留測試集 prompt（T01–T60）",
+        "# MischiefCam · 保留測試集 prompt（T01–T60，實際生成 50 支）",
         "",
         "**這批只用來做最後一次評估，不拿來訓練、選門檻、選裁切或改 prompt。** 所有設定定案後才跑一次，"
         "跑出來的分數才是提案要寫的效能。跑完如果又改設定，這批就不算乾淨了，要另外再做一批。",
         "",
         "- 影片存成 `T01.mp4` … `T60.mp4`，放在 `data/Test-Videos/`（只用編號）。",
+        f"- **2026-10-24 縮減成 50 支**：下表標「不生成」的 {counts['dropped']} 支跳過。挑法是在每個「視角 × 類型」"
+        "格子裡省略跟已生成影片最像的情境，所以正負例、困難負例和視角的比例都跟原本 60 支相同。",
+        "- 另外還有 5 支破沙發負例，在 `test_damaged_sofa_prompts.md`（D01–D05），一樣放 `data/Test-Videos/`。",
         "- **自己盲標**：標註工具不要加 `--suggest`；照畫面實際發生的標，不要參考 prompt 原本想要的結果。",
         "- 狗品種、沙發、房間都是訓練 prompt 沒出現過的；鏡頭位置與句型也刻意不同，用來測「換了風格還抓不抓得到」。",
         "- 正例、負例已經打散後才編號，編號看不出答案；預期結果只寫在 `test_set_prompts.json`，標完之前不要看。",
         f"- 組成：共 {counts['total']} 支，近景 {counts['close']}、中景 {counts['medium']}、廣角 {counts['wide']}。",
         "- 如果有真實影片（自家或隊友的狗），另外存成 `R01.mp4`…，放在同一個資料夾，一起盲標。",
         "  真實影片最能回答評審會問的「合成資料訓練的模型，真實世界有沒有用」。",
+        "",
+        "| ID | 視角 | 狀態 |",
+        "|---|---|---|",
+        *[f"| {p['id']} | {p['view']} | {'**不生成**' if p['status'] == 'dropped' else '生成'} |" for p in prompts],
+        "",
+    ]
+    for p in prompts:
+        title = f"## {p['id']} · {p['view']}" + ("（不生成）" if p["status"] == "dropped" else "")
+        md += [title, "", "```text", p["prompt"], "```", ""]
+    (ROOT / "prompts/test_set_prompts.md").write_text("\n".join(md), encoding="utf-8")
+    print(json.dumps(counts))
+    write_damaged(random.Random(SEED + 1))
+    return 0
+
+
+def write_damaged(rng: random.Random) -> None:
+    # no night vision here: if the detector misses the dog (as on T08) the clip passes without testing
+    # the damage shortcut at all
+    day = [light for light in LIGHTS if "infrared" not in light]
+    dogs, sofas, rooms, lights = (rng.sample(x, len(x)) for x in (DOGS, SOFAS, ROOMS, day))
+    prompts = []
+    for i, (view, action) in enumerate(DAMAGED):
+        light = lights[i % len(lights)]
+        attrs = dict(dog=dogs[i], sofa=sofas[i], room=rooms[i], camera=rng.choice(CAMERAS[view]), light=light)
+        text = TEMPLATES[i % len(TEMPLATES)].format(**attrs, action=action, guard=DAMAGE[view] + " " + DAMAGED_GUARD,
+                                                    view_word=VIEW_WORD[view], light_cap=light[0].upper() + light[1:])
+        text = re.sub(r"\b([Aa]) (?=[aeiouAEIOU])", r"\1n ", text)
+        prompts.append(dict(id=f"D{i + 1:02d}", view=view, intended="negative", group="damaged_sofa",
+                            **attrs, action=action, prompt=text))
+    data = {
+        "version": 1,
+        "purpose": "Held-out negatives with an already-damaged sofa and no chewing: does the model alert on "
+                   "visible damage instead of the chewing itself? Evaluated once with the test set.",
+        "how_to_use": ["Save clips as D01.mp4 … D05.mp4 in data/Test-Videos and label them blind with the "
+                       "test set; label what is visible (a clip where the dog does bite the sofa is positive)."],
+        "prompts": prompts,
+    }
+    (ROOT / "prompts/test_damaged_sofa_prompts.json").write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n",
+                                                                 encoding="utf-8")
+    md = [
+        "# MischiefCam · 破沙發負例 prompt（D01–D05）",
+        "",
+        "**目的**：幾乎所有正例影片都是「狗咬 → 沙發被扯破、填充物跑出來」，模型可能偷學成「看到破洞或填充物"
+        "就通知」。這 5 支是**沙發本來就破了，但狗沒有咬**，用來檢查有沒有這種偷吃步。",
+        "",
+        "- 存成 `D01.mp4` … `D05.mp4`，放在 `data/Test-Videos/`，跟 T 系列一起盲標、一起只評估一次，不拿來訓練。",
+        "- 照畫面實際發生的標：生成工具如果讓狗真的咬了沙發，那支就標正例。",
+        "- 生成時注意：破洞要**從第一格就存在**，而且整支影片裡不變大。",
         "",
         "| ID | 視角 |",
         "|---|---|",
@@ -210,9 +294,7 @@ def main() -> int:
     ]
     for p in prompts:
         md += [f"## {p['id']} · {p['view']}", "", "```text", p["prompt"], "```", ""]
-    (ROOT / "prompts/test_set_prompts.md").write_text("\n".join(md), encoding="utf-8")
-    print(json.dumps(counts))
-    return 0
+    (ROOT / "prompts/test_damaged_sofa_prompts.md").write_text("\n".join(md), encoding="utf-8")
 
 
 if __name__ == "__main__":

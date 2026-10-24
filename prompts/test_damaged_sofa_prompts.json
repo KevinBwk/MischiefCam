@@ -1,0 +1,74 @@
+{
+ "version": 1,
+ "purpose": "Held-out negatives with an already-damaged sofa and no chewing: does the model alert on visible damage instead of the chewing itself? Evaluated once with the test set.",
+ "how_to_use": [
+  "Save clips as D01.mp4 … D05.mp4 in data/Test-Videos and label them blind with the test set; label what is visible (a clip where the dog does bite the sofa is positive)."
+ ],
+ "prompts": [
+  {
+   "id": "D01",
+   "view": "close",
+   "intended": "negative",
+   "group": "damaged_sofa",
+   "dog": "tan short-haired chihuahua",
+   "sofa": "sage green slipcovered sofa",
+   "room": "Japanese-style room with tatami mats",
+   "camera": "a pet camera placed low on the floor about one meter from the sofa",
+   "light": "mixed warm lamp light and cool TV glow",
+   "action": "lies asleep on the seat cushion right next to the existing tear, breathing slowly",
+   "prompt": "Home security footage, mixed warm lamp light and cool TV glow. Recorded by a pet camera placed low on the floor about one meter from the sofa. The room is a Japanese-style room with tatami mats with a sage green slipcovered sofa. A tan short-haired chihuahua lies asleep on the seat cushion right next to the existing tear, breathing slowly. Before the clip starts the sofa is already damaged: one seat cushion has a large old tear with white stuffing poking out, and the front of the armrest is frayed with loose threads. The damage is already there at the start and does not change during the clip: the dog's mouth never bites, chews or pulls the sofa and no new tears or stuffing appear. The view is locked off for the whole clip: one continuous take, no camera motion, no zoom. Realistic animal motion, realistic lighting, no people, no on-screen text."
+  },
+  {
+   "id": "D02",
+   "view": "close",
+   "intended": "negative",
+   "group": "damaged_sofa",
+   "dog": "brindle Cane Corso",
+   "sofa": "tan suede sofa",
+   "room": "playroom with a colorful foam floor mat",
+   "camera": "a pet camera placed low on the floor about one meter from the sofa",
+   "light": "late-morning sunlight with hard shadows and glare on the floor",
+   "action": "sits beside the frayed armrest and briefly sniffs the loose threads, then looks away; its mouth never touches the fabric",
+   "prompt": "Static close-up shot from a pet camera placed low on the floor about one meter from the sofa in a playroom with a colorful foam floor mat, late-morning sunlight with hard shadows and glare on the floor. In the frame is a tan suede sofa. During the clip a brindle Cane Corso sits beside the frayed armrest and briefly sniffs the loose threads, then looks away; its mouth never touches the fabric. Before the clip starts the sofa is already damaged: one seat cushion has a large old tear with white stuffing poking out, and the front of the armrest is frayed with loose threads. The damage is already there at the start and does not change during the clip: the dog's mouth never bites, chews or pulls the sofa and no new tears or stuffing appear. Nothing else moves the camera: no pan, no zoom, no cuts. Looks like real footage from a home camera, with no people and no captions or overlays."
+  },
+  {
+   "id": "D03",
+   "view": "medium",
+   "intended": "negative",
+   "group": "damaged_sofa",
+   "dog": "Dalmatian",
+   "sofa": "dusty pink velvet loveseat",
+   "room": "cluttered student apartment",
+   "camera": "a camera on the TV stand across the room, showing the whole sofa and some floor around it",
+   "light": "dim blue dusk light from the window",
+   "action": "walks past the sofa, sniffs the stuffing lying on the floor for a moment and leaves",
+   "prompt": "A real-looking clip from a pet-monitoring camera (a camera on the TV stand across the room, showing the whole sofa and some floor around it). Setting: cluttered student apartment, dim blue dusk light from the window, with a dusty pink velvet loveseat. What happens: a Dalmatian walks past the sofa, sniffs the stuffing lying on the floor for a moment and leaves. Before the clip starts the sofa is already damaged: the skirt along the bottom is ripped and hanging, and a few tufts of old stuffing lie on the floor in front of it. The damage is already there at the start and does not change during the clip: the dog's mouth never bites, chews or pulls the sofa and no new tears or stuffing appear. Single uninterrupted shot, fixed framing, no zoom, natural dog behaviour, no humans, no text, not stylised or cinematic."
+  },
+  {
+   "id": "D04",
+   "view": "medium",
+   "intended": "negative",
+   "group": "damaged_sofa",
+   "dog": "orange Pomeranian",
+   "sofa": "floral-patterned fabric sofa",
+   "room": "sunroom full of plants",
+   "camera": "a camera on the TV stand across the room, showing the whole sofa and some floor around it",
+   "light": "flat overcast daylight",
+   "action": "lies on the rug in front of the sofa with its head on its paws, not chewing anything",
+   "prompt": "Flat overcast daylight. A sunroom full of plants seen through a camera on the TV stand across the room, showing the whole sofa and some floor around it. A floral-patterned fabric sofa is in view, and an orange Pomeranian lies on the rug in front of the sofa with its head on its paws, not chewing anything. Before the clip starts the sofa is already damaged: the skirt along the bottom is ripped and hanging, and a few tufts of old stuffing lie on the floor in front of it. The damage is already there at the start and does not change during the clip: the dog's mouth never bites, chews or pulls the sofa and no new tears or stuffing appear. The footage is one fixed, continuous shot with ordinary home-camera image quality: no camera movement, no zoom, no people, no subtitles, no animation look."
+  },
+  {
+   "id": "D05",
+   "view": "wide",
+   "intended": "negative",
+   "group": "damaged_sofa",
+   "dog": "fluffy white Bichon frise",
+   "sofa": "emerald green velvet Chesterfield sofa",
+   "room": "coastal beach house living room",
+   "camera": "a wide-angle camera above the doorway showing the entire room, the sofa in the far half",
+   "light": "strong backlight from a window behind the sofa",
+   "action": "jumps onto the sofa, turns around twice and lies down next to the ripped backrest",
+   "prompt": "Home security footage, strong backlight from a window behind the sofa. Recorded by a wide-angle camera above the doorway showing the entire room, the sofa in the far half. The room is a coastal beach house living room with an emerald green velvet Chesterfield sofa. A fluffy white Bichon frise jumps onto the sofa, turns around twice and lies down next to the ripped backrest. Before the clip starts the sofa is already damaged: the backrest has a long old rip with white stuffing bulging out, large enough to see from across the room. The damage is already there at the start and does not change during the clip: the dog's mouth never bites, chews or pulls the sofa and no new tears or stuffing appear. The view is locked off for the whole clip: one continuous take, no camera motion, no zoom. Realistic animal motion, realistic lighting, no people, no on-screen text."
+  }
+ ]
+}
