@@ -1,11 +1,9 @@
 {
-  "note": "Demo scenes for the Stage I video (2026-10-24). Clips are AI-generated (synthetic). rois: omit = whole frame counts as the sofa zone. Each clip was played with the released classifier (5% budget): the first two stay quiet, the other four alert.",
+  "note": "Demo scenes for the Stage I video (2026-10-25 order: grab attention with an alert, then two scenes where Michelle stays quiet, then a hard far shot). Clips are AI-generated (synthetic). rois: omit = auto zone (every detected couch). Each clip was played with the released classifier (5% budget) and behaved as captioned.",
   "items": [
-    {"video": "data/Videos/v20.mp4", "caption": "Dog walks in and naps on the sofa — Michelle stays quiet"},
-    {"video": "data/Videos/v27.mp4", "caption": "Dog chews its own rope toy on the sofa — still quiet"},
-    {"video": "data/Videos/v02.mp4", "caption": "Dog chews the sofa — Michelle alerts"},
-    {"video": "data/Videos/v32.mp4", "caption": "Dog bites the armrest — alert, with Michelle's visual check"},
-    {"video": "data/Medium-Videos/m01.mp4", "caption": "Dog walks over, then starts on the cushion — alert"},
-    {"video": "data/Wide-Videos/w09.mp4", "caption": "Whole room, two dogs — one chews the armrest"}
+    {"video": "data/Videos/v02.mp4", "caption": "Dog chews the sofa — Michelle alerts within seconds"},
+    {"video": "data/Videos/v27.mp4", "caption": "Dog chews its own rope toy on the sofa — Michelle stays quiet"},
+    {"video": "data/Videos/v20.mp4", "caption": "Dog naps on the sofa — still quiet: no false alarm"},
+    {"video": "data/Wide-Videos/w04.mp4", "caption": "Night vision, far corner camera — dog chews the sofa, Michelle still alerts"}
   ]
 }
