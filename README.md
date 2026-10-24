@@ -148,8 +148,9 @@ Click **New zone**, click around the sofa, click the first point to close, name 
 ### Demo view
 
 ```bash
-uv run mcam-demo --video data/Videos/v02.mp4 --video data/Wide-Videos/w09.mp4
-uv run mcam-demo --camera 0          # live camera: device index, or rtsp/http URL
+uv run mcam-demo --playlist demo/playlist.json   # the six demo scenes: two quiet, four alerts
+uv run mcam-demo --video data/Videos/v02.mp4      # any clips, repeat --video
+uv run mcam-demo --camera 0                       # live camera: device index, or rtsp/http URL
 ```
 
 Local page (127.0.0.1:8768): camera view with zone / dog / state overlay and Michelle's

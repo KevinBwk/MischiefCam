@@ -1,9 +1,11 @@
 {
-  "note": "Demo scenes for the Stage I video. Clips are AI-generated (synthetic). rois: omit = whole frame counts as the sofa zone.",
+  "note": "Demo scenes for the Stage I video (2026-10-24). Clips are AI-generated (synthetic). rois: omit = whole frame counts as the sofa zone. Each clip was played with the released classifier (5% budget): the first two stay quiet, the other four alert.",
   "items": [
-    {"video": "data/Videos/v27.mp4", "caption": "Dog chews its own rope toy on the sofa — should stay quiet"},
-    {"video": "data/Videos/v20.mp4", "caption": "Dog naps on the sofa — should stay quiet"},
-    {"video": "data/Videos/v4.mp4",  "caption": "Dog starts chewing the sofa — Michelle should alert"},
-    {"video": "data/Wide-Videos/w02.mp4", "caption": "Whole living room view — dog chews the sofa"}
+    {"video": "data/Videos/v20.mp4", "caption": "Dog walks in and naps on the sofa — Michelle stays quiet"},
+    {"video": "data/Videos/v27.mp4", "caption": "Dog chews its own rope toy on the sofa — still quiet"},
+    {"video": "data/Videos/v02.mp4", "caption": "Dog chews the sofa — Michelle alerts"},
+    {"video": "data/Videos/v32.mp4", "caption": "Dog bites the armrest — alert, with Michelle's visual check"},
+    {"video": "data/Medium-Videos/m01.mp4", "caption": "Dog walks over, then starts on the cushion — alert"},
+    {"video": "data/Wide-Videos/w09.mp4", "caption": "Whole room, two dogs — one chews the armrest"}
   ]
 }
