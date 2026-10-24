@@ -30,9 +30,9 @@ from .pipeline import Pipeline, PipelineConfig
 from .roi import load_rois
 from .sources import CameraSource, VideoFileSource
 from .state import StateConfig
-from .types import ROI, Event
+from .types import ROI, Event, VLMRequest
 from .metrics import write_timings
-from .vlm import make_backend, probe_crop
+from .vlm import build_prompt, make_backend, probe_crop
 from .worker import VLMWorker
 
 STATIC = Path(__file__).resolve().parent / "static" / "demo.html"
@@ -113,7 +113,7 @@ class DemoState:
 
     def snapshot(self) -> dict:
         with self.lock:
-            p = lambda xs: round(float(np.median(xs[-50:])), 1) if xs else None
+            p = lambda xs: round(float(np.median(xs[-50:]))) if xs else None  # whole ms read better on screen
             return {"status": self.status, "message": self.message, "item": self.item, "index": self.item_index,
                     "total": self.total, "events": self.events[-60:], "backend": self.backend_name,
                     "det_ms": p(self.det_ms), "judge_ms": p(self.judge_ms), "product": self.branding.product_name,
@@ -140,10 +140,10 @@ def draw_overlay(image: np.ndarray, rois: list[ROI], dets, info: dict, pts: floa
         if roi.auto:
             for x1, y1, x2, y2 in auto.get(roi.id, []):
                 poly = np.array([[x1, y1], [x2, y1], [x2, y2], [x1, y2]], dtype=np.int32)
-                shapes.append((poly, f"{roi.name} (protected, auto)"))
+                shapes.append((poly, f"{roi.name} - protected zone (auto-detected)"))
         else:
             poly = np.array([[int(x * w), int(y * h)] for x, y in roi.polygon], dtype=np.int32)
-            shapes.append((poly, f"{roi.name} (protected)"))
+            shapes.append((poly, f"{roi.name} - protected zone"))
     for poly, _ in shapes:
         cv2.fillPoly(layer, [poly], C_ZONE)
     out = cv2.addWeighted(layer, 0.12, out, 0.88, 0)
@@ -164,12 +164,14 @@ def draw_overlay(image: np.ndarray, rois: list[ROI], dets, info: dict, pts: floa
         cv2.rectangle(out, (x1, y1), (x2, y2), color, int(3 * s), cv2.LINE_AA)
         text = f"dog #{tid}"
         if state:
-            text += {"candidate": " - in zone", "observing": " - watching", "reviewing": " - checking...",
+            text += {"candidate": " - in zone", "observing": " - watching", "reviewing": " - AI checking...",
                      "cooldown": " - alert sent"}.get(state, f" - {state}")
         _label(out, text, (x1, max(int(24 * s), y1)), color)
-        if v and state:
-            why = v.get("reason") or _judge_name(v.get("raw", ""))
-            _label(out, f"{v['decision']}" + (f" - {why[:38]}" if why else ""), (x1, min(h - 4, y2 + int(26 * s))), color)
+        if v and state:  # the latest verdict in plain words (the judge and its reason are on the alert card)
+            zone = (d.get("zones") or ["sofa"])[0]
+            verdict = {"suspect": f"chewing the {zone}", "normal": f"not chewing the {zone}",
+                       "insufficient": "can't see the mouth"}.get(v["decision"], v["decision"])
+            _label(out, f"AI: {verdict}", (x1, min(h - 4, y2 + int(26 * s))), color)
     _label(out, f"t={pts:5.1f}s", (int(12 * s), int(34 * s)), (40, 40, 40))
     badge = "ON-DEVICE  |  NO CLOUD"
     (tw, _), _ = cv2.getTextSize(badge, cv2.FONT_HERSHEY_SIMPLEX, 0.7 * s, 2)
@@ -216,6 +218,14 @@ class Runner(threading.Thread):
             backend = make_backend(vc)
             # "either": the VLM inside it also writes the visual assessment for classifier alerts
             worker = VLMWorker(backend, vc["queue_size"], vc["max_age_s"], explainer=getattr(backend, "vlm", None))
+            # warm-up: the first call is several times slower (seen: 3.2 s vs ~0.4 s); keep it out of the recording
+            from PIL import Image
+
+            warm = VLMRequest(images=(Image.new("RGB", (vc["input_size"], vc["input_size"])),),
+                              prompt=build_prompt("sofa"), max_new_tokens=vc["max_new_tokens"])
+            backend.infer(warm)  # "either": the classifier (and the VLM when the classifier says normal)
+            if worker.explainer is not None:
+                worker.explainer.infer(warm)  # the VLM itself, whatever the classifier said
         except Exception as exc:  # show the problem on the page instead of a silent dead server
             with st.lock:
                 st.status, st.message = "error", f"Could not load models: {exc}"
@@ -255,6 +265,8 @@ class Runner(threading.Thread):
         with st.lock:
             st.item, st.item_index, st.status, st.message = item, index, "running", item.get("caption", "")
         alerts_before = sum(1 for e in st.events if e["kind"] == "alert")
+        judged_before = list(st.judge_ms)  # the footer median spans all clips
+        scene = f"Scene {index + 1}"  # card label; the full caption is already above the video
         play = self.plays
         recent: deque = deque(maxlen=120)  # (pts, overlay frame): the alert snapshot is the frame that was judged
         bus = EventBus()
@@ -271,7 +283,7 @@ class Runner(threading.Thread):
                 st.add_event({"kind": "explained", "alert_key": f"{play}:{v.get('alert_key')}", "tone": tone, "text": text,
                               "ms": v.get("vlm_ms")})
                 return
-            card = {"kind": ev.kind, "clip": item.get("caption", ""), "t": fmt_time(ev.pts_s), "pts": ev.pts_s,
+            card = {"kind": ev.kind, "clip": scene, "t": fmt_time(ev.pts_s), "pts": ev.pts_s,
                     "zone": ev.roi_name, "dog": ev.track_id, "decision": ev.decision, "reason": ev.reason,
                     "judge": _judge_name(v.get("raw", "")), "ms": v.get("vlm_ms")}
             snap = None
@@ -285,9 +297,6 @@ class Runner(threading.Thread):
                     card["tone"], card["text"] = "ok", f"Visual check: {ev.reason}" if ev.reason else "Visual check: chewing seen"
                 judged = min(recent, key=lambda f: abs(f[0] - ev.pts_s), default=None)  # the reviewed frame
                 snap = encode(judged[1], width=640) if judged is not None else None
-            if ev.kind in ("alert", "insufficient") and v.get("vlm_ms"):
-                with st.lock:
-                    st.judge_ms.append(float(v["vlm_ms"]))
             st.add_event(card, snap)
 
         bus.subscribe(on_event)
@@ -300,6 +309,7 @@ class Runner(threading.Thread):
                 st.jpeg, st.frame_seq = jpeg, st.frame_seq + 1
                 if pipe.stats.detector_ms:
                     st.det_ms.append(pipe.stats.detector_ms[-1])
+                st.judge_ms = judged_before + pipe.stats.vlm_ms  # every verdict, so quiet scenes show a time too
 
         vc = cfg["vlm"]
         pipe = Pipeline(source, detector, rois, worker, bus, StateConfig(**cfg["state"]),
@@ -316,8 +326,9 @@ class Runner(threading.Thread):
             write_timings(pipe.stats, out_dir / "timings.json", "realtime")  # paced playback: R4 latency
             self.camera = None
         if sum(1 for e in st.events if e["kind"] == "alert") == alerts_before:
-            st.add_event({"kind": "quiet", "clip": item.get("caption", ""),
-                          "message": f"{st.branding.mascot_name} stayed quiet — no chewing on a protected zone."})
+            zone = next((r.name for r in rois if r.policy == "forbidden"), "sofa")
+            st.add_event({"kind": "quiet", "clip": scene,
+                          "message": f"{st.branding.mascot_name} stayed quiet: no chewing on the {zone} in this scene."})
         time.sleep(float(cfg["source"].get("demo_pause_s", 1.5)))
 
 
@@ -443,9 +454,11 @@ def main(argv: list[str] | None = None) -> int:
     cfg["source"]["demo_fps"] = args.fps
     branding = load_branding()
     items = load_items(args)
-    state = DemoState(branding, {"either": "classifier + VLM", "probe": "classifier", "mlx": "VLM", "fake": "fake"}[args.vlm])
+    state = DemoState(branding, {"either": "CLIP classifier + Qwen2-VL-2B", "probe": "CLIP classifier",
+                                  "mlx": "Qwen2-VL-2B", "fake": "fake"}[args.vlm])
     runner = Runner(state, items, cfg, args.loop)
-    page = STATIC.read_text(encoding="utf-8").replace("{{PRODUCT}}", branding.product_name).replace("{{MASCOT}}", branding.mascot_name)
+    page = STATIC.read_text(encoding="utf-8").replace("{{PRODUCT}}", branding.product_name).replace("{{MASCOT}}", branding.mascot_name) \
+        .replace("{{TAGLINE}}", branding.tagline)
     server, port = bind_free_port(lambda p: ThreadingHTTPServer(("127.0.0.1", p), make_handler(state, page, runner)), args.port)
     runner.start()
     if args.autostart:

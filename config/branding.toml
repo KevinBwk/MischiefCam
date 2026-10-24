@@ -3,13 +3,13 @@
 # Code never hard-codes these strings; the Python package is intentionally named `core`.
 
 product_name = "MischiefCam"
-tagline = "On-device AI that spots pet mischief before it spreads."
+tagline = "Tells you when your dog starts chewing the sofa — and stays quiet when it doesn't."
 
 # Mascot / reminder persona used in notifications and UI copy.
 mascot_name = "Michelle"
 
 [messages]
 # {mascot}, {product}, {roi}, {decision}, {reason}, {time} are available placeholders.
-suspect = "{mascot}: looks like someone is chewing the {roi} ({time}). Tap to review the clip."
+suspect = "{mascot}: Heads up! Looks like your dog is chewing the {roi} ({time})."
 insufficient = "{mascot}: something happened near the {roi} but I couldn't see clearly ({time})."
 camera_moved = "{mascot}: the camera view changed — please re-check your protected zones."

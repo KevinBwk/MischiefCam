@@ -15,15 +15,15 @@
     font: 16px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif; overflow: hidden; }
   .app { display: grid; grid-template-columns: minmax(0, 1fr) 400px; grid-template-rows: auto minmax(0, 1fr) auto; height: 100vh; gap: 14px; padding: 16px 20px; }
   header { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; }
-  .logo { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--brand), #ff6f61); display: grid; place-items: center; font-weight: 800; color: #1a1a1a; }
   header h1 { font-size: 20px; margin: 0; letter-spacing: .2px; }
   header .tag { color: var(--muted); font-size: 14px; }
   header .pill { margin-left: auto; padding: 6px 12px; border-radius: 999px; background: #173a2a; color: var(--ok); font-size: 13px; font-weight: 600; border: 1px solid #23573f; }
-  .stage { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+  .stage { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; transition: border-color .2s, box-shadow .2s; }
   .caption { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); min-height: 52px; }
   .caption .scene { color: var(--brand); font-weight: 700; font-size: 14px; white-space: nowrap; }
   .caption .text { font-size: 18px; font-weight: 600; }
-  .video { flex: 1; min-height: 0; display: grid; place-items: center; background: #000; position: relative; }
+  .video { flex: 1; min-height: 0; display: grid; place-items: center; background: var(--panel); position: relative; }
+  .stage.alerting { border-color: var(--alert); box-shadow: 0 0 0 2px var(--alert); }
   .video img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
   .overlay { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(8, 10, 14, .82); text-align: center; }
   .overlay h2 { margin: 0 0 6px; font-size: 28px; }
@@ -33,20 +33,19 @@
   .side { display: flex; flex-direction: column; gap: 14px; min-height: 0; }
   .phone { background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 14px; flex: 1; min-height: 0; display: flex; flex-direction: column; }
   .phone .top { display: flex; align-items: center; gap: 10px; padding: 4px 4px 12px; border-bottom: 1px solid var(--line); }
-  .avatar { width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ffd59e, #ff8a5c); display: grid; place-items: center; font-weight: 800; color: #3a1d0a; font-size: 18px; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--brand); display: grid; place-items: center; font-weight: 800; color: #1a1a1a; font-size: 18px; }
   .phone .who b { display: block; }
   .phone .who span { color: var(--muted); font-size: 13px; }
   .feed { overflow-y: auto; padding-top: 12px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
   .card { background: var(--panel2); border: 1px solid var(--line); border-radius: 14px; padding: 12px; animation: pop .35s ease-out; }
-  .card.alert { border-color: rgba(255, 90, 95, .65); box-shadow: 0 0 0 1px rgba(255, 90, 95, .25), 0 8px 24px rgba(255, 90, 95, .12); }
+  .card.alert { border: 1.5px solid var(--alert); }
   .card.quiet { border-color: rgba(60, 207, 142, .45); }
   .card .meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; margin-bottom: 4px; }
   .card .msg { font-size: 15px; font-weight: 600; }
-  .card.alert .msg::before { content: "⚠️ "; }
   .card.quiet .msg::before { content: "✓ "; color: var(--ok); }
   .card img { width: 100%; border-radius: 10px; margin-top: 8px; display: block; }
-  .card .why { color: var(--muted); font-size: 12.5px; margin-top: 6px; }
-  .card .assess { font-size: 13.5px; margin-top: 8px; padding: 6px 9px; border-radius: 8px; background: rgba(255,255,255,.04); }
+  .card .why { color: var(--muted); font-size: 13px; margin-top: 6px; }
+  .card .assess { font-size: 15px; margin-top: 8px; padding: 6px 9px; border-radius: 8px; background: rgba(255,255,255,.04); }
   .card .assess.ok { color: var(--text); border-left: 3px solid var(--alert); }
   .card .assess.warn { color: var(--watch); border-left: 3px solid var(--watch); }
   .card .assess.muted { color: var(--muted); font-size: 12.5px; }
@@ -67,13 +66,12 @@
 <body>
 <div class="app">
   <header>
-    <div class="logo">M</div>
     <h1>{{PRODUCT}}</h1>
-    <span class="tag">On-device AI that spots pet mischief before it spreads</span>
-    <span class="pill">● Running on this computer · no cloud</span>
+    <span class="tag">{{TAGLINE}}</span>
+    <span class="pill">● On-device · video never leaves this computer</span>
   </header>
 
-  <section class="stage">
+  <section class="stage" id="stage">
     <div class="caption"><span class="scene" id="scene"></span><span class="text" id="caption">Loading…</span></div>
     <div class="video">
       <img id="video" alt="" hidden>
@@ -93,7 +91,7 @@
         <div class="avatar" id="avatar"></div>
         <div class="who"><b>{{MASCOT}}</b><span>your home's mischief minder</span></div>
       </div>
-      <div class="feed" id="feed"><div class="empty">No notifications yet.</div></div>
+      <div class="feed" id="feed"><div class="empty">All quiet. {{MASCOT}} will ping you if your dog starts chewing the sofa.</div></div>
     </div>
     <div class="legend">
       <span><i style="background:#aa6ee6"></i>protected zone (sofa)</span>
@@ -105,9 +103,9 @@
   </aside>
 
   <footer>
-    <span>Judge: <b id="judge">–</b></span>
-    <span>Detection: <b id="detMs">–</b> ms</span>
-    <span>Judgement: <b id="judgeMs">–</b> ms</span>
+    <span>Chewing check: <b id="judge">–</b></span>
+    <span>Detection: <b id="detMs">–</b> ms per frame</span>
+    <span>Check time: <b id="judgeMs">–</b> ms (median)</span>
     <span class="spacer"></span>
     <span id="status">loading</span>
   </footer>
@@ -116,7 +114,7 @@
 (() => {
   const $ = id => document.getElementById(id);
   const seen = new Set();
-  let streamOn = false;
+  let streamOn = false, alertTimer;
 
   function setAssess(el, tone, text) {
     const a = el.querySelector('.assess');
@@ -136,7 +134,7 @@
       el.querySelector('.msg').textContent = e.message;
       if (e.alert_key) el.dataset.akey = e.alert_key;
       if (e.text) setAssess(el, e.tone, e.text);
-      el.querySelector('.why').textContent = `${e.judge}${e.ms ? ` · ${Math.round(e.ms)} ms` : ''}${e.reason ? ` · ${e.reason}` : ''}`;
+      el.querySelector('.why').textContent = `Flagged by the ${e.judge}${e.ms ? ` in ${Math.round(e.ms)} ms` : ''}`;
     } else if (e.kind === 'quiet') {
       el.className = 'card quiet';
       el.innerHTML = `<div class="meta"><span></span><span>${e.wall}</span></div><div class="msg"></div>`;
@@ -144,9 +142,9 @@
       el.querySelector('.msg').textContent = e.message;
     } else {
       el.className = 'card small';
-      const what = e.kind === 'confirming' ? `looks like chewing — double-checking dog #${e.dog} at ${e.t}…`
-        : e.kind === 'review' ? `checking dog #${e.dog} near the ${e.zone}…`
-        : `couldn't see dog #${e.dog}'s mouth clearly at ${e.t} — looking again`;
+      const what = e.kind === 'confirming' ? `Looks like chewing. Double-checking dog #${e.dog} at ${e.t}…`
+        : e.kind === 'review' ? `Checking dog #${e.dog} near the ${e.zone}…`
+        : `Couldn't see dog #${e.dog}'s mouth clearly at ${e.t}. Looking again.`;
       el.innerHTML = `<div class="msg"></div>`;
       el.querySelector('.msg').textContent = what;
     }
@@ -166,7 +164,7 @@
     }
     const ov = $('overlay');
     if (s.status === 'loading') { ov.hidden = false; $('ovTitle').textContent = 'Loading models…'; $('start').disabled = true; }
-    else if (s.status === 'ready') { ov.hidden = false; $('ovTitle').textContent = 'Ready'; $('ovText').textContent = 'Start your screen recording, then press Start (or Space).'; $('start').disabled = false; $('caption').textContent = 'Waiting to start'; }
+    else if (s.status === 'ready') { ov.hidden = false; $('ovTitle').textContent = 'Ready'; $('start').disabled = false; $('caption').textContent = 'Waiting to start'; }
     else if (s.status === 'error') { ov.hidden = false; $('ovTitle').textContent = 'Error'; $('ovText').textContent = s.message; $('start').hidden = true; }
     else { ov.hidden = true; }
     if (s.status === 'running' && !streamOn) { $('video').src = '/stream.mjpg'; $('video').hidden = false; streamOn = true; }
@@ -178,7 +176,7 @@
       if (e.kind === 'review') continue;          // keep the feed readable: show results, not every check
       if (e.kind === 'explained') {               // the VLM's visual assessment arrives after the alert
         const target = [...feed.querySelectorAll('.card.alert')].find(c => c.dataset.akey === e.alert_key);
-        if (target) setAssess(target, e.tone, e.text);
+        if (target) { setAssess(target, e.tone, e.text); feed.scrollTop = feed.scrollHeight; }
         continue;
       }
       const lastEl = feed.lastElementChild;
@@ -186,10 +184,15 @@
         // merge repeated "couldn't see clearly" for the same dog into one card
         const n = Number(lastEl.dataset.count) + 1;
         lastEl.dataset.count = n;
-        lastEl.querySelector('.msg').textContent = `still checking dog #${e.dog} — couldn't see the mouth clearly (×${n}, ${lastEl.dataset.first}–${e.t})`;
+        lastEl.querySelector('.msg').textContent = `Still checking dog #${e.dog}: mouth not clearly visible (×${n}, ${lastEl.dataset.first}–${e.t}).`;
         continue;
       }
       const el = card(e);
+      if (e.kind === 'alert') {                   // tie the new card to the video: red frame for 3 s
+        $('stage').classList.add('alerting');
+        clearTimeout(alertTimer);
+        alertTimer = setTimeout(() => $('stage').classList.remove('alerting'), 3000);
+      }
       if (e.kind === 'insufficient') { el.dataset.key = `${e.clip}|${e.dog}`; el.dataset.count = 1; el.dataset.first = e.t; }
       feed.appendChild(el);
       while (feed.children.length > 40) feed.removeChild(feed.firstChild);
