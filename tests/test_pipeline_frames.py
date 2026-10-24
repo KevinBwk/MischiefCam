@@ -121,25 +121,40 @@ def test_late_outcome_from_another_run_is_ignored():
     assert p.stats.alerts == 0
 
 
-def test_auto_zone_follows_detected_couch_and_holds_briefly():
+def test_auto_zone_locks_and_never_shrinks():
     import pytest
 
     from core.types import ROI, Detection
 
     sofa = ROI("sofa", "sofa", "forbidden", (), auto="couch")
     p = Pipeline.__new__(Pipeline)
-    p.cfg = PipelineConfig(context_classes=("couch",), auto_zone_hold_s=3.0)
+    p.cfg = PipelineConfig(context_classes=("couch",))
     p.rois = {"sofa": sofa}
-    p.auto_zones, p._auto_seen = {}, {}
+    p.auto_zones = {}
     p._context = [Detection((100, 100, 300, 200), 0.9, "couch")]
     p._update_auto_zones(1.0)
     assert p._overlap((250, 150, 350, 250), sofa, 640, 360) == pytest.approx(0.25)  # 50x50 of a 100x100 box
     assert p._overlap((400, 250, 500, 350), sofa, 640, 360) == 0.0                   # beside, not touching
-    p._context = []                                   # dog lies on the sofa and hides it
-    p._update_auto_zones(3.5)
-    assert p.auto_zones["sofa"]                       # held
-    p._update_auto_zones(5.0)
-    assert p.auto_zones["sofa"] == []                 # gone for > 3 s: no zone
+    p._context = [Detection((180, 100, 300, 200), 0.9, "couch")]  # the dog now hides the left half
+    p._update_auto_zones(2.0)
+    assert p.auto_zones["sofa"] == [(100, 100, 300, 200)]          # the zone does not shrink
+    p._context = []                                                # sofa fully hidden
+    p._update_auto_zones(30.0)
+    assert p.auto_zones["sofa"] == [(100, 100, 300, 200)]          # still locked
+
+
+def test_merge_zone_boxes_grows_and_filters_weak_new_boxes():
+    from core.roi import merge_zone_boxes
+
+    z = merge_zone_boxes([], [((0, 0, 10, 10), 0.9)])
+    z = merge_zone_boxes(z, [((5, 5, 20, 12), 0.4)])               # overlaps: merged even if weak
+    assert z == [(0, 0, 20, 12)]
+    z = merge_zone_boxes(z, [((50, 50, 60, 60), 0.4)])             # new, weak: ignored
+    assert z == [(0, 0, 20, 12)]
+    z = merge_zone_boxes(z, [((50, 50, 60, 60), 0.8)])             # new, confident: second sofa
+    assert len(z) == 2
+    z = merge_zone_boxes(z, [((15, 8, 55, 55), 0.9)])              # bridges both: all merged
+    assert z == [(0, 0, 60, 60)]
 
 
 def test_auto_zone_requires_its_class_in_context_classes():

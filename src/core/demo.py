@@ -163,7 +163,7 @@ def draw_overlay(image: np.ndarray, rois: list[ROI], dets, info: dict, pts: floa
         text = f"dog #{tid}"
         if state:
             text += {"candidate": " - in zone", "observing": " - watching", "reviewing": " - checking...",
-                     "cooldown": " - CHEWING SOFA"}.get(state, f" - {state}")
+                     "cooldown": " - alert sent"}.get(state, f" - {state}")
         _label(out, text, (x1, max(int(24 * s), y1)), color)
         if v and state:
             why = v.get("reason") or _judge_name(v.get("raw", ""))

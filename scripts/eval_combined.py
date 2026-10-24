@@ -6,8 +6,9 @@ Needs the VLM batch summaries in outputs/eval_<view><suffix> and cached embeddin
     uv run python scripts/eval_combined.py _az _az2 _az3 --crop contact --fpr 0.05 --zone couch
 
 --zone couch applies the auto protected zone to the classifier as the pipeline does: a sampled frame
-can only count toward an alert if the dog's expanded box overlaps a detected couch by >= 10% (the
-threshold is still picked on all frames, as mcam-train does). The VLM batches must have been run
+can only count toward an alert if the dog's expanded box overlaps the locked couch zone (grow-only,
+built from the clip's sampled frames so far, as core.roi.merge_zone_boxes) by >= 10% (the threshold
+is still picked on all frames, as mcam-train does). The VLM batches must have been run
 with --rois config/rois.auto.json for the same setting.
 """
 import argparse, json, random, numpy as np, collections
@@ -45,7 +46,8 @@ gate = {}  # (clip, t) -> dog in the couch zone
 if args.zone:
     import cv2
     from core.probe import _area, _inter, pick_dog_and_couch
-    cache = resolve("outputs/cache/zone_gate_couch.json")
+    from core.roi import merge_zone_boxes
+    cache = resolve("outputs/cache/zone_gate_couch_locked.json")
     known = json.loads(cache.read_text()) if cache.exists() else {}
     det = None
     for c in clips:
@@ -55,16 +57,18 @@ if args.zone:
                 from core.detector import UltralyticsDetector
                 det = UltralyticsDetector(str(resolve("models/yolov8m.pt")), "mps", ["dog", "couch"])
             cap = cv2.VideoCapture(str(resolve(c.clip)))
-            for t in need:
+            zone = []  # locked, grow-only couch zone for this clip, in time order
+            for t in sorted(c.times):
                 cap.set(cv2.CAP_PROP_POS_MSEC, float(t) * 1000); ok, fr = cap.read()
                 passed = False
                 if ok:
                     dets = det.detect_once(fr)
+                    zone = merge_zone_boxes(zone, [(d.bbox, d.score) for d in dets if d.class_name == "couch"])
                     dog, _ = pick_dog_and_couch(dets)
                     if dog is not None:
                         dx, dy = (dog[2] - dog[0]) * 0.15, (dog[3] - dog[1]) * 0.15
                         g = (dog[0] - dx, dog[1] - dy, dog[2] + dx, dog[3] + dy)
-                        passed = max((_inter(g, d.bbox) for d in dets if d.class_name == "couch"), default=0) / max(_area(g), 1e-6) >= 0.10
+                        passed = max((_inter(g, z) for z in zone), default=0) / max(_area(g), 1e-6) >= 0.10
                 known[f"{c.clip}|{t:.3f}"] = passed
             cap.release()
     cache.parent.mkdir(parents=True, exist_ok=True); cache.write_text(json.dumps(known))

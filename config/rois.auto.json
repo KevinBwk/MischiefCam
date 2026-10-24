@@ -1,7 +1,7 @@
 {
   "version": 1,
   "coordinate_space": "normalized",
-  "note": "Auto zone: the protected zone is every couch the detector finds in the current frame (held 3 s when briefly hidden). Used for evaluation and demo clips; a drawn config/rois.json takes over for a fixed home camera.",
+  "note": "Auto zone: the protected zone is every couch the detector has found, locked and grow-only (merged with later detections of the same sofa, never shrinking when the dog hides part of it). Used for evaluation and demo clips; a drawn config/rois.json takes over for a fixed home camera.",
   "rois": [
     {"id": "sofa", "name": "sofa", "policy": "forbidden", "auto": "couch"}
   ]

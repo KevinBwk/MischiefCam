@@ -14,7 +14,7 @@ import numpy as np
 from .crop import interaction_crop
 from .detector import DetectorBackend
 from .events import EventBus
-from .roi import box_overlap_fraction, expand_box
+from .roi import box_overlap_fraction, expand_box, merge_zone_boxes
 from .sources import FrameSource
 from .state import EpisodeTracker, StateConfig
 from .types import ROI, Detection, Event, VLMRequest
@@ -30,7 +30,7 @@ class PipelineConfig:
     crop_mode: str = "animal"  # "animal" | "union" | "contact" (zoom on where the dog meets the zone/couch)
     probe_crop_mode: str | None = None  # classifier's crop when it differs from crop_mode (from classifier.json)
     context_classes: tuple[str, ...] = ()  # detector classes used only as context (e.g. couch), never tracked as pets
-    auto_zone_hold_s: float = 3.0  # keep an auto zone's last boxes this long when the object is not detected
+    auto_zone_min_score: float = 0.5  # confidence needed to add a new (non-overlapping) box to an auto zone
     max_new_tokens: int = 48
     explain_max_new_tokens: int = 96  # the visual-assessment JSON is longer than a verdict
     frames: int = 1            # frames per judgement (multi-frame when > 1)
@@ -85,9 +85,8 @@ class Pipeline:
         self.last_verdict: dict[int, dict] = {}  # track_id -> latest judgement shown on screen
         self._last_det: dict[int, Detection] = {}
         self._context: list[Detection] = []  # latest context detections (e.g. couches)
-        # auto zones (ROI.auto = a detector class): current boxes and when they were last seen
+        # auto zones (ROI.auto = a detector class): locked, grow-only boxes per zone
         self.auto_zones: dict[str, list[tuple[float, float, float, float]]] = {}
-        self._auto_seen: dict[str, float] = {}
         missing = {r.auto for r in self.rois.values() if r.auto} - set(cfg.context_classes)
         if missing:
             raise ValueError(f"auto zones need these detector context classes: {sorted(missing)} "
@@ -272,13 +271,10 @@ class Pipeline:
 
     def _update_auto_zones(self, pts: float) -> None:
         for roi in self.rois.values():
-            if not roi.auto:
-                continue
-            boxes = [d.bbox for d in self._context if d.class_name == roi.auto]
-            if boxes:
-                self.auto_zones[roi.id], self._auto_seen[roi.id] = boxes, pts
-            elif pts - self._auto_seen.get(roi.id, -1e9) > self.cfg.auto_zone_hold_s:
-                self.auto_zones[roi.id] = []  # e.g. a dog lying on the sofa hides it briefly: hold, then drop
+            if roi.auto:
+                found = [(d.bbox, d.score) for d in self._context if d.class_name == roi.auto]
+                self.auto_zones[roi.id] = merge_zone_boxes(self.auto_zones.get(roi.id, []), found,
+                                                           self.cfg.auto_zone_min_score)
 
     def _overlap(self, box, roi: ROI, width: float, height: float) -> float:
         """Fraction of the (expanded) dog box inside the zone: a drawn polygon or the auto zone's boxes."""

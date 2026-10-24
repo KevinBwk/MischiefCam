@@ -35,6 +35,49 @@ def load_rois(path: Path | str) -> list[ROI]:
     return rois
 
 
+Box = tuple[float, float, float, float]
+
+
+def merge_zone_boxes(locked: list[Box], detections: list[tuple[Box, float]], min_new_score: float = 0.5) -> list[Box]:
+    """Grow-only auto zone: the protected area never shrinks when the dog hides part of the sofa.
+
+    A detected box that overlaps a locked box is merged into it (union); one that overlaps none is a
+    new object (another sofa) and is added only when confident, so one stray detection cannot add a
+    zone. Locked boxes that come to overlap are merged.
+    """
+    zones = list(locked)
+    for box, score in detections:
+        hits = [i for i, z in enumerate(zones) if _boxes_overlap(z, box)]
+        if not hits:
+            if score >= min_new_score:
+                zones.append(tuple(box))
+            continue
+        merged = tuple(box)
+        for i in sorted(hits, reverse=True):
+            merged = _union(merged, zones.pop(i))
+        zones.append(merged)
+    changed = True
+    while changed:  # merge zones that grew into each other
+        changed = False
+        for i in range(len(zones)):
+            for j in range(i + 1, len(zones)):
+                if _boxes_overlap(zones[i], zones[j]):
+                    zones[i] = _union(zones[i], zones.pop(j))
+                    changed = True
+                    break
+            if changed:
+                break
+    return zones
+
+
+def _boxes_overlap(a: Box, b: Box) -> bool:
+    return min(a[2], b[2]) > max(a[0], b[0]) and min(a[3], b[3]) > max(a[1], b[1])
+
+
+def _union(a: Box, b: Box) -> Box:
+    return (min(a[0], b[0]), min(a[1], b[1]), max(a[2], b[2]), max(a[3], b[3]))
+
+
 def polygon_area(points: list[Point] | tuple[Point, ...]) -> float:
     n = len(points)
     if n < 3:

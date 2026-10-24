@@ -22,8 +22,9 @@ table) is negative in Stage I, where only the sofa is protected.
 ## Protected zone in evaluation
 
 Clips come from many different rooms, so instead of drawing a zone per clip, evaluation uses the
-**auto zone** (`config/rois.auto.json`): the protected zone is every couch the detector finds in the
-frame, held for 3 s when the dog briefly hides it. A dog counts as "in the zone" when at least 10%
+**auto zone** (`config/rois.auto.json`): the protected zone is every couch the detector finds, locked
+and grow-only (later detections of the same sofa are merged in; it never shrinks when the dog hides
+part of the sofa). A dog counts as "in the zone" when at least 10%
 of its box (grown by 15%) overlaps a couch box; only then is it judged. Measured on the
 development set: a couch was detected in 100% of positive and 99% of negative frames with a dog,
 and every positive frame (214 / 214) passed the zone test, so the zone never hid a chewing dog
