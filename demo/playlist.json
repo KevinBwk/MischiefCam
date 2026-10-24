@@ -1,5 +1,5 @@
 {
-  "note": "Demo scenes for the Stage I video (2026-10-25 order: grab attention with an alert, then two scenes where Michelle stays quiet, then a hard far shot). Clips are AI-generated (synthetic). rois: omit = auto zone (every detected couch). Each clip was played with the released classifier (5% budget) and behaved as captioned.",
+  "note": "Demo scenes for the Stage I video (2026-10-24 order: grab attention with an alert, then two scenes where Michelle stays quiet, then a hard far shot). Clips are AI-generated (synthetic). rois: omit = auto zone (every detected couch). Each clip was played with the released classifier (5% budget) and behaved as captioned.",
   "items": [
     {"video": "data/Videos/v02.mp4", "caption": "Dog chews the sofa — Michelle alerts within seconds"},
     {"video": "data/Videos/v27.mp4", "caption": "Dog chews its own rope toy on the sofa — Michelle stays quiet"},

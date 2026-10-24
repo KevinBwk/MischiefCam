@@ -29,7 +29,7 @@ optimistic because every setting was chosen on those clips; the held-out test se
 |---|---|---|
 | **Held-out test set** (frozen model, run once) | [TBD] | [TBD] |
 | Zone-only baseline on the same set (alert whenever a dog stays in the zone) | [TBD] | [TBD] |
-| Development set, 111 clips (mean of 20 scene-grouped CV splits × 3 VLM runs) | 29.9 / 39 (77%) | 5.7 / 72 (8%) |
+| Development set, 111 clips, auto sofa zone (mean of 20 scene-grouped CV splits × 3 VLM runs) | 29.6 / 39 (76%) | 4.7 / 72 (7%) |
 | Contrast pairs, scored blind before training (sofa vs look-alike, same scene) | 8 / 10 | 1 / 10 |
 
 Latency on the Stage I prototype: MacBook Pro (Mac16,8), Apple M4 Pro, 24 GB; `mcam-demo`
@@ -88,6 +88,11 @@ flowchart LR
   wording that never appear in the training prompts, to test generalisation beyond one generator style.
 - **Limitations:** no real-world footage yet; one generator; 8-second clips. False alerts per hour on
   real daily footage are part of the Stage II validation plan.
+- **Auto zone risk:** evaluation and demo clips protect every couch the detector finds. In one clip
+  (w09) it also boxed a corner with a dog bed as a second "sofa", so a dog resting in its bed is
+  judged as if it were on the sofa (the judge still has to say "chewing" to alert). A home camera
+  should use a zone confirmed by the owner (draw once with `mcam-roi`; Stage II: auto-detect, then
+  confirm or adjust).
 
 ## Status
 
@@ -148,7 +153,7 @@ Click **New zone**, click around the sofa, click the first point to close, name 
 ### Demo view
 
 ```bash
-uv run mcam-demo --playlist demo/playlist.json   # the six demo scenes: two quiet, four alerts
+uv run mcam-demo --playlist demo/playlist.json   # the demo scenes: alert, two quiet, hard far shot
 uv run mcam-demo --video data/Videos/v02.mp4      # any clips, repeat --video
 uv run mcam-demo --camera 0                       # live camera: device index, or rtsp/http URL
 ```

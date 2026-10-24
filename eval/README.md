@@ -28,8 +28,11 @@ part of the sofa). A dog counts as "in the zone" when at least 10%
 of its box (grown by 15%) overlaps a couch box; only then is it judged. Measured on the
 development set: a couch was detected in 100% of positive and 99% of negative frames with a dog,
 and every positive frame (214 / 214) passed the zone test, so the zone never hid a chewing dog
-there. Whether each couch box is placed correctly was not checked frame by frame. A fixed home
-camera uses a zone drawn once with `mcam-roi` instead.
+there. Whether each couch box is placed correctly was not checked frame by frame, and at least one
+clip shows a false zone: in w09 a corner with a dog bed was also detected as a couch, so the second
+dog lying in its bed counts as "in the zone" and gets judged (the judge decides whether it alerts).
+Several sofas are allowed on purpose (homes can have two); a fixed home camera uses a zone drawn
+once with `mcam-roi` instead.
 
 ## Two kinds of numbers
 
@@ -48,15 +51,21 @@ camera uses a zone drawn once with `mcam-roi` instead.
     chew it. Positive training clips almost always show damage appearing, so these check that the
     model alerts on chewing, not on visible damage.
 
-## Development results (2026-10-23)
+## Development results (2026-10-24, auto sofa zone)
 
 Judge "either" = CLIP linear probe (contact crop, 5% frame false-alert budget) OR Qwen2-VL-2B.
+Protected zone = locked auto couch zone (VLM batches run with `config/rois.auto.json`, classifier
+frames gated with `--zone couch`). In brackets: the same with the whole frame as the zone.
 
 | Judge | Caught (positives) | False alerts (negatives) |
 |---|---|---|
-| Qwen2-VL-2B alone | 13.0 / 39 | 1.3 / 72 |
-| CLIP classifier alone | 29.1 / 39 | 4.4 / 72 |
-| **Either** | **29.9 / 39 (77%)** | **5.7 / 72 (8%)** |
+| Qwen2-VL-2B alone | 11.3 / 39 (13.0) | 1.3 / 72 (1.3) |
+| CLIP classifier alone | 29.1 / 39 (29.1) | 3.4 / 72 (4.4) |
+| **Either** | **29.6 / 39 (76%)** (29.9) | **4.7 / 72 (7%)** (5.7) |
+
+The zone removed about one false alert (a dog chewing something next to the sofa) and no
+positive: the classifier caught the same clips, and VLM run-to-run variation is of the same size
+as the 1.7-clip VLM difference.
 
 Contrast pairs scored **blind** before they were added to training (classifier trained on the
 other 91 clips, full pipeline): 8 / 10 caught, 1 / 10 false alerts.
@@ -74,7 +83,7 @@ uv run python scripts/batch_run.py data/Pairs-Videos --labels data/labels_pairs.
 # latency P50 / P95 per stage (warm-up excluded), pooled over runs
 uv run python scripts/latency_report.py outputs/eval_pairs_either
 # development cross-validation (needs VLM batch runs named eval_<set><suffix>)
-uv run python scripts/eval_combined.py "" _r2 _r3 --crop contact --fpr 0.05
+uv run python scripts/eval_combined.py _lz _lz2 _lz3 --crop contact --fpr 0.05 --zone couch
 ```
 
 ## Results files
