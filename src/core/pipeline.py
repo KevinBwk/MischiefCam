@@ -85,6 +85,8 @@ class Pipeline:
         self.last_verdict: dict[int, dict] = {}  # track_id -> latest judgement shown on screen
         self._last_det: dict[int, Detection] = {}
         self._context: list[Detection] = []  # latest context detections (e.g. couches)
+        # the zone cooldown pauses every dog in the zone; only these tracks actually raised an alert
+        self.alerted_tracks: set[int] = set()
         # auto zones (ROI.auto = a detector class): locked, grow-only boxes per zone
         self.auto_zones: dict[str, list[tuple[float, float, float, float]]] = {}
         missing = {r.auto for r in self.rois.values() if r.auto} - set(cfg.context_classes)
@@ -252,6 +254,7 @@ class Pipeline:
             extra = {"raw": res.raw_text, "vlm_ms": round(res.elapsed_ms, 1)}
             if alert:
                 self.stats.alerts += 1
+                self.alerted_tracks.add(track_id)
                 extra["alert_key"] = _alert_key(job.episode_id, job.pts_s)
                 extra["judge_source"] = res.source
                 # Classifier alerts go out at once; the VLM's visual assessment follows as an "explained" event.
@@ -287,7 +290,8 @@ class Pipeline:
         """Per-dog state for live displays: {track_id: {"zones": [...], "state": str, "verdict": {...}}}."""
         dogs: dict[int, dict] = {}
         for (tid, roi_id), ep in self.tracker.episodes.items():
-            d = dogs.setdefault(tid, {"zones": [], "state": "", "verdict": self.last_verdict.get(tid)})
+            d = dogs.setdefault(tid, {"zones": [], "state": "", "verdict": self.last_verdict.get(tid),
+                                      "alerted": tid in self.alerted_tracks})
             d["zones"].append(self.rois[roi_id].name if roi_id in self.rois else roi_id)
             d["state"] = ep.state.value
         return {"dogs": dogs, "in_zone": sorted({tid for tid, _ in present}),

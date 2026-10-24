@@ -80,6 +80,7 @@ def test_probe_alert_queues_explanation_and_explained_event():
     p = Pipeline.__new__(Pipeline)
     p.cfg = PipelineConfig()
     p.worker, p.bus, p.stats, p.last_verdict = StubWorker(), EventBus(), RunStats(), {}
+    p.alerted_tracks = set()
     p.tracker = EpisodeTracker(StateConfig())
     p.rois = {"z": ROI("z", "sofa", "forbidden", ((0, 0), (1, 0), (1, 1), (0, 1)))}
     p._episode_meta = {"ep": (1, "z")}
@@ -102,6 +103,7 @@ def test_probe_alert_queues_explanation_and_explained_event():
     expl = next(e for e in seen if e.kind == "explained")
     assert expl.extra["alert_key"] == "ep@3.000" and expl.extra["explanation"]["observation"] == "teeth on cushion"
     assert p.stats.alerts == 1  # the explanation is not a second verdict
+    assert p.alerted_tracks == {1}
     assert p.stats.judge_ms == {"clip": [5.0], "qwen_explain": [900.0]}  # explain latency kept apart
 
 

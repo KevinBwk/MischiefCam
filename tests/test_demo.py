@@ -58,3 +58,14 @@ def test_assessment_line_tiers():
                             "mouth_visibility": "partial"})[1].startswith("Limited")
     assert assessment_line(None) == ("muted", "Visual assessment unavailable")
     assert assessment_line({**base, "assessment": "suspect", "ok": False})[0] == "muted"  # never a yes when unparsed
+
+
+def test_only_the_dog_that_alerted_is_drawn_as_alert():
+    from core.demo import C_ALERT, C_WATCH
+
+    img = np.zeros((360, 640, 3), dtype=np.uint8)
+    dets = [Detection((40, 100, 200, 300), 0.9, "dog", track_id=1), Detection((400, 100, 560, 300), 0.9, "dog", track_id=2)]
+    info = {"dogs": {1: {"state": "cooldown", "alerted": True}, 2: {"state": "cooldown", "alerted": False}}}
+    out = draw_overlay(img, [], dets, info, 2.0, {"synthetic": True})
+    assert tuple(int(v) for v in out[250, 40]) == C_ALERT    # left edge of dog 1's box
+    assert tuple(int(v) for v in out[250, 400]) == C_WATCH   # dog 2: in the zone, not an alert

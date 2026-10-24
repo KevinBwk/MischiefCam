@@ -157,6 +157,8 @@ def draw_overlay(image: np.ndarray, rois: list[ROI], dets, info: dict, pts: floa
         d = dogs.get(tid, {})
         state = d.get("state", "")
         v = d.get("verdict") or {}
+        if state == "cooldown" and not d.get("alerted"):
+            state = "candidate"  # zone cooldown after ANOTHER dog's alert: this one did nothing, show it as in zone
         color = C_ALERT if state == "cooldown" else STATE_COLOR.get(state, C_DOG)
         x1, y1, x2, y2 = map(int, det.bbox)
         cv2.rectangle(out, (x1, y1), (x2, y2), color, int(3 * s), cv2.LINE_AA)
