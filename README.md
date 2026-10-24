@@ -102,9 +102,11 @@ flowchart LR
 
 ## License
 
-No license is granted yet: this repository is shared for review in the ASUS UGen AI League.
-Third-party models keep their own licenses; note that Ultralytics YOLOv8 is AGPL-3.0
-(see [docs/MODELS.md](docs/MODELS.md#licensing-note)), which matters before any commercial release.
+MischiefCam's own code is licensed under the [Apache License 2.0](LICENSE).
+Third-party models and packages keep their own licenses ([docs/MODELS.md](docs/MODELS.md)). The detector,
+Ultralytics YOLOv8 (code and weights), is AGPL-3.0: distributing or serving MischiefCam together with it puts
+the combined work under AGPL-3.0 terms, so a closed commercial product needs an Ultralytics Enterprise license
+or a permissively licensed detector behind `DetectorBackend` ([licensing note](docs/MODELS.md#licensing-note)).
 
 ---
 
