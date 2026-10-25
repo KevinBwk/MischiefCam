@@ -1,0 +1,1203 @@
+{
+  "version": 1,
+  "clips": {
+    "d01.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "resting",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-25T23:12:26"
+    },
+    "d02.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "sniffing",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "unknown",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-25T23:14:59"
+    },
+    "d03.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "sniffing",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-25T23:15:14"
+    },
+    "d04.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "resting",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-25T23:15:33"
+    },
+    "d05.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 3.716,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 3.716,
+          "end_s": 8.0,
+          "label": "negative",
+          "behavior": "resting",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-25T23:16:15"
+    },
+    "t01.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 0.8,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 0.8,
+          "end_s": 4.5,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 4.5,
+          "end_s": 6.8,
+          "label": "negative",
+          "behavior": "carrying",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": false,
+      "source_note": "",
+      "damage_confirmed": "unknown",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-25T23:17:13"
+    },
+    "t02.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-25T23:17:34"
+    },
+    "t03.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-25T23:17:48"
+    },
+    "t04.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 4.7,
+          "label": "negative",
+          "behavior": "carrying",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 4.7,
+          "end_s": 7.271,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "unknown",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-25T23:18:39"
+    },
+    "t05.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 3.52,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 3.523,
+          "end_s": 8.0,
+          "label": "negative",
+          "behavior": "resting",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:08:15"
+    },
+    "t06.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "partial"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:20:07"
+    },
+    "t07.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 1.0,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 1.0,
+          "end_s": 5.845,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:20:59"
+    },
+    "t08.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "resting",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:21:19"
+    },
+    "t09.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "sitting",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:21:36"
+    },
+    "t10.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "resting",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:21:52"
+    },
+    "t11.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "licking_self",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "licking_object",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:23:23"
+    },
+    "t12.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:23:40"
+    },
+    "t13.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 8.0,
+          "label": "negative",
+          "behavior": "rolling",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:24:08"
+    },
+    "t14.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:24:29"
+    },
+    "t15.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:24:47"
+    },
+    "t17.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:26:14"
+    },
+    "t18.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 5.179,
+          "label": "negative",
+          "behavior": "sitting",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 7.295,
+          "end_s": 8.0,
+          "label": "negative",
+          "behavior": "sniffing",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:26:55"
+    },
+    "t19.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 1.03,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 1.33,
+          "end_s": 8.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:27:35"
+    },
+    "t20.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:27:52"
+    },
+    "t21.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 1.563,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 1.563,
+          "end_s": 10.005,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:28:22"
+    },
+    "t22.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 1.3,
+          "label": "negative",
+          "behavior": "resting",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 3.9,
+          "end_s": 10.005,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:29:12"
+    },
+    "t23.mp4": {
+      "segments": [
+        {
+          "start_s": 1.479,
+          "end_s": 7.57,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 7.57,
+          "end_s": 10.005,
+          "label": "negative",
+          "behavior": "sitting",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:29:54"
+    },
+    "t24.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:30:15"
+    },
+    "t25.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 0.235,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 0.235,
+          "end_s": 8.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:37:10"
+    },
+    "t26.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:37:36"
+    },
+    "t27.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "resting",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:37:49"
+    },
+    "t28.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 1.1,
+          "label": "negative",
+          "behavior": "resting",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 1.1,
+          "end_s": 5.411,
+          "label": "negative",
+          "behavior": "playing",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 5.411,
+          "end_s": 8.0,
+          "label": "negative",
+          "behavior": "sitting",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:38:50"
+    },
+    "t29.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "resting",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:39:10"
+    },
+    "t30.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:39:22"
+    },
+    "t32.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "resting",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "other",
+          "target": "舔另一隻狗",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:39:57"
+    },
+    "t35.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 4.646,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 4.646,
+          "end_s": 8.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:41:06"
+    },
+    "t38.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "licking_object",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:41:24"
+    },
+    "t39.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:41:37"
+    },
+    "t40.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:41:48"
+    },
+    "t41.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "licking_self",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:42:03"
+    },
+    "t44.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:42:17"
+    },
+    "t45.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:42:34"
+    },
+    "t46.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 1.5,
+          "label": "negative",
+          "behavior": "sniffing",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 1.5,
+          "end_s": 10.005,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:43:07"
+    },
+    "t47.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "resting",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T09:43:20"
+    },
+    "t50.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "playing",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T10:59:18"
+    },
+    "t51.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 2.632,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 2.632,
+          "end_s": 4.393,
+          "label": "negative",
+          "behavior": "sniffing",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 4.393,
+          "end_s": 8.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T11:00:16"
+    },
+    "t52.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 3.21,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 3.21,
+          "end_s": 8.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "yes",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T11:00:56"
+    },
+    "t54.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 1.611,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 1.611,
+          "end_s": 8.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T11:05:35"
+    },
+    "t16.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 2.761,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 2.761,
+          "end_s": 8.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T11:06:08"
+    },
+    "t55.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 2.208,
+          "label": "negative",
+          "behavior": "sniffing",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 3.718,
+          "end_s": 8.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T11:06:43"
+    },
+    "t56.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "chewing_toy",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T11:06:59"
+    },
+    "t57.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 1.187,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 1.187,
+          "end_s": 2.893,
+          "label": "negative",
+          "behavior": "walking",
+          "target": "",
+          "visibility": "clear"
+        },
+        {
+          "start_s": 2.893,
+          "end_s": 8.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T11:07:38"
+    },
+    "t58.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "negative",
+          "behavior": "licking_object",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T11:08:04"
+    },
+    "t59.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": -1.0,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T11:08:24"
+    },
+    "t60.mp4": {
+      "segments": [
+        {
+          "start_s": 0.0,
+          "end_s": 5.368,
+          "label": "positive",
+          "behavior": "chewing_furniture",
+          "target": "",
+          "visibility": "clear"
+        }
+      ],
+      "simulated": true,
+      "source_note": "",
+      "damage_confirmed": "no",
+      "split": "",
+      "ai_assisted": false,
+      "updated": "2026-10-26T11:09:02"
+    }
+  }
+}

@@ -1,0 +1,658 @@
+[
+  {
+    "clip": "d01.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "d02.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "d03.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.5,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.5s:suspect"
+    ]
+  },
+  {
+    "clip": "d04.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "d05.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.5,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.5s:suspect"
+    ]
+  },
+  {
+    "clip": "t01.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t02.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": 0.0,
+    "alert_delay_s": 2.08,
+    "outcome": "TP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t03.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": 0.0,
+    "alert_delay_s": 2.08,
+    "outcome": "TP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t04.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.292,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.3s:suspect"
+    ]
+  },
+  {
+    "clip": "t05.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 4.375,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "4.4s:suspect"
+    ]
+  },
+  {
+    "clip": "t06.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": 0.0,
+    "alert_delay_s": 2.08,
+    "outcome": "TP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t07.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.917,
+    "chew_start_s": 1.0,
+    "alert_delay_s": 1.92,
+    "outcome": "TP",
+    "verdicts": [
+      "2.9s:suspect"
+    ]
+  },
+  {
+    "clip": "t08.mp4",
+    "label": "negative",
+    "alert": false,
+    "first_alert_s": null,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "TN",
+    "verdicts": []
+  },
+  {
+    "clip": "t09.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t10.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t11.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t12.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t13.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.292,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.3s:suspect"
+    ]
+  },
+  {
+    "clip": "t14.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 3.125,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "3.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t15.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t16.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.708,
+    "chew_start_s": 2.761,
+    "alert_delay_s": -0.05,
+    "outcome": "TP",
+    "verdicts": [
+      "2.7s:suspect"
+    ]
+  },
+  {
+    "clip": "t17.mp4",
+    "label": "negative",
+    "alert": false,
+    "first_alert_s": null,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "TN",
+    "verdicts": []
+  },
+  {
+    "clip": "t18.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 4.167,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "4.2s:suspect"
+    ]
+  },
+  {
+    "clip": "t19.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.292,
+    "chew_start_s": 1.33,
+    "alert_delay_s": 0.96,
+    "outcome": "TP",
+    "verdicts": [
+      "2.3s:suspect"
+    ]
+  },
+  {
+    "clip": "t20.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t21.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 3.75,
+    "chew_start_s": 1.563,
+    "alert_delay_s": 2.19,
+    "outcome": "TP",
+    "verdicts": [
+      "3.8s:suspect"
+    ]
+  },
+  {
+    "clip": "t22.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": 3.9,
+    "alert_delay_s": -1.82,
+    "outcome": "TP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t23.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 3.958,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "4.0s:suspect"
+    ]
+  },
+  {
+    "clip": "t24.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": 0.0,
+    "alert_delay_s": 2.08,
+    "outcome": "TP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t25.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": 0.235,
+    "alert_delay_s": 1.85,
+    "outcome": "TP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t26.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t27.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t28.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t29.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t30.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t32.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t35.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": 4.646,
+    "alert_delay_s": -2.56,
+    "outcome": "TP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t38.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t39.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": 0.0,
+    "alert_delay_s": 2.08,
+    "outcome": "TP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t40.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t41.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t44.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": 0.0,
+    "alert_delay_s": 2.08,
+    "outcome": "TP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t45.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t46.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": 1.5,
+    "alert_delay_s": 0.58,
+    "outcome": "TP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t47.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t50.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t51.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": 4.393,
+    "alert_delay_s": -2.31,
+    "outcome": "TP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t52.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 4.792,
+    "chew_start_s": 3.21,
+    "alert_delay_s": 1.58,
+    "outcome": "TP",
+    "verdicts": [
+      "4.8s:suspect"
+    ]
+  },
+  {
+    "clip": "t54.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.917,
+    "chew_start_s": 1.611,
+    "alert_delay_s": 1.31,
+    "outcome": "TP",
+    "verdicts": [
+      "2.9s:suspect"
+    ]
+  },
+  {
+    "clip": "t55.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": 3.718,
+    "alert_delay_s": -1.63,
+    "outcome": "TP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t56.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.292,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.3s:suspect"
+    ]
+  },
+  {
+    "clip": "t57.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 3.125,
+    "chew_start_s": 2.893,
+    "alert_delay_s": 0.23,
+    "outcome": "TP",
+    "verdicts": [
+      "3.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t58.mp4",
+    "label": "negative",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": null,
+    "alert_delay_s": null,
+    "outcome": "FP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t59.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": 0.0,
+    "alert_delay_s": 2.08,
+    "outcome": "TP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  },
+  {
+    "clip": "t60.mp4",
+    "label": "positive",
+    "alert": true,
+    "first_alert_s": 2.083,
+    "chew_start_s": 0.0,
+    "alert_delay_s": 2.08,
+    "outcome": "TP",
+    "verdicts": [
+      "2.1s:suspect"
+    ]
+  }
+]

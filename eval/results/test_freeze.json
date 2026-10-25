@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-26",
+  "code_commit": "4b895ca32485af5a199e7912fd5fa973f37e8870",
+  "classifier_json_sha1": "a721a858be801bdeb8dc48bb5309a30a24d0833d",
+  "labels_test_json_sha1": "ed6beadd4b7eb6cd69de433b6a5d56753dafed33",
+  "clips": 55,
+  "rois": "config/rois.auto.json",
+  "runs": {
+    "test_either": {"vlm": "either", "TP": 14, "FN": 7, "FP": 3, "TN": 31, "alert_delay_s_p50": 3.96, "alert_delay_s_p95": 6.46},
+    "test_zone_only": {"vlm": "fake", "TP": 21, "FN": 0, "FP": 32, "TN": 2, "alert_delay_s_p50": 1.85, "alert_delay_s_p95": 2.08}
+  },
+  "note": "Labels written blind in mcam-label before any run; each configuration run once, nothing tuned afterwards."
+}

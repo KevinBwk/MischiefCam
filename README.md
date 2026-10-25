@@ -27,8 +27,8 @@ optimistic because every setting was chosen on those clips; the held-out test se
 
 | | Caught | False alerts |
 |---|---|---|
-| **Held-out test set** (frozen model, run once) | [TBD] | [TBD] |
-| Zone-only baseline on the same set (alert whenever a dog stays in the zone) | [TBD] | [TBD] |
+| **Held-out test set**, 55 clips (frozen model, labelled blind, run once) | **14 / 21 (67%)** | **3 / 34 (9%)** |
+| Zone-only baseline on the same set (alert whenever a dog stays in the zone) | 21 / 21 | 32 / 34 (94%) |
 | Development set, 111 clips, auto sofa zone (mean of 20 scene-grouped CV splits × 3 VLM runs) | 29.6 / 39 (76%) | 4.7 / 72 (7%) |
 | Contrast pairs, scored blind before training (sofa vs look-alike, same scene) | 8 / 10 | 1 / 10 |
 
@@ -102,7 +102,7 @@ flowchart LR
 | CLIP classifier (contact crop) + Qwen2-VL-2B, "either" judge | implemented, evaluated on 111 development clips |
 | Alert card with asynchronous VLM visual assessment, demo view | implemented, tested in the demo |
 | Latency instrumentation (raw per-stage timings, P50 / P95) | implemented |
-| Held-out test set, zone-only baseline | [TBD: after the frozen run] |
+| Held-out test set (55 clips), zone-only baseline | run once on 2026-10-26 ([details](eval/README.md#held-out-test-results-2026-10-26)) |
 | Hailo-10H backends on UGen300 | planned (Stage II, [plan](docs/STAGE2_PORT.md)) |
 
 ## License

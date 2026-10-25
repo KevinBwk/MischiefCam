@@ -70,6 +70,34 @@ as the 1.7-clip VLM difference.
 Contrast pairs scored **blind** before they were added to training (classifier trained on the
 other 91 clips, full pipeline): 8 / 10 caught, 1 / 10 false alerts.
 
+## Held-out test results (2026-10-26)
+
+Frozen first (`results/test_freeze.json`): code commit `4b895ca`, `models/classifier.json` sha1
+`a721a858…`, `labels_test.json` sha1 `ed6bead…`. The 55 clips (T series 50 + D01–D05) were
+labelled blind in `mcam-label` (no AI suggestions, prompts not consulted), then each configuration
+was run once with `config/rois.auto.json`. Nothing was changed afterwards. Clip labels are the human
+labels; on 5 clips the generated video did not show what its prompt asked for, and the label
+follows the video. All clips are synthetic (no real footage in this set).
+
+| Subset | Either: alerts | Zone-only: alerts |
+|---|---|---|
+| **Positives (dog chews the sofa)** | **14 / 21 (67%)** | 21 / 21 |
+| close / medium / wide | 6 / 7 · 6 / 9 · 2 / 5 | 7 / 7 · 9 / 9 · 5 / 5 |
+| **Negatives** | **3 / 34 (9%)** | 32 / 34 |
+| hard negatives (toys, licking, play, chewing near the sofa) | 2 / 18 | 17 / 18 |
+| ordinary negatives (resting, walking, sniffing) | 0 / 11 | 10 / 11 |
+| D01–D05: sofa already torn, dog does not chew it | 1 / 5 | 5 / 5 |
+
+Chewing start → first alert (media time, caught clips): P50 3.96 s, P95 6.46 s.
+
+- **Missed (7)**: 3 of 5 wide shots and 3 of 9 medium ones; at those distances the mouth is a few
+  pixels and every review said "insufficient". This is about 9 points below the development
+  estimate (76%), the expected gap for settings tuned on the development set.
+- **False alerts (3)**: two wide hard negatives (a dog ripping a stuffed toy on the floor near the
+  sofa; two dogs wrestling in front of it) and one torn-sofa clip (d03).
+- Zone-only alerts on almost every clip, so the judges are what make the alerts usable: they
+  remove 29 of 32 false alerts and keep two thirds of the real ones.
+
 ## Reproduce
 
 ```bash
@@ -91,4 +119,6 @@ uv run python scripts/eval_combined.py _lz _lz2 _lz3 --crop contact --fpr 0.05 -
 - `results/latency_mac_realtime_either.json`, `results/latency_mac_realtime_vlm_only.json`:
   per-stage P50 / P95 from `scripts/latency_report.py` (2026-10-24, MacBook Pro M4 Pro 24 GB,
   `mcam-demo` real-time playback of the 20 contrast-pair clips, judge "either" vs VLM only).
-- Held-out test results go here once the frozen run is done.
+- `results/test_freeze.json`: frozen commit, model and label hashes, totals for both test runs.
+- `results/test_either_summary.json`, `results/test_zone_only_summary.json`: per-clip outcome,
+  first alert time and every judge verdict (`batch_run.py` output).
