@@ -1,6 +1,6 @@
 # MischiefCam
 
-> On-device AI that tells you when your dog starts chewing the sofa — and stays quiet when it doesn't.
+> On-device AI that tells you when your dog chews your furniture, and stays quiet when it doesn't.
 > Notifications come from **Michelle**, the app's friendly mascot.
 
 Built for the **ASUS UGen AI League** (Battlefield Lightning, ASUS UGen300 / Hailo-10H).

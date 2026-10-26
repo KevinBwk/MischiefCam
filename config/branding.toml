@@ -3,7 +3,7 @@
 # Code never hard-codes these strings; the Python package is intentionally named `core`.
 
 product_name = "MischiefCam"
-tagline = "Tells you when your dog starts chewing the sofa — and stays quiet when it doesn't."
+tagline = "Tells you when your dog chews your furniture, and stays quiet when it doesn't."
 
 # Mascot / reminder persona used in notifications and UI copy.
 mascot_name = "Michelle"
