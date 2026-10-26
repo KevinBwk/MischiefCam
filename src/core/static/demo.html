@@ -33,7 +33,8 @@
   .side { display: flex; flex-direction: column; gap: 14px; min-height: 0; }
   .phone { background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 14px; flex: 1; min-height: 0; display: flex; flex-direction: column; }
   .phone .top { display: flex; align-items: center; gap: 10px; padding: 4px 4px 12px; border-bottom: 1px solid var(--line); }
-  .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--brand); display: grid; place-items: center; font-weight: 800; color: #1a1a1a; font-size: 18px; }
+  .avatar { width: 40px; height: 40px; flex: none; }
+  .avatar svg { width: 100%; height: 100%; display: block; }
   .phone .who b { display: block; }
   .phone .who span { color: var(--muted); font-size: 13px; }
   .feed { overflow-y: auto; padding-top: 12px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
@@ -88,7 +89,23 @@
   <aside class="side">
     <div class="phone">
       <div class="top">
-        <div class="avatar" id="avatar"></div>
+        <div class="avatar" aria-hidden="true">
+          <!-- Michelle: butler owl (one ink colour on the brand circle; monocle and bow tie) -->
+          <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <clipPath id="avatarClip"><circle cx="20" cy="20" r="20"/></clipPath>
+            <g clip-path="url(#avatarClip)">
+              <circle cx="20" cy="20" r="20" fill="#ffb347"/>
+              <path d="M10 33 Q8.5 19 12.5 13.5 Q12 11.4 12.6 9.2 Q14 10.9 16.6 11.4 Q20 10.4 23.4 11.4 Q26 10.9 27.4 9.2 Q28 11.4 27.5 13.5 Q31.5 19 30 33 Q20 36.5 10 33 Z"
+                    fill="#1a1a1a" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round"/>
+              <circle cx="15.7" cy="19" r="4.2" fill="#ffb347"/><circle cx="24.3" cy="19" r="4.2" fill="#ffb347"/>
+              <circle cx="17.3" cy="19.3" r="1.9" fill="#1a1a1a"/><circle cx="25.9" cy="19.3" r="1.9" fill="#1a1a1a"/>
+              <circle cx="24.3" cy="19" r="5.3" fill="none" stroke="#ffb347" stroke-width="1"/>
+              <path d="M28 22.7 Q29.8 26.5 28.4 31" stroke="#ffb347" stroke-width="0.8" fill="none"/>
+              <path d="M19 24 h2 l-1 2 z" fill="#ffb347"/>
+              <path d="M20 29.5 L15.5 27 V32 Z M20 29.5 L24.5 27 V32 Z" fill="#ffb347"/><circle cx="20" cy="29.5" r="1.5" fill="#ffb347"/>
+            </g>
+          </svg>
+        </div>
         <div class="who"><b>{{MASCOT}}</b><span>your home's mischief minder</span></div>
       </div>
       <div class="feed" id="feed"><div class="empty">All quiet. {{MASCOT}} will ping you if your dog starts chewing the sofa.</div></div>
@@ -203,7 +220,6 @@
   async function start() { $('start').disabled = true; await fetch('/api/start', { method: 'POST' }); }
   $('start').addEventListener('click', start);
   window.addEventListener('keydown', e => { if (e.key === ' ' && !$('start').disabled) { e.preventDefault(); start(); } });
-  $('avatar').textContent = '{{MASCOT}}'.trim().charAt(0).toUpperCase();
   setInterval(tick, 250);
   tick();
 })();
