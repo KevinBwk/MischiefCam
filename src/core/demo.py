@@ -170,7 +170,7 @@ def draw_overlay(image: np.ndarray, rois: list[ROI], dets, info: dict, pts: floa
         if v and state:  # the latest verdict in plain words (the judge and its reason are on the alert card)
             zone = (d.get("zones") or ["sofa"])[0]
             verdict = {"suspect": f"chewing the {zone}", "normal": f"not chewing the {zone}",
-                       "insufficient": "can't see the mouth"}.get(v["decision"], v["decision"])
+                       "insufficient": f"no {zone} chewing seen"}.get(v["decision"], v["decision"])
             _label(out, f"AI: {verdict}", (x1, min(h - 4, y2 + int(26 * s))), color)
     _label(out, f"t={pts:5.1f}s", (int(12 * s), int(34 * s)), (40, 40, 40))
     badge = "ON-DEVICE  |  NO CLOUD"
@@ -439,7 +439,7 @@ def main(argv: list[str] | None = None) -> int:
     src.add_argument("--video", action="append", help="clip to play (repeatable)")
     src.add_argument("--camera", help="live camera: device index or rtsp/http URL")
     ap.add_argument("--caption", help="caption for --video/--camera")
-    ap.add_argument("--rois", help="zone file for items without their own (default: whole frame = sofa)")
+    ap.add_argument("--rois", help="zone file for items without their own (default: auto zone = detected couch boxes)")
     ap.add_argument("--vlm", default="either", choices=["mlx", "probe", "either", "fake"])
     ap.add_argument("--config")
     ap.add_argument("--fps", type=float, default=10.0, help="processing / display rate")
