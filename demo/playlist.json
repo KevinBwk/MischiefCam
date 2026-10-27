@@ -1,7 +1,7 @@
 {
-  "note": "Demo scenes for the Stage I video (2026-10-24 order: grab attention with an alert, then two scenes where Michelle stays quiet, then a hard far shot). Clips are AI-generated (synthetic). rois: omit = auto zone (every detected couch). Each clip was played with the released classifier (5% budget) and behaved as captioned.",
+  "note": "Demo scenes for the Stage I video (2026-10-24 order: grab attention with an alert, then two scenes where Michelle stays quiet, then a hard far shot). Clips are AI-generated (synthetic). rois: omit = auto zone (every detected couch). Each clip was played with the released classifier (5% budget) and behaved as captioned. 2026-10-27: v32 replaced v02 as the opening alert (sofa intact at the start; the VLM raises this alert at 2.1 s, 4 of 4 runs).",
   "items": [
-    {"video": "data/Videos/v02.mp4", "caption": "Dog chews the sofa — Michelle alerts within seconds"},
+    {"video": "data/Videos/v32.mp4", "caption": "Puppy chews the sofa armrest — Michelle alerts within seconds"},
     {"video": "data/Videos/v27.mp4", "caption": "Dog chews its own rope toy on the sofa — Michelle stays quiet"},
     {"video": "data/Videos/v20.mp4", "caption": "Dog naps on the sofa — still quiet: no false alarm"},
     {"video": "data/Wide-Videos/w04.mp4", "caption": "Night vision, far corner camera — dog chews the sofa, Michelle still alerts"}
