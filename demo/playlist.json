@@ -1,9 +1,9 @@
 {
-  "note": "Demo scenes for the Stage I video (2026-10-24 order: grab attention with an alert, then two scenes where Michelle stays quiet, then a hard far shot). Clips are AI-generated (synthetic). rois: omit = auto zone (every detected couch). Each clip was played with the released classifier (5% budget) and behaved as captioned. 2026-10-27: v32 replaced v02 as the opening alert (sofa intact at the start; the VLM raises this alert at 2.1 s, 4 of 4 runs).",
+  "note": "Demo scenes for the Stage I video (2026-10-24 order: grab attention with an alert, then two scenes where Michelle stays quiet, then a hard far shot). Clips are AI-generated (synthetic). rois: omit = auto zone (every detected couch). Each clip was played with the released classifier (5% budget) and behaved as captioned. 2026-10-27: v32 replaced v02 as the opening alert (sofa intact at the start; the VLM raises this alert at 2.1 s, 4 of 4 runs). nap01 (data/Demo-Videos, prompt in prompts/demo_prompts.md, demo only, never trained or evaluated on) replaced v20 (unnatural climb onto the sofa). chew08 (same folder, night vision, no stuffing) replaced w04 (sofa torn from the first frame): alert in 5 of 5 batch runs (classifier, p=0.538 at 4.2 s) and 3 of 3 live playbacks (VLM at 00:02).",
   "items": [
     {"video": "data/Videos/v32.mp4", "caption": "Puppy chews the sofa armrest — Michelle alerts within seconds"},
     {"video": "data/Videos/v27.mp4", "caption": "Dog chews its own rope toy on the sofa — Michelle stays quiet"},
-    {"video": "data/Videos/v20.mp4", "caption": "Dog naps on the sofa — still quiet: no false alarm"},
-    {"video": "data/Wide-Videos/w04.mp4", "caption": "Night vision, far corner camera — dog chews the sofa, Michelle still alerts"}
+    {"video": "data/Demo-Videos/nap01.mp4", "caption": "Dog hops onto the sofa for a nap — still quiet: no false alarm"},
+    {"video": "data/Demo-Videos/chew08.mp4", "caption": "Night vision — dog chews the sofa armrest, Michelle alerts"}
   ]
 }
