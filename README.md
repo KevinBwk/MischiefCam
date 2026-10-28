@@ -1,13 +1,13 @@
 # MischiefCam
 
 > On-device AI that tells you when your dog chews your furniture, and stays quiet when it doesn't.
-> Notifications come from **Michelle**, the app's friendly mascot.
+> Alerts come from **Michelle**, the app's friendly mascot.
 
 Built for the **ASUS UGen AI League** (Battlefield Lightning, ASUS UGen300 / Hailo-10H).
 Stage I (this repo) runs on a Mac; Stage II ports the same pipeline to the UGen300
 ([plan](docs/STAGE2_PORT.md)). *Product name is provisional; see [`config/branding.toml`](config/branding.toml).*
 
-**Demo video:** [TBD: YouTube link] · **Evaluation protocol:** [eval/README.md](eval/README.md) ·
+**Demo video:** [youtu.be/M-MiTSTHQsw](https://youtu.be/M-MiTSTHQsw) · **Evaluation protocol:** [eval/README.md](eval/README.md) ·
 **Models:** [docs/MODELS.md](docs/MODELS.md)
 
 ## Why
@@ -16,9 +16,9 @@ Pet cameras already send "dog activity" or generic behaviour alerts, and smart c
 describe scenes in the cloud for a monthly fee. What owners actually want to know is narrower:
 *is the dog damaging the thing I care about, right now?* MischiefCam watches a zone the owner
 protects (Stage I: the sofa), decides whether the dog is **chewing it** rather than resting,
-sniffing or chewing its own toy, and only then notifies, with a snapshot and a short visual
-assessment. Inference runs entirely on the local device (no cloud inference, no subscription);
-only the notification itself goes out.
+sniffing or chewing its own toy, and only then raises an alert with a snapshot and a short visual
+assessment (on screen in Stage I; phone push in Stage II). Inference runs entirely on the local
+device (no cloud inference, no subscription); only the alert itself is meant to leave the device.
 
 ## Results
 
@@ -42,7 +42,8 @@ real-time playback of the 20 contrast-pair clips at 10 FPS, warm-up excluded
 | Classifier (CLIP ViT-B/16 + linear head, per review) | 47 | 20 ms | 22 ms |
 | VLM verdict (Qwen2-VL-2B, 4-bit MLX) | 38 | 421 ms | 435 ms |
 | VLM visual assessment (after a classifier alert) | 8 | 626 ms | 683 ms |
-| Chewing starts → first alert (labelled start vs alert, media time, `batch_run`) | 9 | 2.7 s | 5.2 s |
+| Chewing starts → first alert (contrast-pair development clips, media time, `batch_run`) | 9 | 2.7 s | 5.2 s |
+| Chewing starts → first alert, held-out test set (caught clips, media time) | 14 | 3.96 s | 6.46 s |
 
 The alert delay includes the deliberate 2-second dwell before the first review. Running the same
 clips with the VLM as the only judge made the detector *slower* (P50 43 ms, P95 77 ms;
@@ -59,7 +60,7 @@ flowchart LR
     CAM["Camera or video<br/>(host)"] --> DET["YOLOv8m + ByteTrack<br/>dog, couch<br/>(NPU in Stage II)"]
     DET --> ZONE["Protected zone: drawn once,<br/>or auto = detected couch<br/>+ episode state machine<br/>dwell 2 s, re-look, cooldown<br/>(host CPU)"]
     ZONE -->|review| CROP["Crops on host CPU<br/>contact crop: dog ∩ couch<br/>animal crop: whole dog"]
-    CROP --> CLF["CLIP ViT-B/16 + linear head<br/>~17 ms on Mac<br/>(NPU in Stage II)"]
+    CROP --> CLF["CLIP ViT-B/16 + linear head<br/>~20 ms on Mac<br/>(NPU in Stage II)"]
     CLF -->|suspect| ALERT["Alert + snapshot<br/>Michelle notification"]
     CLF -->|normal| VLM["Qwen2-VL-2B verdict<br/>(NPU in Stage II)"]
     VLM -->|suspect| ALERT
@@ -79,14 +80,16 @@ flowchart LR
 
 ## Data
 
-- **Synthetic clips** generated with [TBD: tool name] from the prompts in `prompts/` (close,
-  medium and wide CCTV-style views, hard negatives, contrast pairs). Every demo clip is marked
+- **Synthetic clips** made from the prompts in `prompts/` (close, medium and wide CCTV-style
+  views, hard negatives, contrast pairs). Every demo clip is marked
   "synthetic clip — pre-recorded video, live inference".
 - **Labels** are human, time-segmented, mostly blind (`data/labels_*.json`); the rule is in
   [eval/README.md](eval/README.md).
 - **Held-out test set** prompts deliberately use breeds, sofas, rooms, camera placements and
   wording that never appear in the training prompts, to test generalisation beyond one generator style.
-- **Limitations:** no real-world footage yet; one generator; 8-second clips. False alerts per hour on
+- **Limitations:** real footage so far is a preliminary check only (six short clips, no false
+  alerts; [details](eval/README.md#preliminary-real-home-check-after-the-test-set)); one generator;
+  8-second clips. False alerts per hour on
   real daily footage are part of the Stage II validation plan.
 - **Auto zone risk:** evaluation and demo clips protect every couch the detector finds. In one clip
   (w09) it also boxed a corner with a dog bed as a second "sofa", so a dog resting in its bed is
@@ -118,6 +121,9 @@ or a permissively licensed detector behind `DetectorBackend` ([licensing note](d
 ## Developer guide
 
 ### Setup (macOS, Apple Silicon)
+
+Stage I runs on macOS (Apple Silicon). The UGen300 needs a Windows or Linux host (no macOS), so
+Stage II moves to a PC or mini PC ([plan](docs/STAGE2_PORT.md)).
 
 ```bash
 brew install ffmpeg

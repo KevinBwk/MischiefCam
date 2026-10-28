@@ -90,6 +90,8 @@ follows the video. All clips are synthetic (no real footage in this set).
 
 Chewing start → first alert (media time, caught clips): P50 3.96 s, P95 6.46 s.
 
+Small sample: 95% Wilson intervals are 45–83% caught (14 / 21) and 3–23% false alerts (3 / 34).
+
 - **Missed (7)**: 3 of 5 wide shots and 3 of 9 medium ones; at those distances the mouth is a few
   pixels and every review said "insufficient". This is about 9 points below the development
   estimate (76%), the expected gap for settings tuned on the development set.
@@ -97,6 +99,15 @@ Chewing start → first alert (media time, caught clips): P50 3.96 s, P95 6.46 s
   sofa; two dogs wrestling in front of it) and one torn-sofa clip (d03).
 - Zone-only alerts on almost every clip, so the judges are what make the alerts usable: they
   remove 29 of 32 false alerts and keep two thirds of the real ones.
+
+## Preliminary real-home check (after the test set)
+
+After the held-out run, a friend shared six short real clips of their dog at home (2 min 17 s in
+total). They were run with the frozen model (`models/classifier.json` sha1 `a721a858…`), with
+nothing changed. No sofa chewing happens in these clips, so they test false alerts only:
+**0 false alerts**. This is a preliminary check: it is not part of the 55-clip test set and not a
+false-alerts-per-hour measurement, which belongs to the Stage II real-home pilot. The clips are
+not published.
 
 ## Reproduce
 

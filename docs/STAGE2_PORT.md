@@ -3,7 +3,7 @@
 The Stage I prototype runs on a Mac (Apple M4 Pro, 24 GB). The UGen300 is a USB accelerator
 (Hailo-10H, 8 GB LPDDR4, 40 TOPS INT4 / 20 TOPS INT8) that plugs into a host. ASUS lists Windows,
 Linux and Android hosts, not macOS ([spec](https://www.asus.com/motherboards-components/ai-accelerator/ugen/ugen300-usb-8g/techspec/)),
-so Stage II runs on a **Linux host** (Ubuntu x86_64 is supported by
+so Stage II runs on a Windows or Linux host; bring-up starts on Linux (Ubuntu x86_64 is supported by
 [hailo-apps](https://github.com/hailo-ai/hailo-apps)). Facts below are from vendor pages
 (2026-10-24); our own on-device numbers do not exist yet.
 
@@ -18,7 +18,8 @@ so Stage II runs on a **Linux host** (Ubuntu x86_64 is supported by
 
 The seams already exist: `DetectorBackend`, `Embedder`, `VLMBackend` and `FrameSource` are
 protocols (`src/core/detector.py`, `probe.py`, `vlm.py`, `sources.py`); `config/default.toml`
-selects backends by name. Porting adds backends; the pipeline, state machine, crops and alert
+already selects the judge backend by name (`vlm.backend`); Stage II wires `detector.backend` and
+the embedder the same way. Porting adds backends; the pipeline, state machine, crops and alert
 flow do not change.
 
 ## Expected timing (vendor single-model figures, not measured together)
