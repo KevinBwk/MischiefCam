@@ -24,7 +24,7 @@
      "end_s": 8.0,
      "label": "negative",
      "behavior": "chewing_furniture",
-     "target": "桌子",
+     "target": "table",
      "visibility": "clear"
     }
    ],
@@ -84,7 +84,7 @@
      "end_s": 6.325,
      "label": "positive",
      "behavior": "chewing_furniture",
-     "target": "抱枕",
+     "target": "throw pillow",
      "visibility": "clear"
     },
     {
@@ -92,7 +92,7 @@
      "end_s": 8.0,
      "label": "negative",
      "behavior": "sitting",
-     "target": "抱枕",
+     "target": "throw pillow",
      "visibility": "clear"
     }
    ],
@@ -196,7 +196,7 @@
      "end_s": 2.0,
      "label": "negative",
      "behavior": "other",
-     "target": "喝水",
+     "target": "drinking water",
      "visibility": "partial"
     },
     {
@@ -269,7 +269,7 @@
     }
    ],
    "simulated": true,
-   "source_note": "兩隻狗；另一隻全程在狗窩",
+   "source_note": "Two dogs; the other one stays in the dog bed throughout.",
    "damage_confirmed": "yes",
    "split": "",
    "ai_assisted": true,

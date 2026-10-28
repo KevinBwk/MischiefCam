@@ -8,7 +8,7 @@
           "end_s": 4.7,
           "label": "positive",
           "behavior": "chewing_furniture",
-          "target": "沙發",
+          "target": "sofa",
           "visibility": "clear"
         }
       ],
@@ -42,7 +42,7 @@
           "end_s": 5.756,
           "label": "positive",
           "behavior": "chewing_furniture",
-          "target": "沙發扶手",
+          "target": "sofa armrest",
           "visibility": "clear"
         }
       ],
@@ -109,7 +109,7 @@
           "end_s": 5.6,
           "label": "positive",
           "behavior": "chewing_furniture",
-          "target": "沙發",
+          "target": "sofa",
           "visibility": "clear"
         }
       ],
@@ -126,7 +126,7 @@
           "end_s": 4.57,
           "label": "positive",
           "behavior": "chewing_furniture",
-          "target": "沙發靠枕",
+          "target": "sofa cushion",
           "visibility": "clear"
         }
       ],
@@ -143,7 +143,7 @@
           "end_s": -1.0,
           "label": "negative",
           "behavior": "chewing_toy",
-          "target": "繩子玩具",
+          "target": "rope toy",
           "visibility": "clear"
         }
       ],
@@ -160,7 +160,7 @@
           "end_s": 5.702,
           "label": "negative",
           "behavior": "chewing_toy",
-          "target": "骨頭玩具",
+          "target": "bone toy",
           "visibility": "clear"
         }
       ],
@@ -177,7 +177,7 @@
           "end_s": 4.705,
           "label": "positive",
           "behavior": "chewing_furniture",
-          "target": "沙發扶手",
+          "target": "sofa armrest",
           "visibility": "clear"
         }
       ],
@@ -194,7 +194,7 @@
           "end_s": 5.702,
           "label": "negative",
           "behavior": "chewing_toy",
-          "target": "繩子玩具",
+          "target": "rope toy",
           "visibility": "clear"
         }
       ],

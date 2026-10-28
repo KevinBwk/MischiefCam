@@ -1,12 +1,12 @@
-# MischiefCam · 破沙發負例 prompt（D01–D05）
+# MischiefCam · Damaged-sofa negative prompts (D01–D05)
 
-**目的**：幾乎所有正例影片都是「狗咬 → 沙發被扯破、填充物跑出來」，模型可能偷學成「看到破洞或填充物就通知」。這 5 支是**沙發本來就破了，但狗沒有咬**，用來檢查有沒有這種偷吃步。
+**Purpose**: almost every positive clip shows "dog bites, then the sofa tears and stuffing comes out", so the model may take a shortcut and learn "alert whenever a hole or stuffing is visible".These 5 clips show **a sofa that is already damaged, with no chewing**, to check for that shortcut.
 
-- 存成 `D01.mp4` … `D05.mp4`，放在 `data/Test-Videos/`，跟 T 系列一起盲標、一起只評估一次，不拿來訓練。
-- 照畫面實際發生的標：生成工具如果讓狗真的咬了沙發，那支就標正例。
-- 生成時注意：破洞要**從第一格就存在**，而且整支影片裡不變大。
+- Save as `D01.mp4` … `D05.mp4` in `data/Test-Videos/`; blind-label with the T series, evaluate once together with it, never train on them.
+- Label what is visible: if the video generator makes the dog bite the sofa, label that clip positive.
+- When generating: the damage must be **present from the first frame** and must not grow during the clip.
 
-| ID | 視角 |
+| ID | View |
 |---|---|
 | D01 | close |
 | D02 | close |

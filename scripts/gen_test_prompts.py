@@ -223,29 +223,29 @@ def main() -> int:
                                                         encoding="utf-8")
 
     md = [
-        "# MischiefCam · 保留測試集 prompt（T01–T60，實際生成 50 支）",
+        "# MischiefCam · Held-out test set prompts (T01–T60, 50 clips actually generated)",
         "",
-        "**這批只用來做最後一次評估，不拿來訓練、選門檻、選裁切或改 prompt。** 所有設定定案後才跑一次，"
-        "跑出來的分數才是提案要寫的效能。跑完如果又改設定，這批就不算乾淨了，要另外再做一批。",
+        "**This batch is for the final evaluation only: do not use it to train, pick thresholds, pick crops or tune prompts.** Run it once, after all settings are final; "
+        "that score is the performance to report in the proposal. If settings change afterwards, this set is no longer clean and a new one is needed.",
         "",
-        "- 影片存成 `T01.mp4` … `T60.mp4`，放在 `data/Test-Videos/`（只用編號）。",
-        f"- **2026-10-24 縮減成 50 支**：下表標「不生成」的 {counts['dropped']} 支跳過。挑法是在每個「視角 × 類型」"
-        "格子裡省略跟已生成影片最像的情境，所以正負例、困難負例和視角的比例都跟原本 60 支相同。",
-        "- 另外還有 5 支破沙發負例，在 `test_damaged_sofa_prompts.md`（D01–D05），一樣放 `data/Test-Videos/`。",
-        "- **自己盲標**：標註工具不要加 `--suggest`；照畫面實際發生的標，不要參考 prompt 原本想要的結果。",
-        "- 狗品種、沙發、房間都是訓練 prompt 沒出現過的；鏡頭位置與句型也刻意不同，用來測「換了風格還抓不抓得到」。",
-        "- 正例、負例已經打散後才編號，編號看不出答案；預期結果只寫在 `test_set_prompts.json`，標完之前不要看。",
-        f"- 組成：共 {counts['total']} 支，近景 {counts['close']}、中景 {counts['medium']}、廣角 {counts['wide']}。",
-        "- 如果有真實影片（自家或隊友的狗），另外存成 `R01.mp4`…，放在同一個資料夾，一起盲標。",
-        "  真實影片最能回答評審會問的「合成資料訓練的模型，真實世界有沒有用」。",
+        "- Save the clips as `T01.mp4` … `T60.mp4` in `data/Test-Videos/` (IDs only).",
+        f"- **Reduced to 50 clips on 2026-10-24**: the {counts['dropped']} rows marked \"not generated\" below are skipped. In each \"view × type\""
+        " cell, the scenario most similar to an already generated clip was omitted, so the positive/negative, hard-negative and view proportions match the original 60.",
+        "- There are also 5 damaged-sofa negatives in `test_damaged_sofa_prompts.md` (D01–D05), saved in `data/Test-Videos/` as well.",
+        "- **Blind-label them yourself**: run the label tool without `--suggest`; label what actually happens on screen, not what the prompt intended.",
+        "- Dog breeds, sofas and rooms are all absent from the training prompts; camera positions and phrasing are deliberately different too, to test whether detection survives a change of style.",
+        "- Positives and negatives were shuffled before numbering, so IDs reveal nothing; the intended outcomes are only in `test_set_prompts.json`, so do not open it until labelling is done.",
+        f"- Composition: {counts['total']} clips in total: {counts['close']} close, {counts['medium']} medium, {counts['wide']} wide.",
+        "- If you have real footage (your own or a teammate's dog), save it as `R01.mp4` … in the same folder and blind-label it together.",
+        "  Real footage best answers the question the judges will ask: does a model trained on synthetic data work in the real world?",
         "",
-        "| ID | 視角 | 狀態 |",
+        "| ID | View | Status |",
         "|---|---|---|",
-        *[f"| {p['id']} | {p['view']} | {'**不生成**' if p['status'] == 'dropped' else '生成'} |" for p in prompts],
+        *[f"| {p['id']} | {p['view']} | {'**not generated**' if p['status'] == 'dropped' else 'generated'} |" for p in prompts],
         "",
     ]
     for p in prompts:
-        title = f"## {p['id']} · {p['view']}" + ("（不生成）" if p["status"] == "dropped" else "")
+        title = f"## {p['id']} · {p['view']}" + (" (not generated)" if p["status"] == "dropped" else "")
         md += [title, "", "```text", p["prompt"], "```", ""]
     (ROOT / "prompts/test_set_prompts.md").write_text("\n".join(md), encoding="utf-8")
     print(json.dumps(counts))
@@ -278,16 +278,16 @@ def write_damaged(rng: random.Random) -> None:
     (ROOT / "prompts/test_damaged_sofa_prompts.json").write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n",
                                                                  encoding="utf-8")
     md = [
-        "# MischiefCam · 破沙發負例 prompt（D01–D05）",
+        "# MischiefCam · Damaged-sofa negative prompts (D01–D05)",
         "",
-        "**目的**：幾乎所有正例影片都是「狗咬 → 沙發被扯破、填充物跑出來」，模型可能偷學成「看到破洞或填充物"
-        "就通知」。這 5 支是**沙發本來就破了，但狗沒有咬**，用來檢查有沒有這種偷吃步。",
+        "**Purpose**: almost every positive clip shows \"dog bites, then the sofa tears and stuffing comes out\", so the model may take a shortcut and learn \"alert whenever a hole or stuffing is visible\"."
+        "These 5 clips show **a sofa that is already damaged, with no chewing**, to check for that shortcut.",
         "",
-        "- 存成 `D01.mp4` … `D05.mp4`，放在 `data/Test-Videos/`，跟 T 系列一起盲標、一起只評估一次，不拿來訓練。",
-        "- 照畫面實際發生的標：生成工具如果讓狗真的咬了沙發，那支就標正例。",
-        "- 生成時注意：破洞要**從第一格就存在**，而且整支影片裡不變大。",
+        "- Save as `D01.mp4` … `D05.mp4` in `data/Test-Videos/`; blind-label with the T series, evaluate once together with it, never train on them.",
+        "- Label what is visible: if the video generator makes the dog bite the sofa, label that clip positive.",
+        "- When generating: the damage must be **present from the first frame** and must not grow during the clip.",
         "",
-        "| ID | 視角 |",
+        "| ID | View |",
         "|---|---|",
         *[f"| {p['id']} | {p['view']} |" for p in prompts],
         "",

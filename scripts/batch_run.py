@@ -3,7 +3,8 @@
 Labels come from the labeling tool's JSON (or a legacy {"<file name>": label} map);
 clips without a label are listed as "?". Example:
 
-    uv run python scripts/batch_run.py data/raw --labels data/labels.json --rois config/rois.full_frame.json
+    uv run python scripts/batch_run.py data/Pairs-Videos --labels data/labels_pairs.json \
+        --rois config/rois.auto.json --vlm either
 
 Each clip gets its own folder under outputs/<batch-name>/. This is a dev check, not an evaluation:
 it reports per-clip outcomes and makes no accuracy claim.

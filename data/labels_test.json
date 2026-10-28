@@ -748,7 +748,7 @@
           "end_s": -1.0,
           "label": "negative",
           "behavior": "other",
-          "target": "舔另一隻狗",
+          "target": "licking the other dog",
           "visibility": "clear"
         }
       ],

@@ -1,10 +1,10 @@
-# MischiefCam · 中景 prompt（M01–M20）
+# MischiefCam · Medium-shot prompts (M01–M20)
 
-整張沙發加部分客廳，狗約佔畫面 1/10。禁止物件只有沙發。影片存成 `M01.mp4` … `M20.mp4`（只用編號，標註才會是盲標），放在 `data/Medium-Videos/`。
+The whole sofa plus part of the living room; the dog fills about 1/10 of the frame. The sofa is the only forbidden object. Save the clips as `M01.mp4` … `M20.mp4` (IDs only, so labelling stays blind) in `data/Medium-Videos/`.
 
-共 20 則：正例 7、負例 13。每則開頭都寫明沙發完好，避免影片一開始就有棉絮。
+20 prompts in total: 7 positive, 13 negative. Each prompt opens by stating that the sofa is intact, so the clip does not start with stuffing already visible.
 
-| ID | 類別 | 行為 | 目標 |
+| ID | Category | Behaviour | Target |
 |---|---|---|---|
 | M01 | positive | chewing_furniture | sofa armrest |
 | M02 | positive | chewing_furniture | seat cushion edge |
